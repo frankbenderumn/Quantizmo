@@ -4,9 +4,16 @@ function WSApi() {
     this.callbacks = {};
     this.requestId = 0;
 
+    this.onmessage = null;
+
     this.socket.onmessage = function (msg) {
         var data = JSON.parse(msg.data);
-        self.callbacks[data.id](data);
+        if ("id" in data) {
+            self.callbacks[data.id](data);
+        }
+        if (self.onmessage) {
+            self.onmessage(msg, data);
+        }
     }
 
     this.connect = new Promise(function(resolve, reject) {
@@ -29,12 +36,13 @@ function WSApi() {
     });
 }
 
-WSApi.prototype.sendCommand = function(cmd, calcVal) {
+WSApi.prototype.sendCommand = function(cmd, data, calcVal) {
     let self = this;
 
     if (self.connected) {
-        cmd.id = this.requestId;
-        this.socket.send(JSON.stringify(cmd));
+        data.command = cmd;
+        data.id = this.requestId;
+        this.socket.send(JSON.stringify(data));
         let promise = new Promise(function(resolve, reject) {
             self.callbacks[self.requestId] = function(data) {
                 if (calcVal) {
@@ -53,7 +61,7 @@ WSApi.prototype.sendCommand = function(cmd, calcVal) {
         return new Promise(function(resolve, reject) {
             self.connect.then(function() {
                 self.connected = true;
-                    self.sendCommand(cmd, calcVal).then(
+                    self.sendCommand(cmd, data, calcVal).then(
                         function(data) {
                             resolve(data);
                         });

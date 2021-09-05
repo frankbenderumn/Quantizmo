@@ -3,52 +3,55 @@
 
 #include <map>
 #include "WebServer.h"
+#include <chrono>
 
 namespace csci3081 {
 
-class WebServerSession;
-class WebServerCommand;
-
-struct WebServerSessionState {
-    std::map<std::string, WebServerCommand*> commands;
-};
-
-class WebServerCommand {
-public:
-    virtual ~WebServerCommand() {}
-
-    virtual void execute(WebServerSession* session, picojson::value& command, WebServerSessionState* state);
-    virtual void execute(WebServerSession* session, picojson::object& command, WebServerSessionState* state, picojson::object& data) = 0;
-};
-
 class WebServerSession : public JSONSession {
 public:
-    WebServerSession(WebServerSessionState state) : state(state) {
+    WebServerSession() : start(std::chrono::system_clock::now()), time(0.0) {
     }
     ~WebServerSession() {
     }
     void receiveJSON(picojson::value& val) {
-        std::string cmd = val.get<picojson::object>()["command"].get<std::string>();
-        std::cout << cmd << std::endl;
-        std::map<std::string, WebServerCommand*>::iterator it = state.commands.find(cmd);
-        if (it != state.commands.end()) {
-            it->second->execute(this, val, &state);
+        picojson::object data = val.get<picojson::object>();
+        std::string cmd = data["command"].get<std::string>();
+        picojson::object ret;
+        ret["id"] = data["id"];
+        receiveCommand(cmd, data, ret);
+        picojson::value retVal(ret);
+        sendJSON(retVal);
+    }
+
+    void receiveCommand(const std::string& cmd, picojson::object& data, picojson::object& ret) {
+        if (cmd == "update") {
+            std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
+	        std::chrono::duration<double> diff = end - start;
+            double delta = diff.count() - time;
+            time += delta;
+
+            if (delta > 0.1) {
+				for (float f = 0.0; f < delta; f+=0.01) {
+					Update(0.01);
+				}
+			}
+			else {
+				Update(delta);
+			}
+        }
+        else {
+            std::cout << "Unknown command: " << cmd << " - " << picojson::value(data).serialize() << std::endl;
         }
     }
-    void update() {}
+
+    void Update(double dt) {
+    }
 
 private:
-    WebServerSessionState state;
+    std::chrono::time_point<std::chrono::system_clock> start;
+    double time;
 };
 
-void WebServerCommand::execute(WebServerSession* session, picojson::value& command, WebServerSessionState* state) {
-        picojson::object data;
-        picojson::object cmd = command.get<picojson::object>();
-        data["id"] = cmd["id"];
-        execute(session, cmd, state, data);
-        picojson::value ret(data);
-        session->sendJSON(ret);
-}
 
 }
 
