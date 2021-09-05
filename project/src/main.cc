@@ -4,13 +4,11 @@ Copyright (c) 2019 Dan Orban
 
 #include <iostream>
 #include <map>
-#include "web_sockets_server.h" 
+#include "web_server_session.h" 
 
 using namespace csci3081;
 
 int main(int argc, char**argv) {
-    std::cout << "Usage: ./bin/ExampleServer 8081 web" << std::endl;
-
     if (argc > 1) {
         int port = std::atoi(argv[1]);
         std::string webDir = std::string(argv[2]);
@@ -18,6 +16,9 @@ int main(int argc, char**argv) {
         while (true) {
             server.service();
         }
+    }
+    else {
+        std::cout << "Usage: ./bin/ExampleServer 8081 web" << std::endl;
     }
 
     return 0;
