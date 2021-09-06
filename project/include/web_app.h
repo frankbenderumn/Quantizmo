@@ -1,5 +1,5 @@
-#ifndef WEB_SOCKETS_SERVER_H_
-#define WEB_SOCKETS_SERVER_H_
+#ifndef WEB_APP_H_
+#define WEB_APP_H_
 
 #include <map>
 #include "WebServer.h"
@@ -7,10 +7,10 @@
 
 namespace csci3081 {
 
-class WebServerSession : public JSONSession {
+class WebApp : public JSONSession {
 public:
-    WebServerSession() : start(std::chrono::system_clock::now()), time(0.0) {}
-    ~WebServerSession() {}
+    WebApp() : start(std::chrono::system_clock::now()), time(0.0) {}
+    ~WebApp() {}
     
     void receiveJSON(picojson::value& val);
     void ReceiveCommand(const std::string& cmd, picojson::object& data, picojson::object& returnValue);

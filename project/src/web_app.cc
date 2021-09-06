@@ -1,8 +1,8 @@
-#include "web_server_session.h"
+#include "web_app.h"
 
 namespace csci3081 {
 
-void WebServerSession::receiveJSON(picojson::value& val) {
+void WebApp::receiveJSON(picojson::value& val) {
     picojson::object data = val.get<picojson::object>();
     std::string cmd = data["command"].get<std::string>();
     picojson::object returnValue;
@@ -12,7 +12,7 @@ void WebServerSession::receiveJSON(picojson::value& val) {
     sendJSON(retVal);
 }
 
-void WebServerSession::ReceiveCommand(const std::string& cmd, picojson::object& data, picojson::object& returnValue) {
+void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, picojson::object& returnValue) {
     if (cmd == "update") {
         std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
         std::chrono::duration<double> diff = end - start;
@@ -42,13 +42,13 @@ void WebServerSession::ReceiveCommand(const std::string& cmd, picojson::object& 
     }
 }
 
-void WebServerSession::Update(double dt, picojson::object& returnValue) {
+void WebApp::Update(double dt, picojson::object& returnValue) {
 }
 
-void WebServerSession::KeyUp(const std::string& key, int keyCode) {
+void WebApp::KeyUp(const std::string& key, int keyCode) {
 }
 
-void WebServerSession::KeyDown(const std::string& key, int keyCode) {
+void WebApp::KeyDown(const std::string& key, int keyCode) {
 }
 
 }
