@@ -1,0 +1,154 @@
+/* When the screen is less than 600 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
+@media screen and (max-width: 600px) {
+  .navbar > li:not(:last-child) {display: none;}
+  .navbar > li.icon {
+    float: right;
+    display: block;
+  }
+}
+
+/* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
+@media screen and (max-width: 600px) {
+  .navbar.responsive {position: relative;}
+  .navbar.responsive > li.icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .navbar.responsive > li {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+}
+
+.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+/* Hide the link that should open and close the topnav on small screens */
+.header-navbar .icon {
+  display: none;
+}
+
+
+.notification-count{
+  font-family: "Helvetica";
+  text-align:center;
+  padding:0px 1px;
+  font-size:0.7rem;
+  position:absolute;
+  top:5px;
+  right:0.25px;
+  line-height:0.8rem;
+  height:0.8rem;
+  color:white;
+  border-radius:0.8rem;
+  letter-spacing:1px;
+  font-weight:bold;
+}
+
+/* NAVIGATION**************************************** */
+section.sidebar {float:left;top:0;left:0;background:transparent;z-index:99;height:100%;position:fixed;padding-top:100px;padding-bottom:50px;}
+section.sidebar ul {text-align:center;}
+section.sidebar ul li {position:relative;width:70px;cursor:pointer;text-transform:uppercase;transition:all .4s ease-out;float:none;font-size:2rem;}
+section.sidebar ul li:after {position:absolute;top:0;left:70px;width:70px;height:100%;opacity:.5;transform: perspective(400px) rotateY(90deg);transform-origin: 0 100%;transition:all .4s ease-out;font-size:0.6rem;}
+section.sidebar ul li:after {line-height:88px;}
+section.sidebar ul li:hover {transform:translateX(-70px);}
+section.sidebar ul li:hover:after {opacity:1;transform:perspective(400px) rotateY(0deg) scale(1) ;}
+section.sidebar ul li > div {display:inline-block;padding:25px 0;background:transparent;}
+section.sidebar ul li div { position:relative;}
+@media screen and (max-width: 600px) {
+  section.sidebar{
+    overflow:auto;
+    display: none;
+  }
+  section.sidebar ul li {position:relative;width:50px;cursor:pointer;text-transform:uppercase;transition:all .4s ease-out;float:none;font-size:1.5rem;}
+  section.sidebar ul li:after {position:absolute;top:0;left:50px;width:50px;height:100%;opacity:.5;transform: perspective(400px) rotateY(90deg);transform-origin: 0 100%;transition:all .4s ease-out;font-size:0.6rem;}
+  section.sidebar ul li:after {line-height:68px;font-size:0.65rem;}
+  section.sidebar ul li:hover {transform:translateX(-50px);}
+}
+nav.mobile-nav{
+  display:flex;
+  width:100%;
+  border-top:var(--grey);
+  position:fixed;
+  bottom:0;
+  z-index:99;
+  background-color:white;
+  color:var(--theme);
+  border-top:1px solid var(--grey);
+  height:40px;
+}
+.rotateLeft{
+  /* transform-origin: 50% 50%;
+  transform: rotate(180deg); */
+  background-color: red;
+  animation: rotateLeft linear 0.2s forwards;
+}
+.rotateRight{
+  /* transform-origin: 50% 50%;
+  transform: rotate(180deg); */
+  background-color: blue;
+  animation: rotateRight linear 0.2s forwards;
+}
+@keyframes rotateLeft{
+  from{
+    transform-origin: 0;
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(180deg);
+    background-image:linear-gradient(var(--aqua), var(--aqua));
+    color:white;
+    border-radius:0px 0px 50px 50px;
+  }
+}
+@keyframes rotateRight{
+  from{
+    transform-origin: 50% 50%;
+    transform: rotate(180deg);
+  }
+  to{
+    transform-origin: 0;
+    transform: rotate(0deg);
+    background-image:linear-gradient(var(--aqua), var(--starzoku));
+  }
+}
+
+.subnav li{
+  color:var(--grey);
+  background-color:rgb(27, 27, 30);
+  padding:10px;
+}
+ul.subnav li:hover{
+  background-color:var(--grey);
+  color:rgb(27, 27, 30);
+}
+
+.hublet{
+  border: 1px solid var(--black);
+  color: var(--white);
+}
+.hublet:hover{
+  opacity:0.9;
+  color:var(--grey);
+  transition: 0.2s;
+  border: 1px solid var(--white);
+  --webkit-box-shadow: 0px 0px 20px var(--white) !important;
+  cursor: pointer;
+}
+.applet{
+  color:var(--white);
+  padding:10px;
+  font-size:0.7em;
+}
+.applet:hover{
+  color:var(--lightblue);
+  transition:0.2s;
+  cursor: pointer;
+  padding:10px;
+}
+
+

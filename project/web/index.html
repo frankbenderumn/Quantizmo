@@ -1,63 +1,182 @@
 <html>
 	<head>
 		<title>3081 Project</title>
-		<style>
-			body { margin: 0; }
-			canvas { display: block; }
-			#info {
-				position: absolute;
-				top: 10px;
-				width: 100%;
-				text-align: center;
-				color: white;
-				z-index: 101;
-				display:block;
-			}
-
-			#menu {
-				background-color: black;
-				opacity: 0.8;
-				position: absolute;
-				top: 10px;
-				right: 10px;
-				text-align: left;
-				color: white;
-				z-index: 100;
-				display:block;
-				padding: 10px;
-			}
-
-
-			#scene-container {
-			  position: absolute;
-			  width: 100%;
-			  height: 100%;
-			}
-			#notification-bar {
-				position: absolute;
-				z-index: 2;
-				opacity: 0.5;
-				left: 0;
-				height: 100%;
-				background-color: black;
-				width: 300px;
-				color: white;
-				font-size: 1em;
-				white-space: pre-line;
-				padding-left: 15px;
-				padding-top: 15px;
-			}
-
-		</style>
-
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<link rel="stylesheet" type="text/css" href="css/final.css" />
+		<link rel="stylesheet" type="text/css" href="css/navigation.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<script src="js/jquery-3.5.1.min.js"></script>
 		<script src="js/three.js"></script>
 		<script src="js/OrbitControls.js"></script>
 		<script src="js/GLTFLoader.js"></script>
 		<script src="js/OBJLoader.js"></script>
 		<script src="js/WSApi.js"></script>
+		<script src="js/scaffolding.js"></script>
 	</head>
 	<body>
+		<!-- <% if logged_in? %> -->
+		<script>
+		// window.onload = function(){
+		// 	  $.fn.setTheme("<%= j @theme.base %>", "<%= j @theme.secondary %>", "<%= j @theme.background %>", "<%= j @theme.message %>", "<%= j @theme.fill %>");
+		// 	  let device = $("body").css('z-index');
+		// 	  if(device < 0){
+		// 		$("body").attr('data-device', 'desktop');
+		// 	  }else if(device == 0){
+		// 		$("body").attr('data-device', 'mobile');
+		// 	  }
+		// 	}
+		// 	// MAY WANT TO INCORPORATE SERIALIZERS
+		// 	$(window).bind('beforeunload', function(){
+		// 	  $.fn.initTheme("<%= j current_user.templatee if !current_user.templatee.nil? %>");
+		// 	  $.fn.loadTemplate("<%= j current_user.templatee if !current_user.templatee.nil? %>");
+		// 	  $.fn.setTheme("<%= j @theme.base %>", "<%= j @theme.secondary %>", "<%= j @theme.background %>", "<%= j @theme.message %>", "<%= j @theme.fill %>");
+		// 	});
+		// 	$(document).on('turbolinks:load', function(){
+		// 	  $.fn.setTheme("<%= j @theme.base %>", "<%= j @theme.secondary %>", "<%= j @theme.background %>", "<%= j @theme.message %>", "<%= j @theme.fill %>");
+		// 	  $.fn.initTheme("<%= j current_user.templatee if !current_user.templatee.nil? %>");
+		// 	  $.fn.loadTemplate("<%= j current_user.templatee if !current_user.templatee.nil? %>");
+		// 	  $.fn.hideLoader();
+		// 	});
+		// 	$(document).ready(function(){
+		// 	  $("a, li").on('click', function(){
+		// 		$.fn.hideMobileSidenav();
+		// 	  });
+		// 	  $.fn.mobileSidenav = () => {
+		// 		console.log("mobile sidenav clicked!");
+		// 		$("#mobile-menu").attr('data-gate', 'true');
+		// 		$("#mobile-menu-trigger").addClass('ripple');
+		// 		$(".second-menu").show();
+		// 		$("#mobile-menu").animate({
+		// 		  width: '100%',
+		// 		}, function(){
+		// 		  $('.carousel').flickity('resize');
+		// 		  $('.carousel').flickity({
+		// 			cellAlign: 'left',
+		// 			freeScroll: true,
+		// 		  });
+		// 		});
+		// 	  }
+		// 	  $.fn.hideMobileSidenav = () => {
+		// 		$("div#mobile-menu").attr('data-gate', 'false');
+		// 		$(".second-menu").hide();
+		// 		$("div#mobile-menu-trigger").removeClass('ripple');
+		// 		$("div#mobile-menu").css('width', 0);
+		// 	  }
+		// 	  $('.carousel').flickity({
+		// 		cellAlign: 'left',
+		// 	  });
+		// 	  $(".carousel .app-cell").on('click', function(){
+		// 		$.fn.showLoader();
+		// 	  });
+		// 	  $(".megamenu-trigger").mouseover(function(){
+		// 		let menu = $(".megamenu-wrapper");
+		// 		menu.show();
+		// 	  });
+		// 	  $(".megamenu-wrapper").mouseleave(function(){
+		// 		let menu = $(".megamenu-wrapper");
+		// 		menu.hide();
+		// 	  });
+		// 	  $(document).on('turbolinks:load', function(){
+		// 		$("div#mobile-menu-trigger").on('click', function(){
+		// 		  console.log("mobile menu clicked!");
+		// 		  let gate = $("div#mobile-menu").attr('data-gate');
+		// 		  console.log("gate is: "+gate);
+		// 		  if (gate == "false"){
+		// 			console.log("Sidenav should open!");
+		// 			$.fn.mobileSidenav();
+		// 		  }else{
+		// 			$.fn.hideMobileSidenav();
+		// 		  }
+		// 		});
+		// 		$("#page").on('click', function(){
+		// 		  console.log("showtime!");
+		// 		});
+		// 		$("[data-api='notifications']").on('click', function(){
+		// 		  console.log("notifications triggered!");
+		// 		  $.ajax({
+		// 			method: "GET",
+		// 			url: "/notifications"
+		// 		  });
+		// 		});
+		// 	  });
+		// 	});
+		</script>
+		<style>
+		
+		</style>
+		  <header>
+			<div class="container">
+			  <nav id="navbar" class="nav-header">
+				<span class="left"><b class="brand" style="color:white;">CSCI3081W Project</b></span>
+				<span><img id="starzoku-logo starzoku-logo-mobile" class="logo" src="https://starzoku.s3.amazonaws.com/favicon-32x32.png"/></span>
+				  <ul id="navbar" class="header-navbar right white">
+					<li><i class="fas fa-home"></i> Home</li>
+					<li><i class="fas fa-rocket"></i> Orbit</li>
+					<li class="megamenu-trigger"><i class="fas fa-circle"></i> Categories</li> 
+					<!-- <li data-trigger="notification-dropdown" data-role="toggle" data-api="notifications" data-tab="notifications">
+					  <div class="anchor">
+						<i class="fas fa-star"></i>
+						  <div class="notification-count red-bg">1</div>
+						<div data-target="notification-dropdown" data-role="toggle" data-tab="notifications" class="shadow notification-wrapper">
+						  <ol data-api-return="notifications" class="dropdown list"></ol>
+						</div>
+					  </div>
+					</li>
+					<li data-trigger="mnotification-dropdown" data-role="toggle" data-api="mnotifications" data-tab="mnotifications">
+					  <div class="anchor">
+						<i class="fas fa-comment-alt"></i>
+						  <div class="notification-count blue-bg">1</div>
+						<div data-target="mnotification-dropdown" data-role="toggle" data-tab="mnotifications" class="notification-wrapper shadow">
+						  <ol data-api-return="mnotifications" class="dropdown list"></ol>
+						</div>
+					  </div>
+					</li>
+					<li data-trigger="reminder-dropdown" data-role="toggle" data-api="reminders" data-tab="reminders">
+					  <div class="anchor">
+						<i class="fas fa-coffee"></i>
+						  <div class="notification-count green-bg hide">1</div>
+						<div data-target="reminder-dropdown" data-role="toggle" data-tab="reminders" class="shadow notification-wrapper">
+						  <ol data-api-return="reminders" class="dropdown list"></ol>
+						</div>
+					  </div>
+					</li>
+					<li data-trigger="settings" data-role="toggle">
+					  <div class="anchor">
+						<span id="cog"><i class="fas fa-cog"></i></span>
+						<div class="hide shadow notification-wrapper w-200" data-target="settings" data-role="toggle">
+						  <ol id="settings-list" class="dropdown list">
+							<li>Help</li>
+							<li>Privacy Policy</li>
+							<li>Code of Conduct</li>
+							<li class="red">Log Out</li>
+						  </ol>
+						</div>
+					  </div>
+					</li> -->
+					<li>
+					  <a id="sidenav-trigger" href="javascript:void(0);">
+						<i class="fa fa-bars sidenav-trig"></i>
+					  </a>
+					</li>
+				  </ul>
+				</div>
+			  </nav>
+			<ol class="sidenav white" id="sidenav">
+				<div class="p-20">
+				<span id="sidenav-close"><span id="closebtn" class="closebtn" onclick="closeNav()">&times;</span></span>
+				<H2>Menu</H2>
+				<li><i class="fas fa-home"></i> Home</li>
+				<li><i class="fas fa-user-circle"></i> Profile</li>
+				<li><i class="fas fa-user-cog"></i> Settings</li>
+				<li><i class="fas fa-chart-pie"></i> Statistics</li>
+				<li><i class="fas fa-trophy"></i> Accolades</li>
+				<li><i class="fas fa-drafting-compass"></i> Alpha</li>
+				<li><i class="fas fa-user-shield"></i> Admin</li>
+				<li><a class="modal-button" href="#wire">OPEN MODAL</a></li>
+				</div>
+			</ol>
+		  </header>
+
 		<div id="notification-bar"></div>
 		<div id="menu">
 						<input type="button" value="Kill Simulation" onclick='kill()'>
@@ -78,5 +197,27 @@
 		<div id="scene-container"></div>
     <!-- Include the "main" graphics script and run it. -->
 		<script src="js/main.js"></script>
+
+		<div id="wire" data-target="wire" data-role="toggle" class="slim modal">
+			<div class="slim modal-box">
+			  <video id="localVideo" playsinline autoplay muted></video>
+			  <video id="remoteVideo" playsinline autoplay></video>
+			  <div class="shell">
+				<button class="bttn" id="startButton">Start</button>
+				<button class="bttn" id="callButton">Call</button>
+				<button class="bttn" id="hangupButton">Hang Up</button>
+			  </div>
+			  <div class="box">
+				<span>SDP Semantics:</span>
+				<select id="sdpSemantics">
+				  <option selected value="">Default</option>
+				  <option value="unified-plan">Unified Plan</option>
+				  <option value="plan-b">Plan B</option>
+				</select>
+			  </div>
+			</div>
+		  </div>
+		</div>
+
 	</body>
 </html>
