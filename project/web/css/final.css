@@ -285,6 +285,21 @@ body { padding:0px; margin:0px auto; }
 .pink { color:var(--pink) !important; }
 .glass { color:var(--glass) !important; }
 
+.success-bg {background-color: var(--success); }
+.danger-bg {background-color: var(--danger); }
+.notice-bg {background-color: var(--notice); }
+.warning-bg {background-color: var(--warning); }
+
+.success {color: var(--success); }
+.danger {color: var(--danger); }
+.notice {color: var(--notice); }
+.warning {color: var(--warning); }
+
+.red-border { border-color: var(--red) !important; }
+.blue-border { border-color: var(--blue) !important; }
+.orange-border { border-color: var(--orange) !important; }
+.green-border { border-color: var(--green) !important; }
+
 /* GLOBALS TAGS */
 .h-100 { height:100%; }
 html, body {
@@ -429,16 +444,6 @@ small { font-size:70%; }
 .shell .body { padding:10px; background-color:var(--glass); border-radius:0px 0px 5px 5px; } 
 .shell.alt .header { color:var(--theme); background-color:var(--white); border-radius:5px 5px 0px 0px; }
 .shell.alt .body { border:2px solid var(--lightgrey); border-radius:0px 0px 5px 5px; }
-
-/* ALERTS */
-.alerts{}
-.alert{}
-.alert.danger{}
-.alert.success{}
-.alert.warning{}
-.alert.notice{}
-.alert.icon{}
-.alert.content{}
 
 /* APPLETS */
 .applet{}

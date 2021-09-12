@@ -51,12 +51,13 @@ make-depend-cxx=$(CXX) -MM -MF $3 -MP -MT $2 $(CXXFLAGS) $(INCLUDES) $1
 $(LIBFILE): $(BUILD_DIR) $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -shared $(INCLUDES) $(LIBDIRS) $(LIBS) $(OBJECTS) -o $@
 
-data-files:
+# data-files:
 	mkdir -p $(ROOT_DIR)/.dependencies
-	rsync -au $(DEP_DIR)/include $(ROOT_DIR)/.dependencies/
+	# rsync -au $(DEP_DIR)/include $(ROOT_DIR)/.dependencies/
 
 # Build web viewer
-$(EXEFILE): $(BUILD_DIR) $(LIBFILE) data-files
+#add data-files to end
+$(EXEFILE): $(BUILD_DIR) $(LIBFILE)
 	$(CXX) $(CXXFLAGS) -Wl,-rpath,$(BUILD_DIR)/lib $(INCLUDES) $(LIBDIRS) -L$(BUILD_DIR)/lib src/main.cc -lcsci3081proj $(LIBS) -lCppWebServer -lwebsockets -lssl -lcrypto -lz -o $@ 
 
 # Build tests

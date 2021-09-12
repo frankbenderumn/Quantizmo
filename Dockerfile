@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     zlib1g-dev \
     dos2unix \
-    rsync \
+    # rsync \
     doxygen \
     graphviz \
     libc6-dbg \

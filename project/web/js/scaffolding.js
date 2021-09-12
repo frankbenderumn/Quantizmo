@@ -53,27 +53,27 @@ $(document).ready(function(){
         }
       });
     }
-    var alert;
-    $.fn.alert = (type, message) => {
-      switch(type){
-        case 'success':
-        $("div#alerts").append(`<span class='alert alert-success'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
-        break;
-        case 'danger':
-        $("div#alerts").append(`<span class='alert alert-danger'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
-        break;
-        case 'warning':
-        $("div#alerts").append(`<span class='alert alert-warning'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
-        break;
-        case 'notice':
-        $("div#alerts").append(`<span class='alert alert-notice'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
-        break;
-        default:
-        break;
-      }
-      $(".alert").delay(400).fadeOut(2000);
-    };
-  });
+  //   var alert;
+  //   $.fn.alert = (type, message) => {
+  //     switch(type){
+  //       case 'success':
+  //       $("div#alerts").append(`<span class='alert alert-success'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
+  //       break;
+  //       case 'danger':
+  //       $("div#alerts").append(`<span class='alert alert-danger'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
+  //       break;
+  //       case 'warning':
+  //       $("div#alerts").append(`<span class='alert alert-warning'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
+  //       break;
+  //       case 'notice':
+  //       $("div#alerts").append(`<span class='alert alert-notice'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
+  //       break;
+  //       default:
+  //       break;
+  //     }
+  //     $(".alert").delay(400).fadeOut(2000);
+  //   };
+  // });
 
   $(document).ready(function(){
 
@@ -88,12 +88,12 @@ $(document).ready(function(){
     $("#sidenav-trigger").on('click', function(){
       var x = document.getElementById('sidenav');
       console.log('jQuery is going through!');
-      x.style.width = '250px';
+      x.style.width = '400px';
     });
     $("#sidenav-offline-trigger").on('click', function(){
       var x = document.getElementById('sidenav-offline');
       console.log('jQuery is going through!');
-      x.style.width = '250px';
+      x.style.width = '400px';
     });
   
     // JAVASCRIPT MODALS

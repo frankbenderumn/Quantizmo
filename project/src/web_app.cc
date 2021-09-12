@@ -22,6 +22,9 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         double simSpeed = data["simSpeed"].get<double>();
         delta *= simSpeed;
 
+        printf("LINK TO BACK END ESTABLISHED!");
+        std::cout << data << std::endl;
+
         if (delta > 0.1) {
             for (float f = 0.0; f < delta; f+=0.01) {
                 Update(0.01, returnValue);
