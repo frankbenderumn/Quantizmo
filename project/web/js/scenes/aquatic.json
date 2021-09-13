@@ -3,7 +3,7 @@
         "command": "createEntity",
       	"params": {
             "name": "drone",
-            "group": "actor",
+            "type": "actor",
       	    "path": "drone_lp.glb",
       	    "position": [498.292, 261.883, -228.623],
       	    "scale": [0.4, 0.4, 0.4],
@@ -19,7 +19,7 @@
         "command": "createEntity",
         "params": {
             "name": "package",
-            "group": "actee",
+            "type": "actee",
             "path": "box.glb",
             "position": [-255.994, 265.798, -296.859],
             "scale": [0.02, 0.02, 0.01],
@@ -32,7 +32,7 @@
         "command": "createEntity",
         "params": {
             "name": "customer",
-            "group": "destination",
+            "type": "destination",
             "path": "robot.glb",
             "position": [-951.412, 262.665, 298.271],
             "scale": [0.25, 0.25, 0.25],

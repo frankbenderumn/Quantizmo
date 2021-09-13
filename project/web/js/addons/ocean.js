@@ -4,7 +4,7 @@ import { Water } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/object
 class Ocean {
     constructor(scene) {this.scene = scene; this.water = undefined; }
     render() {
-        const waterGeometry = new THREE.PlaneBufferGeometry(10000, 10000);
+        const waterGeometry = new THREE.PlaneBufferGeometry(1000, 1000);
         this.water = new Water(
             waterGeometry,
             {

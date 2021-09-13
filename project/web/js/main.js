@@ -41,6 +41,7 @@ const aspect = container.clientWidth / container.clientHeight;
 const near = 0.1;
 const far = 1500;
 let sceneFile;
+let gridGate = true;
 
 $.fn.notify = (type, message) => {
   let wrap = document.getElementById("alert-wrapper");
@@ -190,15 +191,15 @@ class Scene {
   }
 }
 
-$.fn.load = (name, path, mtl = "") => {
-  let arr = path.split('.');
+$.fn.load = (params) => {
+  let arr = params.path.split('.');
   let ext = arr[arr.length - 1];
   switch (ext) {
     case "glb":
-      $.fn.loadGlb(name, path);
+      $.fn.loadGlb(params);
       break;
     case "obj":
-      $.fn.loadObj(name, path, mtl);
+      $.fn.loadObj(params);
       break;
     default:
       $.fn.notify(1, "Invalid model type");
@@ -206,10 +207,63 @@ $.fn.load = (name, path, mtl = "") => {
   }
 };
 
-$.fn.loadGlb = (name, path) => {
-  console.log(`${name} at ../assets/model/${path} attempting to be loaded`);
-  glbLoader.load( `../assets/model/${path}`, function (obj) {
+// // This function is a helper for loadScene().
+// function addMesh(obj) {
+//   // instantiate a loader
+//   var loader2 = new OBJLoader();
+
+//   // load a resource
+//   loader2.load(
+//     // resource URL
+//     obj.mesh,
+//     // called when resource is loaded
+//     function (object) {
+//       //object.position.copy( new THREE.Vector3( scenePosition[0]+1.5, scenePosition[1]+0.5, scenePosition[2]+1.5) )
+//       object.position.copy(new THREE.Vector3(obj.position[0], obj.position[1], obj.position[2]))
+//       object.scale.copy(new THREE.Vector3(obj.scale[0], obj.scale[1], obj.scale[2])) //*1.41
+
+//       object.traverse(function (node) {
+//         //var material = new THREE.MeshStandardMaterial( {color: 0x8589a1});
+//         var material = new THREE.LineBasicMaterial({
+//           color: parseInt(obj.color, 16), //0xff00e1,
+//           linewidth: 1,
+//           linecap: 'round', //ignored by WebGLRenderer
+//           linejoin: 'round' //ignored by WebGLRenderer
+//         });
+//         node.material = material;
+//         //node.position.copy( new THREE.Vector3( 30, 10, 35.0) );
+//         //node.scale.copy( new THREE.Vector3( 1.41, 1.0, 1.41) );
+//         console.log(node);
+
+//       });
+
+//       if (obj.type == "route") {
+//         object.visible = showRoutes;
+//         routes.push(object);
+//       }
+//       models.push(object);
+//       scene.add(object);
+//     },
+//     // called when loading is in progresses
+//     function (xhr) {
+//       console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+//     },
+//     // called when loading has errors
+//     function (error) {
+//       console.log('An error happened', error);
+//     }
+//   );
+// }
+
+$.fn.loadGlb = (params) => {
+  console.log(`${params.name} at ../assets/model/${params.path} attempting to be loaded`);
+  glbLoader.load( `../assets/model/${params.path}`, function (obj) {
+
     let model = obj.scene;
+
+    model.position.copy(new THREE.Vector3(params.position[0], params.position[1], params.position[2]))
+    model.scale.copy(new THREE.Vector3(params.scale[0], params.scale[1], params.scale[2])) //*1.41
+
     let mixer = new THREE.AnimationMixer( obj.scene );
     const clips = obj.animations;
     clips.forEach( function ( clip ) {
@@ -265,16 +319,11 @@ $.fn.runJson = (file, initialScene = true) => {
         console.log(`obj path is ${command.params.path}`);
         // type="", scale="", position="", rotation="", direction=""
         let obj = command.params;
-        $.fn.load(obj.name,
-              obj.path,
-              obj.group,
-              obj.scale,
-              obj.position,
-              obj.rotation,
-              obj.direction);
+        console.log(`params are ${obj}`);
+        $.fn.load(obj);
       }
     }
-    loadModels();
+    // loadModels();
   });
 }
 
@@ -405,6 +454,7 @@ $.fn.run = () => {
       // $.fn.runJson("umn.json");
       break;
     case "aquatic":
+      grid();
       // adding fog
       {
         const color = 0x1f556e;
@@ -431,8 +481,10 @@ $.fn.run = () => {
       // folderWater.open();
       break;
     case "mountain":
+      grid();
       break;
     case "ikea":
+      grid();
       break;
     case "retro":
       break;
@@ -495,8 +547,6 @@ function grid() {
 }
 
 function base(){
-  grid();
-
   // ======================================SUN AND OCEAN==============================================
   sun = new THREE.Vector3();
 
@@ -523,7 +573,7 @@ function base(){
     sun.z = Math.sin(phi) * Math.cos(theta);
     sky.material.uniforms['sunPosition'].value.copy(sun);
     if (target == "pompeii") {
-    ocean.water.material.uniforms['sunDirection'].value.copy(sun).normalize();
+      ocean.water.material.uniforms['sunDirection'].value.copy(sun).normalize();
     }
     scene.environment = pmremGenerator.fromScene(sky).texture;
   }
@@ -625,7 +675,7 @@ function init() {
   // } );
 
   umnScene();
-  $.fn.load("drone", "drone_lp.glb");
+  // $.fn.load("drone", "drone_lp.glb");
 
   // wil need mixer and entity array. May make javascript class to dry up code.
 

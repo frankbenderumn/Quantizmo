@@ -5,7 +5,7 @@
             "name": "drone",
             "group": "actor",
       	    "path": "drone_lp.glb",
-      	    "position": [498.292, 261.883, -228.623],
+      	    "position": [0, 2.5, 0],
       	    "scale": [0.4, 0.4, 0.4],
       	    "rotation": [0, 0, 0, 0],
             "direction": [1,0,0],
