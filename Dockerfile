@@ -21,6 +21,8 @@ ARG GROUP_ID
 ARG SRC_DIR
 ARG DEP_DIR
 
+RUN echo "Look here -----------> ${SRC_DIR}"
+
 RUN addgroup --gid $GROUP_ID user
 RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID user
 

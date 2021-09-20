@@ -53,7 +53,7 @@ $(LIBFILE): $(BUILD_DIR) $(OBJECTS)
 
 data-files:
 	mkdir -p $(ROOT_DIR)/.dependencies
-	# rsync -au $(DEP_DIR)/include $(ROOT_DIR)/.dependencies/
+	rsync -au $(DEP_DIR)/include $(ROOT_DIR)/.dependencies/
 
 # Build web viewer
 #add data-files to end

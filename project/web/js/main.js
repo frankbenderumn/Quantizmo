@@ -14,7 +14,7 @@ import { Ocean } from './addons/ocean.js';
 
 // Web Sockets API for communication with the backend
 var api = new WSApi();
-let globalModels = [];
+// let models = [];
 const glbLoader = new GLTFLoader();
 const models = [];
 const mixers = [];
@@ -41,7 +41,13 @@ const aspect = container.clientWidth / container.clientHeight;
 const near = 0.1;
 const far = 1500;
 let sceneFile;
-let gridGate = true;
+let gridGate = false;
+let updateReady = false;
+
+// actor camera vars
+let actor_container = document.querySelector( '#actor-container' );
+let actor_camera, actor_scene;
+const actor_aspect = actor_container.clientWidth / actor_container.clientHeight;
 
 $.fn.notify = (type, message) => {
   let wrap = document.getElementById("alert-wrapper");
@@ -106,6 +112,10 @@ const onProgress = function(xhr) {
     const percentComplete = xhr.loaded / xhr.total * 100;
     console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
 
+    if (percentComplete == 100) {
+      $.fn.notify(``)
+    }
+
   }
 
 };
@@ -150,7 +160,7 @@ function umnScene() {
 
       });
 
-      models.push(object);
+      // models.push(object);
       scene.add(object);
     },
     // called when loading is in progresses
@@ -165,15 +175,16 @@ function umnScene() {
 }
 
 class Model {
-  constructor(name, path, type="", scale="", position="", rotation="", direction="") {
+  constructor(name, path, scene = '') {
     this.name = name;
     this.path = path;
-    this.type = type;
-    this.scale = scale;
-    this.position = position;
-    this.rotation = rotation;
-    this.direction = direction;
-    // $.fn.load(`${name}`, `${path}`);
+    this.scene = scene;
+  }
+  scene() {
+    return this.scene;
+  }
+  load() {
+    $.fn.load(this.path);
   }
 }
 
@@ -207,53 +218,13 @@ $.fn.load = (params) => {
   }
 };
 
-// // This function is a helper for loadScene().
-// function addMesh(obj) {
-//   // instantiate a loader
-//   var loader2 = new OBJLoader();
+$.fn.camera = () => {
+  actor_camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
+  actor_camera.position.set( -10, 10, 10 );
+  actor_controls = new OrbitControls( actor_camera, actor_container );
 
-//   // load a resource
-//   loader2.load(
-//     // resource URL
-//     obj.mesh,
-//     // called when resource is loaded
-//     function (object) {
-//       //object.position.copy( new THREE.Vector3( scenePosition[0]+1.5, scenePosition[1]+0.5, scenePosition[2]+1.5) )
-//       object.position.copy(new THREE.Vector3(obj.position[0], obj.position[1], obj.position[2]))
-//       object.scale.copy(new THREE.Vector3(obj.scale[0], obj.scale[1], obj.scale[2])) //*1.41
-
-//       object.traverse(function (node) {
-//         //var material = new THREE.MeshStandardMaterial( {color: 0x8589a1});
-//         var material = new THREE.LineBasicMaterial({
-//           color: parseInt(obj.color, 16), //0xff00e1,
-//           linewidth: 1,
-//           linecap: 'round', //ignored by WebGLRenderer
-//           linejoin: 'round' //ignored by WebGLRenderer
-//         });
-//         node.material = material;
-//         //node.position.copy( new THREE.Vector3( 30, 10, 35.0) );
-//         //node.scale.copy( new THREE.Vector3( 1.41, 1.0, 1.41) );
-//         console.log(node);
-
-//       });
-
-//       if (obj.type == "route") {
-//         object.visible = showRoutes;
-//         routes.push(object);
-//       }
-//       models.push(object);
-//       scene.add(object);
-//     },
-//     // called when loading is in progresses
-//     function (xhr) {
-//       console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-//     },
-//     // called when loading has errors
-//     function (error) {
-//       console.log('An error happened', error);
-//     }
-//   );
-// }
+  actor_scene = new THREE.Scene();
+};
 
 $.fn.loadGlb = (params) => {
   console.log(`${params.name} at ../assets/model/${params.path} attempting to be loaded`);
@@ -271,10 +242,10 @@ $.fn.loadGlb = (params) => {
     } );
     console.log(`model is ${model}`);
     mixers.push(clips);
-    // globalModels[name] = model;
-    globalModels[name] = model;
+    let m = new Model(params.name, params.path, model);
+    models.push(m);
+    console.log("models count--------------->"+models.length);
     scene.add(model);
-    // return model;
   }, onProgress, onError(name));
 };
 
@@ -287,7 +258,7 @@ $.fn.loadObj = (name, path, mtl) => {
       objLoader.setMaterials( materials );
       objLoader.load( `../assets/model/${path}`, function ( object ) {
 
-          globalModels[name] = object;
+          // models[name] = object;
           // scene.add( object );
 
       }, onProgress, onError(name) );
@@ -312,29 +283,25 @@ $.fn.runJson = (file, initialScene = true) => {
         scenePosition = command.params.position;
       }
       if (command.command == "createEntity") {
-        // loadMesh(command.params);
-        console.log("Mesh params are...");
-        console.log(command.params);
-        // let obj = JSON.parse(command.params);
-        console.log(`obj path is ${command.params.path}`);
-        // type="", scale="", position="", rotation="", direction=""
+        // console.log("Mesh params are...");
+        // console.log(command.params);
+        // console.log(`obj path is ${command.params.path}`);
         let obj = command.params;
-        console.log(`params are ${obj}`);
+        // console.log(`params are ${obj}`);
         $.fn.load(obj);
+        // command.params.entityId = models.length - 1;
+        // console.log(`entityId ----------------------> ${models.length - 1}`);
+        api.sendCommand("createEntity", command.params);
       }
     }
-    // loadModels();
   });
 }
 
 // More important related to models and animation.
-let drone = new Model("drone", "drone_lp.glb");
-let ship = new Model("ship", "ship.glb");
-let starya = new Model("starya", "starya.glb");
-let aku = new Model("aku", "aku.glb"); 
-
-// console.log("global models is...");
-// console.log(globalModels);
+// let drone = new Model("drone", "drone_lp.glb");
+// let ship = new Model("ship", "ship.glb");
+// let starya = new Model("starya", "starya.glb");
+// let aku = new Model("aku", "aku.glb"); 
 
 const textureLoader = new THREE.TextureLoader();
 const cubeTextureLoader = new THREE.CubeTextureLoader();
@@ -383,13 +350,6 @@ $("[data-role='scene-trigger']").on('click', function() {
   $.fn.run();
   setTimeout(function() { $("div#loading-background").hide(); }, 2000);
 });
-
-
-
-
-
-
-
 
 // This is the function that is called once the document is started.
 $( document ).ready(function() {
@@ -502,9 +462,9 @@ $.fn.run = () => {
   // let sceneModels = scenes[target].models;
   // console.log("sceneModels is...");
   // console.log(sceneModels);
-  // console.log(`global models is ${globalModels}`);
+  // console.log(`global models is ${models}`);
   // for(let e in sceneModels) {
-  //   console.log(`e is ${globalModels[e]}`);
+  //   console.log(`e is ${models[e]}`);
   //   scene.add(sceneModels[e]);
   // }
 
@@ -543,7 +503,9 @@ function grid() {
   const gridSize = 1000;
   const gridDivisions = 500;
   const gridHelper = new THREE.GridHelper( gridSize, gridDivisions, 0x00EE22, 0x000077);
-  scene.add( gridHelper );
+  if (gridGate == true) {
+    scene.add( gridHelper );
+  }
 }
 
 function base(){
@@ -600,7 +562,7 @@ function base(){
   
   
   console.log("global models is...");
-  console.log(globalModels);
+  console.log(models);
 
   // scene.add(drone);
   // const gui = new GUI();
@@ -622,6 +584,7 @@ function init() {
 
   grid();
 // ==================================== SCENE ENVIRONMENTS =========================================
+  umnScene();
 // if (target != undefined) {
 //   let bg = scenes[target].background;
 //   if (typeof bg === "string") {
@@ -637,44 +600,7 @@ function init() {
 // }
 
 // ======================================SCENE MODELS ==============================================
-
-// if (target != undefined) {
-//   scene.background = scenes[target].background;
-// } else {
-//   console.log("background is..."); 
-//   console.log(scenes);
-//   console.log(scenes["retro"].background);
-//   scene.background = scenes["retro"].background;
-// }
-
-  // const textureLoader = new THREE.TextureLoader();
-
-  // // model loader
-  // const loadingManager = new THREE.LoadingManager( function () {
-  //   let sceneModels = scene.models();
-  //   for (let e in sceneModels) {
-  //     scene.add( e );
-  //   }
-  //     // need to remove mirror modifiers
-  //     // scene.add( ship );
-  //     // scene.add( aku );
-  //     // scene.add( starya );
-  // } );
-  // console.log(`global models is ${globalModels}`);
-
-  // glbLoader.load( "../assets/model/drone_lp.glb" , function ( obj ) {
-  //     droneB = obj.scene;
-  //     mixer = new THREE.AnimationMixer( obj.scene );
-  //     const clips = obj.animations;
-  //     clips.forEach( function ( clip ) {
-  //       mixer.clipAction( clip ).play();
-  //     } );
-  //     mixers.push(clips);
-  //     models.push(droneB);
-  //     scene.add(droneB);
-  // } );
-
-  umnScene();
+  // $.fn.runJson("umn");
   // $.fn.load("drone", "drone_lp.glb");
 
   // wil need mixer and entity array. May make javascript class to dry up code.
@@ -715,9 +641,6 @@ function init() {
   light2.position.set( 0, 10, -10 );
   scene.add( ambientLight, light2 );
 
-  // const gridHelper = new THREE.GridHelper( gridSize, gridDivisions, 0x00EE22, 0x000077);
-  // scene.add( gridHelper );
-
   // random sphere test code
   // {
   //   const geometry = new THREE.SphereGeometry( 15, 32, 16 );
@@ -743,7 +666,7 @@ function init() {
 }
 
 var time = 0.0;
-var updateReady = true;
+// var updateReady = true;
 
 // This function updates the scene's animation cycle.
 function update() {
@@ -751,10 +674,15 @@ function update() {
   const delta = clock.getDelta();
   time += delta;
 
-  // for (const m of globalModels) {
-  //   globalModels[m].scale.x = 0.5;
-  //   globalModels[m].scale.y = 0.5;
-  //   globalModels[m].scale.z = 0.5;
+    //temporary work around to force models to be loaded first
+  if (models.length >= 3) {
+    updateReady = true;
+  }
+
+  // for (const m of models) {
+  //   models[m].scale.x = 0.5;
+  //   models[m].scale.y = 0.5;
+  //   models[m].scale.z = 0.5;
   // }
 
   if ( droneB !== undefined ) {
@@ -840,6 +768,40 @@ function update() {
 
   if (updateReady) {
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
+      let data = updateData;
+      console.log(data);
+      // if (data.entity != undefined) {
+      //   let entityName;
+      //   if (data.entity.name != undefined) {
+      //     entityName = data.entity.name;
+      //   }
+      //   console.log(`check not undefined ------> ${models[entityName]}`);
+      //   if (data.entity.position != undefined) {
+      //     // models[entityName].position.x = data.entity.position.x;
+      //     // models[entityName].position.y = data.entity.position.y;
+      //     // models[entityName].position.z = data.entity.position.z;
+      //   }
+      // }
+      if (data.entity0 != undefined ) {
+        // console.log("data size is ..."+Object.keys(data).length);
+        for (let e in data) {
+          console.log(models.length);
+          console.log(data[e].entityId);
+          if (e != "id") {
+            let obj = models[data[e].entityId].scene.position.copy(new THREE.Vector3(data[e].position.x, data[e].position.y, data[e].position.z));
+            console.log(models[data[e].entityId].scene);
+
+          }
+        }
+        // for (var i = 0; i < data.length; i++) {
+        //   let attr = data[i];
+        //   let entityName = a
+        //   console.log(`processing entity named ${entityName} from back-end`);
+        //   if (attr == "position") {
+        //   }
+        // }
+      }
+      // // JSON.stringify(data);
       updateReady = true;
     });
     updateReady = false;
