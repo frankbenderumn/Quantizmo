@@ -1,4 +1,5 @@
 [
+    { "command": "reset", "params": {}},
     {
         "command": "createEntity",
       	"params": {

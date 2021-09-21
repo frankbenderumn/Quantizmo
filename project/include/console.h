@@ -20,7 +20,7 @@ namespace csci3081 {
             } else {
                 printf("\033[1;31mInvalid type in Console Logger\033[0m\n");
             }
-            printf("\n");
+            // printf("\n");
         }
 
         static void Log(StatusType type, const std::string& msg, int size) {
@@ -46,7 +46,7 @@ namespace csci3081 {
                     std::cout << "\033[36mPosition:\033[0m " <<  "<" << position[0] << ", " << position[1] << ", " << position[2] << ">" << std::endl;
                 }
             }
-            printf("\n");
+            // printf("\n");
         }
 
     };

@@ -1,6 +1,8 @@
 #ifndef ACTOR_H_
 #define ACTOR_H_
 
+#include "entity.h"
+
 namespace csci3081 {
     class Actor : public Entity {
       public:

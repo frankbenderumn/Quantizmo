@@ -1,6 +1,8 @@
 #ifndef DESTINATION_H_
 #define DESTINATION_H_
 
+#include "entity.h"
+
 namespace csci3081 {
     class Destination : public Entity {
       public:

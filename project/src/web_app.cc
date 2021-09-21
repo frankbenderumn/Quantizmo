@@ -38,14 +38,20 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         KeyDown(data["key"].get<std::string>(), data["keyCode"].get<double>());
     }
     else if (cmd == "image") {
-
+        const std::string& image = data.find("url")->second.get<std::string>();
+        // std::cout << image << std::endl;
+    }
+    else if (cmd == "reset") {
+        // if (entities.size() > 0) {
+        //     entities.clear();
+        // }
     }
     else if (cmd == "createEntity") {
         assert(factory != nullptr);
         // Entity* e = factory->Create(data.find("entity")->second.get<picojson::object>());
         Entity* e = factory->Create(data);
-        if (e) { AddEntity(e); Console::Log(SUCCESS, " Entity was add!"); } else {
-            Console::Log(FAILURE, " Failed to add entity");
+        if (e) { AddEntity(e); Console::Log(SUCCESS, "Entity was added!"); } else {
+            Console::Log(FAILURE, "Failed to add entity!");
         }
     } 
     else {
@@ -54,19 +60,21 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
 }
 
 void WebApp::Update(double dt, picojson::object& returnValue) {
-    JsonHelper::Print(returnValue);
+    // JsonHelper::Print(returnValue);
     for (auto e : entities) {
         e->Update(dt);
-        std::cout << e->GetName() << std::endl;
-        std::cout << e->Serialize() << std::endl;
+        // std::cout << e->GetName() << std::endl;
+        // std::cout << e->Serialize() << std::endl;
         returnValue["entity"+std::to_string(e->GetId())] = e->Serialize();
     }
 }
 
 void WebApp::KeyUp(const std::string& key, int keyCode) {
+std::cout << "key code up is: " << keyCode << std::endl;
 }
 
 void WebApp::KeyDown(const std::string& key, int keyCode) {
+    std::cout << "key code down is: " << keyCode << std::endl;
 }
 
 }

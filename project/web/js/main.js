@@ -16,16 +16,16 @@ import { Ocean } from './addons/ocean.js';
 var api = new WSApi();
 // let models = [];
 const glbLoader = new GLTFLoader();
-const models = [];
-const mixers = [];
-var camera;
+let models = [];
+let mixers = [];
+// var camera;
 var controls;
 var scene;
 var container = document.querySelector( '#scene-container' );
 const clock = new THREE.Clock();
 const objLoader = new OBJLoader();
 var simSpeed = 1.0;
-var target;
+var target = "aquatic";
 let alertCounter = 0;
 let bgTexture;
 let droneB;
@@ -43,11 +43,12 @@ const far = 1500;
 let sceneFile;
 let gridGate = false;
 let updateReady = false;
+let mouseX, mouseY;
 
 // actor camera vars
-let actor_container = document.querySelector( '#actor-container' );
-let actor_camera, actor_scene;
-const actor_aspect = actor_container.clientWidth / actor_container.clientHeight;
+// let actor_container = document.querySelector( '#actor-container' );
+// let actor_camera, actor_scene, actor_controls, actor_renderer;
+// const actor_aspect = actor_container.clientWidth / actor_container.clientHeight;
 
 $.fn.notify = (type, message) => {
   let wrap = document.getElementById("alert-wrapper");
@@ -218,14 +219,6 @@ $.fn.load = (params) => {
   }
 };
 
-$.fn.camera = () => {
-  actor_camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-  actor_camera.position.set( -10, 10, 10 );
-  actor_controls = new OrbitControls( actor_camera, actor_container );
-
-  actor_scene = new THREE.Scene();
-};
-
 $.fn.loadGlb = (params) => {
   console.log(`${params.name} at ../assets/model/${params.path} attempting to be loaded`);
   glbLoader.load( `../assets/model/${params.path}`, function (obj) {
@@ -240,11 +233,9 @@ $.fn.loadGlb = (params) => {
     clips.forEach( function ( clip ) {
       mixer.clipAction( clip ).play();
     } );
-    console.log(`model is ${model}`);
     mixers.push(clips);
     let m = new Model(params.name, params.path, model);
     models.push(m);
-    console.log("models count--------------->"+models.length);
     scene.add(model);
   }, onProgress, onError(name));
 };
@@ -258,15 +249,15 @@ $.fn.loadObj = (name, path, mtl) => {
       objLoader.setMaterials( materials );
       objLoader.load( `../assets/model/${path}`, function ( object ) {
 
-          // models[name] = object;
-          // scene.add( object );
+          models.push(object);
+          scene.add(object);
 
       }, onProgress, onError(name) );
 
   });
 };
 
-$.fn.send = (command, params) => { api.sendCommand(command, params); }
+// $.fn.send = (command, params) => { api.sendCommand(command, params); }
 
 $.fn.runJson = (file, initialScene = true) => {
   sceneFile = `./js/scenes/${file}`;
@@ -275,6 +266,10 @@ $.fn.runJson = (file, initialScene = true) => {
     for (var i = 0; i < json.length; i++) {
       var command = json[i];
       console.log(command);
+      if (command.command == "reset") {
+        api.sendCommand("reset", command.params);
+        models = [];
+      }
       if (command.command == "setScene") {
         console.log(command);
         sceneModel = command.params.mesh;
@@ -283,25 +278,12 @@ $.fn.runJson = (file, initialScene = true) => {
         scenePosition = command.params.position;
       }
       if (command.command == "createEntity") {
-        // console.log("Mesh params are...");
-        // console.log(command.params);
-        // console.log(`obj path is ${command.params.path}`);
-        let obj = command.params;
-        // console.log(`params are ${obj}`);
-        $.fn.load(obj);
-        // command.params.entityId = models.length - 1;
-        // console.log(`entityId ----------------------> ${models.length - 1}`);
+        $.fn.load(command.params);
         api.sendCommand("createEntity", command.params);
       }
     }
   });
 }
-
-// More important related to models and animation.
-// let drone = new Model("drone", "drone_lp.glb");
-// let ship = new Model("ship", "ship.glb");
-// let starya = new Model("starya", "starya.glb");
-// let aku = new Model("aku", "aku.glb"); 
 
 const textureLoader = new THREE.TextureLoader();
 const cubeTextureLoader = new THREE.CubeTextureLoader();
@@ -323,6 +305,46 @@ const cloudSkybox = cubeTextureLoader.load([
   '../assets/texture/cubemap/orange_sky/gloomy_ft.png',
   '../assets/texture/cubemap/orange_sky/gloomy_bk.png',
 ]);
+
+const views = [
+  {
+    name: "main",
+    left: 0,
+    bottom: 0,
+    width: 1.0,
+    height: 1.0,
+    background: new THREE.Color( 0.5, 0.5, 0.7 ),
+    eye: [ 0, 300, 1800 ],
+    up: [ 0, 1, 0 ],
+    fov: 30,
+    updateCamera: function ( camera, scene, mouseX, mouseY ) {
+
+
+					  // camera.position.x += 0.05;
+					  // camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
+					  camera.lookAt( scene.position );
+
+    }
+  },
+  {
+    main: "actor",
+    left: 0.66,
+    bottom: 0.20,
+    width: 0.25,
+    height: 0.25,
+    background: new THREE.Color( 0.7, 0.5, 0.5 ),
+    eye: [ 0, 1800, 0 ],
+    up: [ 0, 0, 1 ],
+    fov: 45,
+    updateCamera: function ( camera, scene, mouseX, mouseY ) {
+
+      // camera.position = new THREE.Vector3(0, 0, 0);
+      // camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
+      camera.lookAt( scene.position );
+
+    }
+  }
+];
 
 let aquatic = new Scene("aquatic", "aquatic.jpg", ["drone", "starya", "aku"]);
 let mountain = new Scene("mountain", "darkstorm.jpg", ["drone", "starya", "aku"]);
@@ -351,29 +373,115 @@ $("[data-role='scene-trigger']").on('click', function() {
   setTimeout(function() { $("div#loading-background").hide(); }, 2000);
 });
 
-// This is the function that is called once the document is started.
-$( document ).ready(function() {
+function saveAsImage() {
+  var imgData, imgNode;
 
-  // Init() starts up the scene and its update loop.
-  init();
+  try {
+      var strMime = "image/jpeg";
+      imgData = renderer.domElement.toDataURL(strMime);
+      api.sendCommand("image", {url: imgData});
+      saveFile(imgData.replace(strMime, strDownloadMime), "test.jpg");
 
-  // Start checking for when the user resizes their application window.
-  window.addEventListener( 'resize', onWindowResize );
-
-  var keyAction = function(e) {
-    console.log(e);
-    api.sendCommand(e.type, {key: e.key, keyCode: e.keyCode});
+  } catch (e) {
+      console.log(e);
+      return;
   }
 
-  document.onkeydown = keyAction;
-  document.onkeyup = keyAction;
-});
+}
 
-// const raycaster = new THREE.Raycaster();
-// const mouse = new THREE.Vector2();
+var saveFile = function(strData, filename) {
+  var link = document.createElement('a');
+  if (typeof link.download === 'string') {
+      document.body.appendChild(link); //Firefox requires the link to be in the body
+      link.download = filename;
+      link.href = strData;
+      link.click();
+      document.body.removeChild(link); //remove the link when done
+  } else {
+      location.replace(uri);
+  }
+}
+
+function grid() {
+  const gridSize = 1000;
+  const gridDivisions = 500;
+  const gridHelper = new THREE.GridHelper( gridSize, gridDivisions, 0x00EE22, 0x000077);
+  if (gridGate == true) {
+    scene.add( gridHelper );
+  }
+}
+
+function base(){
+  // ======================================SUN AND OCEAN==============================================
+  sun = new THREE.Vector3();
+
+  // Skybox
+  sky = new Sky();
+  sky.scale.setScalar(10000);
+  scene.add(sky);
+  const skyUniforms = sky.material.uniforms;
+  skyUniforms['turbidity'].value = 10;
+  skyUniforms['rayleigh'].value = 2;
+  skyUniforms['mieCoefficient'].value = 0.005;
+  skyUniforms['mieDirectionalG'].value = 0.8;
+  const parameters = {
+    inclination: 0.49,
+    azimuth: 0.205
+  };
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+
+  function updateSun() {
+    const theta = Math.PI * (parameters.inclination - 0.5);
+    const phi = 2 * Math.PI * (parameters.azimuth - 0.5);
+    sun.x = Math.cos(phi);
+    sun.y = Math.sin(phi) * Math.sin(theta);
+    sun.z = Math.sin(phi) * Math.cos(theta);
+    sky.material.uniforms['sunPosition'].value.copy(sun);
+    if (target == "pompeii") {
+      ocean.water.material.uniforms['sunDirection'].value.copy(sun).normalize();
+    }
+    scene.environment = pmremGenerator.fromScene(sky).texture;
+  }
+  updateSun();
+  // scene.remove(sky);
+
+  stats = new Stats();
+  container.appendChild(stats.dom);
+
+  const igeometry = new THREE.BoxBufferGeometry(30, 30, 30);
+  const imaterial = new THREE.MeshStandardMaterial({ roughness: 0 });
+
+  imesh = new THREE.Mesh(igeometry, imaterial);
+
+  // const gui = new GUI();
+  // const folderSky = gui.addFolder('Sky');
+  // folderSky.add(parameters, 'inclination', 0, 0.5, 0.0001).onChange(updateSun);
+  // folderSky.add(parameters, 'azimuth', 0, 1, 0.0001).onChange(updateSun);
+  // folderSky.open();
+
+}
+
+function viewports() {
+  for ( let ii = 0; ii < views.length; ++ ii ) {
+    const view = views[ ii ];
+    // const camera = new THREE.PerspectiveCamera( view.fov, window.innerWidth / window.innerHeight, 1, 10000 );
+    const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
+    // console.log(`camera ------------------> ${camera}`);
+    // camera.position.fromArray( view.eye );
+      camera.position.set( -10, 10, 10 );
+      // camera.up.fromArray( view.up );
+      view.camera = camera;
+      if (view.name == "main") {
+      controls = new OrbitControls( view.camera, container );
+      } else {
+        controls = new OrbitControls( view.camera, container ); 
+      }
+  }
+};
 
 // This function resets the scene
 $.fn.run = () => {
+  viewports();
   scene = new THREE.Scene();
   if (target != undefined) {
     let bg = scenes[target].background;
@@ -478,9 +586,6 @@ $.fn.run = () => {
   const light2 = new THREE.DirectionalLight( 0xffffff, 0.5 );
   light2.position.set( 0, 10, -10 );
   scene.add( ambientLight, light2 );
-
-  base();
-
   scene.add(umnObj);
 
   //====================================SCENE TERRAIN===============================================
@@ -492,6 +597,8 @@ $.fn.run = () => {
   renderer.outputEncoding = THREE.sRGBEncoding;
   document.body.appendChild( renderer.domElement );
 
+  base();
+
   // start the animation/render loop
   renderer.setAnimationLoop( () => {
     update();
@@ -499,130 +606,39 @@ $.fn.run = () => {
   });
 }
 
-function grid() {
-  const gridSize = 1000;
-  const gridDivisions = 500;
-  const gridHelper = new THREE.GridHelper( gridSize, gridDivisions, 0x00EE22, 0x000077);
-  if (gridGate == true) {
-    scene.add( gridHelper );
+// This is the function that is called once the document is started.
+$.fn.run();
+
+$( document ).ready(function() {
+  // Init() starts up the scene and its update loop.
+
+  // Start checking for when the user resizes their application window.
+  window.addEventListener( 'resize', onWindowResize );
+
+  var keyAction = function(e) {
+    console.log(e);
+    api.sendCommand(e.type, {key: e.key, keyCode: e.keyCode});
   }
-}
 
-function base(){
-  // ======================================SUN AND OCEAN==============================================
-  sun = new THREE.Vector3();
+  document.onkeydown = keyAction;
+  document.onkeyup = keyAction;
+});
 
-  // Skybox
-  sky = new Sky();
-  sky.scale.setScalar(10000);
-  scene.add(sky);
-  const skyUniforms = sky.material.uniforms;
-  skyUniforms['turbidity'].value = 10;
-  skyUniforms['rayleigh'].value = 2;
-  skyUniforms['mieCoefficient'].value = 0.005;
-  skyUniforms['mieDirectionalG'].value = 0.8;
-  const parameters = {
-    inclination: 0.49,
-    azimuth: 0.205
-  };
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+// const raycaster = new THREE.Raycaster();
+// const mouse = new THREE.Vector2();
 
-  function updateSun() {
-    const theta = Math.PI * (parameters.inclination - 0.5);
-    const phi = 2 * Math.PI * (parameters.azimuth - 0.5);
-    sun.x = Math.cos(phi);
-    sun.y = Math.sin(phi) * Math.sin(theta);
-    sun.z = Math.sin(phi) * Math.cos(theta);
-    sky.material.uniforms['sunPosition'].value.copy(sun);
-    if (target == "pompeii") {
-      ocean.water.material.uniforms['sunDirection'].value.copy(sun).normalize();
-    }
-    scene.environment = pmremGenerator.fromScene(sky).texture;
-  }
-  updateSun();
-
-  // scene.background = new THREE.Color(0xffffff);
-  // scene.remove(sky);
-
-  //
-  stats = new Stats();
-  container.appendChild(stats.dom);
-
-  const igeometry = new THREE.BoxBufferGeometry(30, 30, 30);
-  const imaterial = new THREE.MeshStandardMaterial({ roughness: 0 });
-
-  imesh = new THREE.Mesh(igeometry, imaterial);
-
-  // $.fn.load("drone", "drone_lp.glb");
-  // $.fn.load("ship", "ship.glb");
-  // $.fn.load("aku", "aku.glb");
-  // $.fn.load("starya", "starya.glb");
-  // $.fn.load("pompeii", "pompeii.glb");
-  // $.fn.load("submarine", "submarine.glb");
-  
-  
-  console.log("global models is...");
-  console.log(models);
-
-  // scene.add(drone);
-  // const gui = new GUI();
-
-  // const folderSky = gui.addFolder('Sky');
-  // folderSky.add(parameters, 'inclination', 0, 0.5, 0.0001).onChange(updateSun);
-  // folderSky.add(parameters, 'azimuth', 0, 1, 0.0001).onChange(updateSun);
-  // folderSky.open();
-
-}
-
+// ============================================ INIT ===============================================
 function init() {
 
-  camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-  camera.position.set( -10, 10, 10 );
-  controls = new OrbitControls( camera, container );
+  viewports();
 
   scene = new THREE.Scene();
 
   grid();
 // ==================================== SCENE ENVIRONMENTS =========================================
   umnScene();
-// if (target != undefined) {
-//   let bg = scenes[target].background;
-//   if (typeof bg === "string") {
-//     document.body.style.backgroundImage = `url('../assets/image/${bg}')`;
-//   } else {
-//     scene.background = bg;
-//   }
-// } else {
-//   console.log("background is..."); 
-//   console.log(scenes);
-//   console.log(scenes["retro"].background);
-//   scene.background = scenes["retro"].background;
-// }
 
 // ======================================SCENE MODELS ==============================================
-  // $.fn.runJson("umn");
-  // $.fn.load("drone", "drone_lp.glb");
-
-  // wil need mixer and entity array. May make javascript class to dry up code.
-
-  // glbLoader.load( "../assets/model/starya.glb" , function ( obj ) {
-  //     starya = obj.scene;
-  //     // mixer = new THREE.AnimationMixer( obj.scene );
-  //     // const clips = obj.animations;
-  //     // clips.forEach( function ( clip ) {
-  //     //   mixer.clipAction( clip ).play();
-  //     // } );
-  // } );
-
-  // glbLoader.load( "../assets/model/aku.glb" , function ( obj ) {
-  //   aku = obj.scene;
-  //   // mixer = new THREE.AnimationMixer( obj.scene );
-  //   // const clips = obj.animations;
-  //   // clips.forEach( function ( clip ) {
-  //   //   mixer.clipAction( clip ).play();
-  //   // } );
-  // } );
-
   // glbLoader.load( "../assets/model/ship.glb" , function ( obj ) {
   //   ship = obj.scene;
   //   // mixer = new THREE.AnimationMixer( obj.scene );
@@ -649,14 +665,26 @@ function init() {
   //   scene.add( sphere );
   // }
 
-  // loadObj("umn/umn.obj", "umn/umn.mtl");
-    // scene.background = new THREE.Color(0x000);
+    var saveLink = document.createElement('div');
+    saveLink.style.position = 'absolute';
+    saveLink.style.top = '60px';
+    saveLink.style.width = '100%';
+    saveLink.style.color = 'white !important';
+    saveLink.style.textAlign = 'center';
+    saveLink.innerHTML =
+        '<a href="#" id="saveLink">Save Frame</a>';
+    document.body.appendChild(saveLink);
+    document.getElementById("saveLink").addEventListener('click', saveAsImage);
 
-  renderer = new THREE.WebGLRenderer( { container, alpha: true, antialias: true } );
+  renderer = new THREE.WebGLRenderer( { container, alpha: true, antialias: true, preserveDrawingBuffer: true } );
   renderer.setSize( window.innerWidth, window.innerHeight );
-  // renderer.outputEncoding = THREE.sRGBEncoding;
+
   document.body.appendChild( renderer.domElement );
-  // renderer.setClearColor(0xffffff);
+
+  var strMime = "image/jpeg";
+  var imgData = renderer.domElement.toDataURL(strMime);
+
+  // document.addEventListener( 'mousemove', onDocumentMouseMove );
 
   // start the animation/render loop
   renderer.setAnimationLoop( () => {
@@ -664,6 +692,7 @@ function init() {
     render();
   });
 }
+var strDownloadMime = "image/octet-stream";
 
 var time = 0.0;
 // var updateReady = true;
@@ -677,20 +706,6 @@ function update() {
     //temporary work around to force models to be loaded first
   if (models.length >= 3) {
     updateReady = true;
-  }
-
-  // for (const m of models) {
-  //   models[m].scale.x = 0.5;
-  //   models[m].scale.y = 0.5;
-  //   models[m].scale.z = 0.5;
-  // }
-
-  if ( droneB !== undefined ) {
-    // drone.rotation.y += delta * 0.5;
-    // droneB.scale.x = 0.5;
-    // droneB.scale.y = 0.5;
-    // droneB.scale.z = 0.5;
-    // if ( mixer ) mixer.update( delta );
   }
 
   // let i = $.fn.getWeather();
@@ -758,50 +773,21 @@ function update() {
   //   });
   // }
 
-
-  // Send the update command to the socket.
-  // if (connected) {
-  //   //socket.send(JSON.stringify({command: "update", delta: delta}));
-  //   socket.send(JSON.stringify({ command: "update", delta: delta, simSpeed: simSpeed }));
-  // }
-
-
   if (updateReady) {
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
       let data = updateData;
       console.log(data);
-      // if (data.entity != undefined) {
-      //   let entityName;
-      //   if (data.entity.name != undefined) {
-      //     entityName = data.entity.name;
-      //   }
-      //   console.log(`check not undefined ------> ${models[entityName]}`);
-      //   if (data.entity.position != undefined) {
-      //     // models[entityName].position.x = data.entity.position.x;
-      //     // models[entityName].position.y = data.entity.position.y;
-      //     // models[entityName].position.z = data.entity.position.z;
-      //   }
-      // }
       if (data.entity0 != undefined ) {
-        // console.log("data size is ..."+Object.keys(data).length);
         for (let e in data) {
           console.log(models.length);
           console.log(data[e].entityId);
           if (e != "id") {
-            let obj = models[data[e].entityId].scene.position.copy(new THREE.Vector3(data[e].position.x, data[e].position.y, data[e].position.z));
+            models[data[e].entityId].scene.position.copy(new THREE.Vector3(data[e].position.x, data[e].position.y, data[e].position.z));
             console.log(models[data[e].entityId].scene);
 
           }
         }
-        // for (var i = 0; i < data.length; i++) {
-        //   let attr = data[i];
-        //   let entityName = a
-        //   console.log(`processing entity named ${entityName} from back-end`);
-        //   if (attr == "position") {
-        //   }
-        // }
       }
-      // // JSON.stringify(data);
       updateReady = true;
     });
     updateReady = false;
@@ -821,8 +807,34 @@ function render() {
 	// for ( let i = 0; i < intersects.length; i ++ ) {
 	// 	intersects[ i ].object.material.color.set( 0xff0000 );
 	// }
+  // console.log("views length ------>"+views.length);
+  for ( let ii = 0; ii < views.length; ++ ii ) {
 
-  renderer.render( scene, camera );
+    const view = views[ ii ];
+    const camera = view.camera;
+
+    // console.log(camera);
+
+    view.updateCamera( camera, scene, mouseX, mouseY );
+
+    const left = Math.floor( window.innerWidth * view.left );
+    const bottom = Math.floor( window.innerHeight * view.bottom );
+    const width = Math.floor( window.innerWidth * view.width );
+    const height = Math.floor( window.innerHeight * view.height );
+
+    renderer.setViewport( left, bottom, width, height );
+    renderer.setScissor( left, bottom, width, height );
+    renderer.setScissorTest( true );
+    // renderer.setClearColor( view.background );
+
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+
+    renderer.render( scene, camera );
+
+  }
+
+  // renderer.render( scene, camera );
 }
 
 // This function updates the projection matrix and renderer whenever the
@@ -845,6 +857,10 @@ function onMouseMove( event ) {
 
 	// mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	// mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    mouseX = ( event.clientX - window.innerWidth / 2 );
+    mouseY = ( event.clientY - window.innerHeight / 2 );
+
 
 }
 

@@ -1,7 +1,9 @@
 [
+    { "command": "reset", "params": {}},
     {
         "command": "createEntity",
       	"params": {
+            "entityId": 0,
             "name": "drone",
             "type": "actor",
       	    "path": "submarine.glb",
@@ -18,6 +20,7 @@
     {
         "command": "createEntity",
         "params": {
+            "entityId": 1,
             "name": "package",
             "type": "actee",
             "path": "box.glb",
@@ -31,6 +34,7 @@
     {
         "command": "createEntity",
         "params": {
+            "entityId": 2,
             "name": "customer",
             "type": "destination",
             "path": "robot.glb",
@@ -39,24 +43,6 @@
             "direction": [1,0,0],
             "radius": 1.0,
             "rotation": [0, 0, 0, 0]
-        }
-    },
-    {
-        "command": "addEntity",
-        "params": {
-            "index": 0
-        }
-    },
-    {
-        "command": "addEntity",
-        "params": {
-            "index": 1
-        }
-    },
-    {
-        "command": "addEntity",
-        "params": {
-            "index": 2
         }
     },
     {

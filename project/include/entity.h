@@ -5,9 +5,10 @@
 #include <vector>
 #include <string>
 #include "console.h"
+#include "ientity.h"
 
 namespace csci3081 {
-    class Entity {
+    class Entity : public IEntity {
       public:
         Entity(const picojson::object& data) {
             this->type = data.find("type")->second.get<std::string>(); 
@@ -34,23 +35,15 @@ namespace csci3081 {
           o["name"] = picojson::value(this->name);
           o["radius"] = picojson::value(this->radius);
           o["entityId"] = picojson::value((double)this->id);
-          std::cout << "serialized entity is "<< picojson::value(o).serialize() << std::endl;
+          // std::cout << "serialized entity is "<< picojson::value(o).serialize() << std::endl;
           return picojson::value(o);
         }
         void Update(float dt) { 
-          position[0] = position[0] + 1 * dt;
+          position[0] += 1 * dt;
         }
-        const std::string& GetName() { return name; }
-        const std::string& GetType() { return type; }
-        const int GetId() { return id; }
-
-      private:
-        std::string type;
-        std::vector<double> position;
-        std::vector<double> direction;
-        std::string name;
-        double radius;
-        int id;
+        const std::string& GetName() { return this->name; }
+        const std::string& GetType() { return this->type; }
+        const int GetId() { return this->id; }
     };
 }
 

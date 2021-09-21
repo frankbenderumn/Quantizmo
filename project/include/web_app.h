@@ -5,7 +5,7 @@
 #include "WebServer.h"
 #include <chrono>
 #include <vector>
-#include "entity.h"
+#include "ientity.h"
 #include "vec3.h"
 #include "factory.h"
 #include <string>

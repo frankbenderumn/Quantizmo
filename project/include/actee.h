@@ -1,6 +1,8 @@
 #ifndef ACTEE_H_
 #define ACTEE_H_
 
+#include "entity.h"
+
 namespace csci3081 {
     class Actee : public Entity {
       public:
