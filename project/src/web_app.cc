@@ -42,9 +42,9 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         // std::cout << image << std::endl;
     }
     else if (cmd == "reset") {
-        // if (entities.size() > 0) {
-        //     entities.clear();
-        // }
+        if (entities.size() > 0) {
+            entities.clear();
+        }
     }
     else if (cmd == "createEntity") {
         assert(factory != nullptr);
@@ -76,5 +76,24 @@ std::cout << "key code up is: " << keyCode << std::endl;
 void WebApp::KeyDown(const std::string& key, int keyCode) {
     std::cout << "key code down is: " << keyCode << std::endl;
 }
+
+// void WebApp::AddObserver(Observer* observer) {
+//   observers_.push_back(observer);
+// }
+
+// void WebApp::RemoveObserver(Observer* observer) {
+//   for (int i = 0; i < observers_.size(); i++) {
+//     if (observers_[i] == observer) {
+//       observers_.erase(observers_.begin() + i);
+//       return;
+//     }
+//   }
+// }
+
+// void WebApp::NotifyObservers(picojson::value& notification, Entity* entity) {
+//   for (Observer* obs : observers_) {
+//     obs->OnEvent(notification, *entity);
+//   }
+// }
 
 }

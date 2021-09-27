@@ -4,7 +4,7 @@
         "command": "createEntity",
       	"params": {
             "entityId": 0,
-            "name": "drone",
+            "name": "submarine",
             "type": "actor",
       	    "path": "submarine.glb",
       	    "position": [0, 0, 0],
@@ -40,6 +40,19 @@
             "path": "robot.glb",
             "position": [0, 0, 0],
             "scale": [0.25, 0.25, 0.25],
+            "direction": [1,0,0],
+            "radius": 1.0,
+            "rotation": [0, 0, 0, 0]
+        }
+    },
+    {
+        "command": "terrain",
+        "params": {
+            "name": "customer",
+            "type": "terrain",
+            "path": "organodron.glb",
+            "position": [0, 0, 0],
+            "scale": [0.5, 0.5, 0.5],
             "direction": [1,0,0],
             "radius": 1.0,
             "rotation": [0, 0, 0, 0]

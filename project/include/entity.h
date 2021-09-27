@@ -7,6 +7,8 @@
 #include "console.h"
 #include "ientity.h"
 
+// TODO: potentially switch member variable std::vector<float> to vec3, since we made it.
+
 namespace csci3081 {
     class Entity : public IEntity {
       public:
@@ -19,25 +21,6 @@ namespace csci3081 {
             this->id = (int)data.find("entityId")->second.get<double>();
         }
         virtual ~Entity() { printf("destroying entity!\n"); }
-        picojson::value Serialize() {
-          picojson::object o;
-          picojson::object pos;
-          pos["x"] = picojson::value(this->position[0]);
-          pos["y"] = picojson::value(this->position[1]);
-          pos["z"] = picojson::value(this->position[2]);
-          picojson::object dir;
-          dir["x"] = picojson::value(this->direction[0]);
-          dir["y"] = picojson::value(this->direction[1]);
-          dir["z"] = picojson::value(this->direction[2]);
-          o["type"] = picojson::value(this->type);
-          o["position"] = picojson::value(pos);
-          o["direction"] = picojson::value(dir);
-          o["name"] = picojson::value(this->name);
-          o["radius"] = picojson::value(this->radius);
-          o["entityId"] = picojson::value((double)this->id);
-          // std::cout << "serialized entity is "<< picojson::value(o).serialize() << std::endl;
-          return picojson::value(o);
-        }
         void Update(float dt) { 
           position[0] += 1 * dt;
         }

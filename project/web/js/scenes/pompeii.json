@@ -1,11 +1,13 @@
 [
+    { "command": "reset", "params": {}},
     {
         "command": "createEntity",
       	"params": {
-            "name": "drone",
+            "entityId": 0,
+            "name": "helicopter",
             "type": "actor",
       	    "path": "drone_lp.glb",
-      	    "position": [498.292, 261.883, -228.623],
+            "position": [0, 0, 0],
       	    "scale": [0.4, 0.4, 0.4],
       	    "rotation": [0, 0, 0, 0],
             "direction": [1,0,0],
@@ -18,10 +20,11 @@
     {
         "command": "createEntity",
         "params": {
+            "entityId": 1,
             "name": "package",
             "type": "actee",
             "path": "box.glb",
-            "position": [-255.994, 265.798, -296.859],
+            "position": [0, 0, 0],
             "scale": [0.02, 0.02, 0.01],
             "direction": [1,0,0],
             "radius": 1.0,
@@ -31,10 +34,11 @@
     {
         "command": "createEntity",
         "params": {
+            "entityId": 2,
             "name": "customer",
             "type": "destination",
             "path": "robot.glb",
-            "position": [-951.412, 262.665, 298.271],
+            "position": [0, 0, 0],
             "scale": [0.25, 0.25, 0.25],
             "direction": [1,0,0],
             "radius": 1.0,
@@ -42,35 +46,17 @@
         }
     },
     {
-        "command": "createEntity",
+        "command": "terrain",
         "params": {
             "name": "pompeii",
             "type": "terrain",
-            "path": "pompeii.glb",
-            "position": [0, -11, 0],
-            "scale": [10, 10, 10],
+            "path": "pompeii3.glb",
+            "position": [0, -10, 0],
+            "scale": [15, 15, 15],
             "direction": [1,0,0],
             "radius": 1.0,
             "rotation": [0, 0, 0, 0],
             "static": true
-        }
-    },
-    {
-        "command": "addEntity",
-        "params": {
-            "index": 0
-        }
-    },
-    {
-        "command": "addEntity",
-        "params": {
-            "index": 1
-        }
-    },
-    {
-        "command": "addEntity",
-        "params": {
-            "index": 2
         }
     },
     {

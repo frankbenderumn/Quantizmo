@@ -2,6 +2,8 @@
 // #define CONTROLLER_H_
 
 // #include <map>
+// child of stragey pattern
+
 // #include "WebServer.h"
 // #include <chrono>
 
