@@ -1,11 +1,11 @@
 #ifndef FACTORY_H_
 #define FACTORY_H_
 
-#include "actor.h"
-#include "actee.h"
-#include "destination.h"
-#include "console.h"
-#include "json_helper.h"
+#include "entity/actor.h"
+#include "entity/actee.h"
+#include "entity/destination.h"
+#include "util/console.h"
+#include "util/json_helper.h"
 
 namespace csci3081 {
     class Factory {

@@ -1,10 +1,10 @@
 #ifndef IENTITY_H_
 #define IENTITY_H_
 
-#include "json_helper.h"
+#include "util/json_helper.h"
 #include <vector>
 #include <string>
-#include "console.h"
+#include "util/console.h"
 
 namespace csci3081 {
     class IEntity {

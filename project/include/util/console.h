@@ -5,7 +5,7 @@
 #include <iostream>
 #include "json_helper.h"
 
-enum StatusType { SUCCESS, FAILURE, INFO };
+enum StatusType { SUCCESS, FAILURE, INFO, WARNING };
 
 namespace csci3081 {
     class Console {
@@ -16,11 +16,12 @@ namespace csci3081 {
             } else if (type == 1) {
                 std::cout << "\033[1;31mERROR\033[0m " << msg << std::endl;
             } else if (type == 2) {
-                std::cout << "\033[1;34mINFO\033[0m" << msg << std::endl;
+                std::cout << "\033[1;34mINFO\033[0m " << msg << std::endl;
+            } else if (type == 3) {
+                std::cout << "\033[1;33mWARNING\033[0m " << msg << std::endl;
             } else {
                 printf("\033[1;31mInvalid type in Console Logger\033[0m\n");
             }
-            // printf("\n");
         }
 
         static void Log(StatusType type, const std::string& msg, int size) {
@@ -29,7 +30,7 @@ namespace csci3081 {
             } else if (type == 1) {
                 std::cout << "\033[1;31mERROR\033[0m " << msg << " " << size << std::endl;
             } else if (type == 2) {
-                std::cout << "\033[1;34mINFO\033[0m" << msg << " " << size << std::endl;
+                std::cout << "\033[1;34mINFO\033[0m " << msg << " " << size << std::endl;
             } else {
                 printf("\033[1;31mInvalid type in Console Logger\033[0m\n");
             }
@@ -46,7 +47,6 @@ namespace csci3081 {
                     std::cout << "\033[36mPosition:\033[0m " <<  "<" << position[0] << ", " << position[1] << ", " << position[2] << ">" << std::endl;
                 }
             }
-            // printf("\n");
         }
 
     };
