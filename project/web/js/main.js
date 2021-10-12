@@ -320,7 +320,11 @@ $.fn.runJson = (file, initialScene = true) => {
         scenePosition = command.params.position;
       }
       if (command.command == "createEntity") {
-        $.fn.load(command.params);
+        if (command.params.type != "actor") {
+          $.fn.load(command.params, false);
+        } else {
+          $.fn.load(command.params);
+        }
         api.sendCommand("createEntity", command.params);
       }
       if (command.command == "terrain") {
@@ -675,13 +679,14 @@ var time = 0.0;
 // This function updates the scene's animation cycle.
 function update() {
   // Get the time since the last animation frame.
+  if (models.length >= 1) {
+    updateReady = true;
+  }
+
   const delta = clock.getDelta();
   time += delta;
 
     //temporary work around to force models to be loaded first
-  if (models.length >= 3) {
-    updateReady = true;
-  }
 
   controls.update();
 
@@ -723,19 +728,25 @@ function update() {
   }
 
   if (updateReady) {
+    console.log("models are: ...");
+    console.log(models);
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
       let data = updateData;
       console.log(data);
-      if (data.entity0 != undefined ) {
+      // if (data.entity0 != undefined && data.entity1 != undefined && data.entity2 != undefined ) {
         for (let e in data) {
-          console.log(models.length);
+          // console.log(models.length);
           console.log(data[e].entityId);
-          if (e != "id") {
-            models[data[e].entityId].scene.position.copy(new THREE.Vector3(data[e].position.x, data[e].position.y, data[e].position.z));
-            console.log(models[data[e].entityId].scene);
-
+          if (data[e].type == "Actor") {
+            models[0].scene.position.copy(new THREE.Vector3(data[e].position.x, data[e].position.y, data[e].position.z));
+            models[0].scene.rotation.x = data[e].direction.x;
+            models[0].scene.rotation.y = data[e].direction.y;
+            // models[0].scene.rotation.z = data[e].direction.z;
+            // models[0].scene.rotation.copy(new THREE.Vector3(data[e].direction.x, data[e].direction.y, data[e].direction.z));
+            // console.log(models[data[e].entityId].scene);
+            // console.log("updating actor!");
           }
-        }
+        // }
       }
       updateReady = true;
     });

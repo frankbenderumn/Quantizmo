@@ -8,21 +8,21 @@
 
 namespace csci3081 {
 
-    enum StrategyType {AUTOMATIC, TARGET, MANUAL, UNDEFINED};
+    enum StrategyType {AUTOMATIC, TARGET, MANUAL, UNDEFINED_STRATEGY };
 
     class Strategy {
       public:
         Strategy() {}
-        virtual ~Strategy() { printf("destroying entity!\n"); }
+        virtual ~Strategy() { printf("destroying strategy!\n"); }
         virtual void Move(const std::vector<double>& dir, double theta, double phi) {
-            // TODO: returns actor direction
             std::vector<double>& newDir = const_cast<std::vector<double>&>(dir);
-            std::vector<double> temp = {0.f, 0.f, 0.f};
-            newDir[0] = 2.f;
+            newDir[0] = theta;
+            newDir[1] = phi;
+            Console::Log(WARNING, "This strategy should not be running!");
         }
         StrategyType GetType() { return type; }
       protected:
-        StrategyType type = UNDEFINED;
+        StrategyType type = UNDEFINED_STRATEGY;
     };
 }
 

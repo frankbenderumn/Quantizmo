@@ -1,25 +1,22 @@
 #ifndef OBSERVER_H_
 #define OBSERVER_H_
 
-#include "web_app.h"
+#include "interface/ientity.h"
 
 namespace csci3081 {
 
-    class WebApp;
+class WebApp;
 
-    class Observer {
-      public:
-        Observer(WebApp* webapp) {
-          this->sys = webapp;
-        }
-        ~Observer() { printf("destroying observer!\n"); }
-        void OnEvent(const picojson::value& value, const Entity& e) {
-            // this->sys->Test();
-        }
+class Observer {
+  public:
+    Observer(WebApp* sys) : sys(sys) {}
+    ~Observer() { printf("destroying web observer!\n"); }
+    void OnEvent(const picojson::value& value, const IEntity& e);
 
-      private:
-        WebApp* sys;
-    };
+  private:
+    WebApp* sys;
+
+};
 
 }  // namespace csci3081
 

@@ -42,20 +42,32 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         // std::cout << image << std::endl;
     }
     else if (cmd == "reset") {
+        for (auto e : entities) {
+            delete e;
+        }
         if (entities.size() > 0) {
             entities.clear();
         }
+        printf("entities size is: ");
+        std::cout << entities.size() << std::endl;
     }
     else if (cmd == "createEntity") {
         assert(factory != nullptr);
-        // Entity* e = factory->Create(data.find("entity")->second.get<picojson::object>());
         Entity* e = factory->Create(data);
-        Actor* actor = dynamic_cast<Actor*>(e);
-        if (actor != nullptr) {
-            Observer* o = new Observer(this);
-            actor->Attach(o);
+        if (e->GetType() == ACTOR) {
+            Actor* a = dynamic_cast<Actor*>(e);
+            actor = a;
+        } else if (e->GetType() == ACTEE) {
+            Actee* a = dynamic_cast<Actee*>(e);
+            actees.push_back(a);
+        } else if (e->GetType() == DESTINATION) {
+
         }
-        if (e) { AddEntity(e); Console::Log(SUCCESS, "Entity was added!"); } else {
+        if (e) { 
+            AddEntity(e);
+            AddObserver(e, new Observer(this));
+            Console::Log(SUCCESS, "Entity was added!"); 
+        } else {
             Console::Log(FAILURE, "Failed to add entity!");
         }
     } 
@@ -65,56 +77,55 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
 }
 
 void WebApp::Update(double dt, picojson::object& returnValue) {
-    // JsonHelper::Print(returnValue);
     for (auto e : entities) {
         Actor* actor = dynamic_cast<Actor*>(e);
-        if (actor != nullptr) {
+        if (actor) {
             actor->Update(dt);
         } else {
             e->Update(dt);
         }
-        // std::cout << e->GetName() << std::endl;
-        // std::cout << e->Serialize() << std::endl;
         returnValue["entity"+std::to_string(e->GetId())] = e->Serialize();
+        std::cout << returnValue["entity"+std::to_string(e->GetId())] << std::endl;
     }
 }
 
 void WebApp::KeyUp(const std::string& key, int keyCode) {
     std::cout << "key code up is: " << keyCode << std::endl;
-    if (actor) {
-        actor->Release(key, keyCode);
-    }
+    // for (auto e : entities) {
+        // Actor* a = dynamic_cast<Actor*>(e);
+        if (actor) {
+            actor->Release(key, keyCode);
+        }
+    // }
 }
 
 void WebApp::KeyDown(const std::string& key, int keyCode) {
     std::cout << "key code down is: " << keyCode << std::endl;
-    if (actor) {
-        actor->Press(key, keyCode);
-    }
+    // for (auto e : entities) {
+    //     Actor* a = dynamic_cast<Actor*>(e);
+        if (actor) {
+            if (keyCode == 84) {
+                assert(actees.size() > 0);
+                Actee* actee = actees[0];
+                actor->SetTarget(actee);
+                actees.erase(actees.begin());
+            } else {
+                actor->Press(key, keyCode);
+            }
+        }
+    // }
 }
 
-// void WebApp::AddObserver(Entity* e, Observer* observer) {
-//     Actor* actor = dynamic_cast<Actor*>(e);
-//     if (actor) {
-//         actor->AddObserver();
-//     }
-//   observers.push_back(observer);
-// }
+void WebApp::Rescue(Destination* dest) {
+    actor->SetDestination(dest);
+}
 
-// void WebApp::RemoveObserver(Entity* e, Observer* observer) {
+void WebApp::AddObserver(Entity* e, Observer* observer) {
+    e->Attach(observer);
+}
 
-//   for (int i = 0; i < observers.size(); i++) {
-//     if (observers[i] == observer) {
-//       observers.erase(observers.begin() + i);
-//       return;
-//     }
-//   }
-// }
-
-// void WebApp::NotifyObservers(picojson::value& notification, Entity* entity) {
-//   for (Observer* obs : observers) {
-//     obs->OnEvent(notification, *entity);
-//   }
-// }
+void WebApp::RemoveObserver(Entity* e, Observer* observer) {
+    e->Detach(observer);
+}
 
 }
