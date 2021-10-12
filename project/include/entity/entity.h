@@ -6,7 +6,7 @@
 #include <string>
 #include "util/console.h"
 #include "interface/ientity.h"
-#include "observer/observer.h"
+#include "observer/iobserver.h"
 
 // TODO: potentially switch member variable std::vector<float> to vec3, since we made it.
 
@@ -28,7 +28,7 @@ namespace csci3081 {
         const int GetId() { return this->id; }
         const int GetRadius() { return this->radius; }
         
-        bool Attach(Observer* observer) {
+        bool Attach(IObserver* observer) {
             for (auto o : observers) {
                 if (o == observer) return false;
             }
@@ -36,7 +36,7 @@ namespace csci3081 {
             return true;
         }
 
-        bool Detach(Observer* observer) {
+        bool Detach(IObserver* observer) {
             for (int i = 0; i < observers.size(); i++) {
                 if (observers[i] == observer) {
                     observers.erase(observers.begin()+i);
@@ -63,14 +63,14 @@ namespace csci3081 {
             this->NotifyObservers(v, *this);
         }
 
-        void NotifyObservers(const picojson::value& event, const Entity& e) {
+        void NotifyObservers(const picojson::value& event, const IEntity& e) {
             for (auto o : this->observers) {
                 o->OnEvent(event, e);
             }
         }        
 
       protected:
-        std::vector<Observer*> observers;
+        std::vector<IObserver*> observers;
 
     };
 }

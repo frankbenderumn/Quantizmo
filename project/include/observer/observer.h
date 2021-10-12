@@ -1,13 +1,14 @@
 #ifndef OBSERVER_H_
 #define OBSERVER_H_
 
-#include "interface/ientity.h"
+#include "iobserver.h"
+#include "web_app.h"
 
 namespace csci3081 {
 
 class WebApp;
 
-class Observer {
+class Observer : public IObserver {
   public:
     Observer(WebApp* sys) : sys(sys) {}
     ~Observer() { printf("destroying web observer!\n"); }

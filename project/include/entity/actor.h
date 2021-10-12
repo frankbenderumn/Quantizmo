@@ -1,7 +1,7 @@
 #ifndef ACTOR_H_
 #define ACTOR_H_
 
-#include "entity.h"
+#include "entity/entity.h"
 #include "strategy/automatic.h"
 #include "strategy/manual.h"
 #include "strategy/target.h"

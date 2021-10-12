@@ -41,9 +41,13 @@ namespace csci3081 {
             this->Notify("alert");
         }
 
-        if (this->GetRadius() - target->GetRadius() <= 1.f) {
-            printf("collision detected\n");
-            this->SetStrategy(new Manual());
+        if (target) {
+
+            if (this->GetRadius() - target->GetRadius() <= 1.f) {
+                printf("collision detected\n");
+                this->SetStrategy(new Manual());
+            }
+
         }
 
         if (strategy->GetType() == MANUAL) {

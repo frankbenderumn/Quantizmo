@@ -1,4 +1,5 @@
 #include "web_app.h"
+#include "observer/observer.h"
 
 namespace csci3081 {
 
@@ -120,12 +121,18 @@ void WebApp::Rescue(Destination* dest) {
     actor->SetDestination(dest);
 }
 
-void WebApp::AddObserver(Entity* e, Observer* observer) {
+void WebApp::AddObserver(Entity* e, IObserver* observer) {
     e->Attach(observer);
 }
 
-void WebApp::RemoveObserver(Entity* e, Observer* observer) {
+void WebApp::RemoveObserver(Entity* e, IObserver* observer) {
     e->Detach(observer);
 }
+
+void Observer::OnEvent(const picojson::value& value, const IEntity& e) {
+    sys->Test();
+    // std::cout << e.Serialize() << std::endl;
+}
+
 
 }

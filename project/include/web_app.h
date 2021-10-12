@@ -53,16 +53,16 @@ class WebApp : public JSONSession {
     /* @brief sends notification through observer back to front-end */
     void SendNotification(const std::string& s) { Console::Log(INFO, s); }
 
-    void Test() { printf("Test!\n"); }
+    void Test() { Console::Log(SUCCESS, "Observer being sent!"); }
 
     /* @brief instantiates the destination in which actees will be deemed rescued */
     void Rescue(Destination* dest);
 
     /* @brief attaches observer to entity */
-    void AddObserver(Entity* e, Observer* observer);
+    void AddObserver(Entity* e, IObserver* observer);
 
     /* @brief detaches observer from entity */
-    void RemoveObserver(Entity* e, Observer* observer);
+    void RemoveObserver(Entity* e, IObserver* observer);
 
   private:
     /* @brief unix timestamp for when program is started */
