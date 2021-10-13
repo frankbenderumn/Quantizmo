@@ -49,11 +49,11 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         if (entities.size() > 0) {
             entities.clear();
         }
-        printf("entities size is: ");
+        // printf("entities size is: ");
         std::cout << entities.size() << std::endl;
     }
     else if (cmd == "createEntity") {
-        assert(factory != nullptr);
+        assert(factory);
         Entity* e = factory->Create(data);
         if (e->GetType() == ACTOR) {
             Actor* a = dynamic_cast<Actor*>(e);
@@ -61,8 +61,6 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         } else if (e->GetType() == ACTEE) {
             Actee* a = dynamic_cast<Actee*>(e);
             actees.push_back(a);
-        } else if (e->GetType() == DESTINATION) {
-
         }
         if (e) { 
             AddEntity(e);
@@ -79,7 +77,7 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
 
 void WebApp::Update(double dt, picojson::object& returnValue) {
     for (auto e : entities) {
-        Actor* actor = dynamic_cast<Actor*>(e);
+        // Actor* actor = dynamic_cast<Actor*>(e);
         if (actor) {
             actor->Update(dt);
         } else {

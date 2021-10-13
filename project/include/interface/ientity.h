@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include "util/console.h"
+#include "util/vec3.h"
 
 namespace csci3081 {
 

@@ -8,7 +8,7 @@ namespace csci3081 {
 class IObserver {
   public:
     IObserver() {}
-    virtual ~IObserver() { printf("destroying web observer!\n"); }
+    virtual ~IObserver() { printf("destroying iobserver!\n"); }
     virtual void OnEvent(const picojson::value& value, const IEntity& e) = 0;
 
 };

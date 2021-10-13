@@ -76,6 +76,15 @@ namespace csci3081 {
 
         /* @brief target to drop off rescuee (actee) */
         Destination* dest;
+
+        std::vector<std::vector<double>> box = {
+            {-110, 0, -62},
+            {-110, 0, 62},
+            {110, 0, 62},
+            {110, 0, -62}
+        };
+
+        int boxIndex = -1;
     };
 }
 

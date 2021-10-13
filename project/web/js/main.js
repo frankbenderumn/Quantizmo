@@ -402,7 +402,10 @@ function saveAsImage() {
   try {
       var strMime = "image/jpeg";
       imgData = renderer.domElement.toDataURL(strMime);
-      api.sendCommand("image", {url: imgData});
+      // api.sendCommand("image", {url: imgData});
+      $.ajax({
+
+      });
       saveFile(imgData.replace(strMime, strDownloadMime), "test.jpg");
   } catch (e) {
       console.log(e);

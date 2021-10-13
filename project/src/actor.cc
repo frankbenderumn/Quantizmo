@@ -1,4 +1,5 @@
 #include "entity/actor.h"
+#include <math.h>
 
 namespace csci3081 {
 
@@ -29,6 +30,14 @@ namespace csci3081 {
 
     }
 
+    double DistanceHelper(std::vector<double> a, std::vector<double> b) {
+        double x = pow(a.at(0) - b.at(0), 2);
+        double y = pow(a.at(1) - b.at(1), 2);
+        double z = pow(a.at(2) - b.at(2), 2);
+        return sqrt(x + y + z);
+        
+    }
+
     void Actor::Update(float dt) {
         if (strategy) {
             this->strategy->Move(this->direction, 0.1, 0.1);
@@ -51,6 +60,7 @@ namespace csci3081 {
         }
 
         if (strategy->GetType() == MANUAL) {
+            Console::Log(WARNING, "TARGET STRATEGY EXECUTING!");
             theta += (posTurn[0] + negTurn[0]) * turnSpeed * dt;
             phi += (posTurn[1] + negTurn[1]) * turnSpeed * dt;
             strategy->Move(this->direction, theta, phi);
@@ -59,9 +69,43 @@ namespace csci3081 {
             position[2] += (posMove[2] + negMove[2]) * this->direction[2] * speed * dt;
         } else if (strategy->GetType() == AUTOMATIC) {
             // strategy->Move(this->direction, theta, phi);
-            position[0] += direction[0] * speed * dt;
+            Console::Log(WARNING, "AUTOMATIC STRATEGY EXECUTING!");
+            printf("direction is:\n");
+
+            // collision points :
+            // [-110, 0, -62]
+            // [-110, 0, 62]
+            // [110, 0, 62]
+            // [110, 0, -62]
+
+            if (boxIndex == -1) { boxIndex++; }
+            if (boxIndex == 4) {
+                boxIndex = 3;
+            }
+
+            // collision detection
+            std::vector<double> poi = box.at(boxIndex);
+
+            if (DistanceHelper(position, poi) <= this->radius) {
+                printf("collide!\n");
+            }
+
+            
+            position[2] += direction[1] * speed * dt;
+            // if (position[0] >= 110) { 220, [-110, 110]
+            //     // return;
+            //     delete this;
+            //     Console::Log(SUCCESS, "BOUNDS CHECK IS A GO!");
+            // }
+            // if (position[2] >= 62) { // 84, [-62, 62]
+            //     // return;
+            //     delete this;
+            //     Console::Log(SUCCESS, "BOUNDS CHECK IS A GO!");
+            // }
+            std::cout << position[0] << std::endl;
         } else if (strategy->GetType() == TARGET) {
-            position[0] += direction[0] * speed * dt;
+            Console::Log(WARNING, "TARGET STRATEGY EXECUTING!");
+            position[2] += direction[2] * speed * dt;
         }
         // printf("direction is: ");
         // std::cout << direction[0] << direction[1] << direction[2] << std::endl;
