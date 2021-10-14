@@ -1,4 +1,5 @@
 .vscode
 .dependencies
+.idea
 *.o
 *.out

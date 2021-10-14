@@ -6,7 +6,7 @@
             "entityId": 0,
             "name": "submarine",
             "type": "actor",
-      	    "path": "submarine.glb",
+      	    "path": "LoCO.glb",
       	    "position": [0, 0, 0],
       	    "scale": [0.4, 0.4, 0.4],
       	    "rotation": [0, 0, 0, 0],
