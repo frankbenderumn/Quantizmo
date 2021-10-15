@@ -366,22 +366,10 @@ const views = [
   }
 ];
 
-let aquatic = new Scene("aquatic", "aquatic.jpg", ["drone", "starya", "aku"]);
-let mountain = new Scene("mountain", "darkstorm.jpg", ["drone", "starya", "aku"]);
-let umn = new Scene("umn", new THREE.Color(0x00dddd), ["drone", "starya", "aku"]);
-let space = new Scene("space", "stars.jpeg", []);
-let retro = new Scene("retro", "glitch.jpeg", ["drone", "starya", "aku"]);
-let ikea = new Scene("ikea", "cyber.jpeg", []);
-let pompeii = new Scene("pompeii", new THREE.Color(0x00dddd), ["drone", "starya", "aku"]);
+let umn = new Scene("umn", new THREE.Color( 'skyblue' ), ["drone", "starya", "aku"]);
 
 var scenes = {
-  "aquatic" : aquatic,
-  "mountain" : mountain, 
-  "umn" : umn, 
-  "space" : space, 
-  "retro" : retro, 
-  "ikea" : ikea, 
-  "pompeii" : pompeii
+  "umn" : umn
 };
 
 $("[data-role='scene-trigger']").on('click', function() {
@@ -399,7 +387,8 @@ function saveAsImage() {
       var strMime = "image/jpeg";
       imgData = renderer.domElement.toDataURL(strMime);
       api.sendCommand("image", {url: imgData});
-      saveFile(imgData.replace(strMime, strDownloadMime), "test.jpg");
+      saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
+      //
   } catch (e) {
       console.log(e);
       return;
@@ -430,90 +419,17 @@ function grid() {
 }
 
 function base(){
-  // ======================================SUN AND OCEAN==============================================
-  sun = new THREE.Vector3();
-  // Skybox
-  sky = new Sky();
-  sky.scale.setScalar( 10000 );
-  scene.add( sky );
-
-  const skyUniforms = sky.material.uniforms;
-
-  skyUniforms[ 'turbidity' ].value = 10;
-  skyUniforms[ 'rayleigh' ].value = 2;
-  skyUniforms[ 'mieCoefficient' ].value = 0.005;
-  skyUniforms[ 'mieDirectionalG' ].value = 0.8;
-
-  const parameters = {
-    elevation: 2,
-    azimuth: 180
-  };
-
-  const pmremGenerator = new THREE.PMREMGenerator( renderer );
-
-  function updateSun() {
-
-    const phi = THREE.MathUtils.degToRad( 90 - parameters.elevation );
-    const theta = THREE.MathUtils.degToRad( parameters.azimuth );
-
-    sun.setFromSphericalCoords( 1, phi, theta );
-
-    sky.material.uniforms[ 'sunPosition' ].value.copy( sun );
-    if (target == "pompeii") {
-      ocean.water.material.uniforms['sunDirection'].value.copy(sun).normalize();
-    }
-
-    scene.environment = pmremGenerator.fromScene( sky ).texture;
-
-  }
-
-  updateSun();
-
-  // rain = new Rain(scene);
-  // rain.init();
-
-  // tornado = new Tornado(scene);
-  // tornado.init();
-
-  // snow = new Snow(scene);
-  // snow.init();
-
   // define controls
   controls = new OrbitControls( camera, container );
   controls.maxPolarAngle = Math.PI * 0.695;
-  controls.target.set( 0, 10, 0 );
-  controls.minDistance = 40.0;
-  controls.maxDistance = 1000.0;
+  controls.target.set( 0, 0, 0 );
   controls.update();
-  
-
-// ==========================================WEATHER================================================
-
-
 }
-
-// creates multiple cameras to support render slice
-function viewports() {
-  for ( let ii = 0; ii < views.length; ++ ii ) {
-    const view = views[ ii ];
-    // const camera = new THREE.PerspectiveCamera( view.fov, window.innerWidth / window.innerHeight, 1, 10000 );
-    const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-    // camera.position.fromArray( view.eye );
-      camera.position.set( -10, 10, 10 );
-      // camera.up.fromArray( view.up );
-      view.camera = camera;
-      // if (view.name == "main") {
-      controls = new OrbitControls( view.camera, container );
-      // } else {
-      //   controls = new OrbitControls( view.camera, container ); 
-      // }
-  }
-};
 
 // This function runs the scene
 $.fn.run = () => {
   camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 20000 );
-  camera.position.set( 30, 30, 100 );
+  camera.position.set( -10, 10, 10 );//30, 30, 100 );
   scene = new THREE.Scene();
   if (target != undefined) {
     let bg = scenes[target].background;
@@ -534,67 +450,6 @@ $.fn.run = () => {
     console.log(scenes);
     console.log(scenes["retro"].background);
     scene.background = scenes["retro"].background;
-  }
-
-  // runs the json to send it to the backend for processing
-
-  // const waterGeometry = new THREE.PlaneBufferGeometry(100000, 100000);
-  // waterGeometry.renderOrder = 2;
-  // water = new Water(
-  //     waterGeometry,
-  //     {
-  //     textureWidth: 512,
-  //     textureHeight: 512,
-  //     waterNormals: new THREE.TextureLoader().load('../assets/texture/waternormals.jpg', function (texture) {
-  //         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-  //     }),
-  //     alpha: 1,
-  //     sunDirection: new THREE.Vector3(),
-  //     sunColor: 0xffffff,
-  //     waterColor: 0x001e0f,
-  //     distortionScale: 0,
-  //     size: 0.1,
-  //     // fog: scene.fog !== undefined
-  //     }
-  // );
-  // water.rotation.x = - Math.PI / 2;
-  // water.position.y = -10;
-
-  // ============================== SCENE ADD ONS AND ENVIRONMENTS==================================
-  switch (target) {
-    case "umn":
-      weather = -1;
-      break;
-    case "aquatic":
-      grid();
-      // adding fog
-      {
-        const color = 0x1f556e;
-        const density = 0.01;
-        // scene.fog = new THREE.FogExp2(color, density);
-
-        const near = 900;
-        const far = 1100;
-        scene.fog = new THREE.Fog(color, near, far);
-      }
-      break;
-    case "pompeii":
-      ocean = new Ocean(scene);
-      ocean.render();
-
-      // scene.add(water);
-      // const gui = new GUI();
-      break;
-    case "mountain":
-      grid();
-      break;
-    case "ikea":
-      grid();
-      break;
-    case "retro":
-      break;
-    default:
-      break;
   }
 
   if (target === "umn") {
@@ -629,13 +484,9 @@ $.fn.run = () => {
 
   // prevents multiple canvases from being generated on scene change
   $('canvas:nth-of-type(1)').remove();
-  renderer = new THREE.WebGLRenderer( { container, alpha: true, antialias: true } );
+  renderer = new THREE.WebGLRenderer( { container, alpha: true, antialias: true, preserveDrawingBuffer: true } );
   renderer.setSize( window.innerWidth, window.innerHeight );
   document.body.appendChild( renderer.domElement );
-
-  // screenshot export type
-  var strMime = "image/jpeg";
-  var imgData = renderer.domElement.toDataURL(strMime);
 
   // adds extra aesthetic code (may refactor to modules)
   base();
@@ -678,54 +529,17 @@ function update() {
   const delta = clock.getDelta();
   time += delta;
 
-    //temporary work around to force models to be loaded first
+  //temporary work around to force models to be loaded first
   if (models.length >= 3) {
     updateReady = true;
   }
 
   controls.update();
 
-  // Iterate through and update the animation mixers for each object in the
-  // scene.
-  // for (const clips of mixers) {
-  //   clips.forEach( function ( clip ) {
-  //     mixer.clipAction( clip ).play();
-  //   } );
-  //   // if (mixer.start == undefined || mixer.duration == undefined) {
-  //   //   mixer.mixer.update(delta);
-  //   // }
-  //   // else {
-  //   //   var newTime = time - mixer.start;
-  //   //   var iterations = Math.floor(newTime / mixer.duration);
-  //   //   newTime = newTime - iterations * mixer.duration + mixer.start;
-  //   //   mixer.mixer.setTime(newTime);
-  //   // }
-  // }
-
-  switch (weather) {
-    case -1:
-      break;
-    case 0:
-      rain.update();
-      break;
-    case 1:
-      snow.update();
-      break;
-    case 2:
-      tornado.update();
-      break;
-    default:
-      break;
-  }
-
-  if (target == "pompeii") {
-    ocean.update();
-  }
-
   if (updateReady) {
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
       let data = updateData;
-      console.log(data);
+      //console.log(data);
       if (data.entity0 != undefined ) {
         for (let e in data) {
           console.log(models.length);
@@ -746,43 +560,6 @@ function update() {
 
 // This function simply renders the scene based on the camera position.
 function render() {
-
-  // update the picking ray with the camera and mouse position
-	// raycaster.setFromCamera( mouse, camera );
-
-	// // calculate objects intersecting the picking ray
-	// const intersects = raycaster.intersectObjects( scene.children );
-
-	// for ( let i = 0; i < intersects.length; i ++ ) {
-	// 	intersects[ i ].object.material.color.set( 0xff0000 );
-	// }
-
-  // code that splits render to multiple viewports
-  // for ( let ii = 0; ii < views.length; ++ ii ) {
-
-  //   const view = views[ ii ];
-  //   const camera = view.camera;
-
-  //   // console.log(camera);
-
-  //   view.updateCamera( camera, scene, mouseX, mouseY );
-
-  //   const left = Math.floor( window.innerWidth * view.left );
-  //   const bottom = Math.floor( window.innerHeight * view.bottom );
-  //   const width = Math.floor( window.innerWidth * view.width );
-  //   const height = Math.floor( window.innerHeight * view.height );
-
-  //   renderer.setViewport( left, bottom, width, height );
-  //   renderer.setScissor( left, bottom, width, height );
-  //   renderer.setScissorTest( true );
-  //   // renderer.setClearColor( view.background );
-
-  //   camera.aspect = width / height;
-  //   camera.updateProjectionMatrix();
-
-  //   renderer.render( scene, camera );
-
-  // }
   renderer.render( scene, camera );
 }
 
@@ -800,13 +577,6 @@ function onWindowResize() {
 }
 
 function onMouseMove( event ) {
-
-	// calculate mouse position in normalized device coordinates
-	// (-1 to +1) for both components
-
-	// mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	// mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
     mouseX = ( event.clientX - window.innerWidth / 2 );
     mouseY = ( event.clientY - window.innerHeight / 2 );
 
