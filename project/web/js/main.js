@@ -386,17 +386,10 @@ function saveAsImage() {
   try {
       var strMime = "image/jpeg";
       imgData = renderer.domElement.toDataURL(strMime);
-      //api.sendCommand("image", {url: imgData});
-      $.ajax({
-        type: "POST",
-        url: "/post/"+0,
-        //data: JSON.stringify({command: "mouseClicked", output: output}),
-        data: JSON.stringify({command: "image", url: imgData}),
-        success: function(res) { console.log(res); },
-        //error: function(res) { console.log(res); },
-        dataType: "json"
-        });
-      saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
+      api.sendPostCommand("image", {url: imgData}).then(function(data) {
+        console.log(data);
+      });
+      //saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
       //
   } catch (e) {
       console.log(e);
@@ -548,7 +541,7 @@ function update() {
   if (updateReady) {
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
       let data = updateData;
-      console.log(data);
+      //console.log(data);
       if (data.entity0 != undefined ) {
         for (let e in data) {
           console.log(models.length);

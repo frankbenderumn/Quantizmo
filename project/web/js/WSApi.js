@@ -3,12 +3,19 @@ function WSApi() {
     this.socket = new WebSocket("ws://" + location.hostname+(location.port ? ':'+location.port: ''), "web_server");
     this.callbacks = {};
     this.requestId = 0;
+    this.id = null;
 
     this.onmessage = null;
 
     this.socket.onmessage = function (msg) {
+        if (!self.connected) {
+            self.id = +msg.data;
+            self.connected = true;
+        }
+
         var data = JSON.parse(msg.data);
-        if ("id" in data) {
+        if ("id" in data && data.id in self.callbacks) {
+            //console.log(data);
             self.callbacks[data.id](data);
         }
         if (self.onmessage) {
@@ -32,17 +39,37 @@ function WSApi() {
     this.connected = false;
 
     this.connect.then(function() {
-        self.connected = true;
+        //self.connected = true;
     });
 }
 
-WSApi.prototype.sendCommand = function(cmd, data, calcVal) {
+WSApi.prototype.sendPostCommand = function(cmd, data, calcVal) {
+    console.log(this.id);
+    return this.sendCommand(cmd, data, calcVal, true);
+}
+
+WSApi.prototype.sendCommand = function(cmd, data, calcVal, isPost = false) {
     let self = this;
 
     if (self.connected) {
         data.command = cmd;
         data.id = this.requestId;
-        this.socket.send(JSON.stringify(data));
+
+        if (isPost) {
+        $.ajax({
+            type: "POST",
+            url: "/post/"+self.id,
+            //data: JSON.stringify({command: "mouseClicked", output: output}),
+            data: JSON.stringify(data),
+            success: function(res) { console.log(res); },
+            //error: function(res) { console.log(res); },
+            dataType: "json"
+            });
+        }
+        else {
+            this.socket.send(JSON.stringify(data));
+        }
+
         let promise = new Promise(function(resolve, reject) {
             self.callbacks[self.requestId] = function(data) {
                 if (calcVal) {
