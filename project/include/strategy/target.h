@@ -9,10 +9,9 @@ namespace csci3081 {
       public:
         Target(const Actee& e) { this->type = TARGET; this->target = target; }
         ~Target() { printf("destroying target!\n"); }
-        void Move(const std::vector<double>& dir, double theta, double phi) {
-            std::vector<double>& newDir = const_cast<std::vector<double>&>(dir);
-            newDir[0] = theta;
-            newDir[1] = phi;
+        void Move(Vec3 dir, float theta, float phi) {
+            dir[0] = theta;
+            dir[1] = phi;
         }
       private:
         Actee* target;

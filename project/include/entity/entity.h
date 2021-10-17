@@ -5,18 +5,17 @@
 #include <vector>
 #include <string>
 #include "util/console.h"
+#include "util/vec3.h"
 #include "interface/ientity.h"
 #include "observer/iobserver.h"
-
-// TODO: potentially switch member variable std::vector<float> to vec3, since we made it.
 
 namespace csci3081 {
 
     class Entity : public IEntity {
       public:
         Entity(const picojson::object& data) {
-            this->position = JsonHelper::CastVector(data.find("position")->second.get<picojson::array>());
-            this->direction = JsonHelper::CastVector(data.find("direction")->second.get<picojson::array>());
+            this->position = Vec3(JsonHelper::CastVector(data.find("position")->second.get<picojson::array>()));
+            this->direction = Vec3(JsonHelper::CastVector(data.find("direction")->second.get<picojson::array>()));
             this->name = data.find("name")->second.get<std::string>(); 
             this->radius = data.find("radius")->second.get<double>();
             this->id = (int)data.find("entityId")->second.get<double>();
@@ -27,6 +26,10 @@ namespace csci3081 {
         EntityType GetType() { return this->type; }
         const int GetId() { return this->id; }
         const int GetRadius() { return this->radius; }
+        Vec3& GetPosition() { return this->position; }
+        void SetPosition(Vec3 rhs) {
+            this->position = rhs;
+        }
         
         bool Attach(IObserver* observer) {
             for (auto o : observers) {
@@ -46,8 +49,8 @@ namespace csci3081 {
             return false;
         }
 
-        virtual void Notify(std::string event, float timestamp = 0.f) {
-            Console::Log(INFO, "NOTIFYING!");
+        virtual void Notify(std::string event, std::string msg = "", float timestamp = 0.f) {
+            // Console::Log(INFO, "NOTIFYING!");
             picojson::object o;
             o["test"] = picojson::value("this is a test");
             if (event == "analytics") {
@@ -55,6 +58,7 @@ namespace csci3081 {
                 o["time"] = picojson::value(0.f);
             } else if (event == "alert") {
                 o["type"] = picojson::value("alert");
+                o["message"] = picojson::value(msg);
             } else {
                 Console::Log(FAILURE, "Invalid observer call type");
                 exit(0);

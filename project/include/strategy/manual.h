@@ -8,10 +8,10 @@ namespace csci3081 {
       public:
         Manual() { this->type = MANUAL; }
         ~Manual() { printf("destroying manual!\n"); }
-        void Move(const std::vector<double>& dir, double theta, double phi) {
-            std::vector<double>& newDir = const_cast<std::vector<double>&>(dir);
-            newDir[0] = theta;
-            newDir[1] = phi;
+        void Move(Vec3 dir, float theta, float phi) {
+            Vec3& newDir = const_cast<Vec3&>(dir);
+            dir[0] = theta;
+            dir[1] = phi;
         }
     };
 }

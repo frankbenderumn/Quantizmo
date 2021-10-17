@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include "util/console.h"
+#include "util/vec3.h"
 
 namespace csci3081 {
 
@@ -14,10 +15,9 @@ namespace csci3081 {
       public:
         Strategy() {}
         virtual ~Strategy() { printf("destroying strategy!\n"); }
-        virtual void Move(const std::vector<double>& dir, double theta, double phi) {
-            std::vector<double>& newDir = const_cast<std::vector<double>&>(dir);
-            newDir[0] = theta;
-            newDir[1] = phi;
+        virtual void Move(Vec3 dir, float theta, float phi) {
+            dir[0] = theta;
+            dir[1] = phi;
             Console::Log(WARNING, "This strategy should not be running!");
         }
         StrategyType GetType() { return type; }

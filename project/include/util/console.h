@@ -41,7 +41,7 @@ namespace csci3081 {
                 const std::string& type = data.find("type")->second.get<std::string>();
                 if (type == "actor" || type == "actee" || type == "destination") {
                     const std::string& name = data.find("name")->second.get<std::string>();
-                    std::vector<double> position = JsonHelper::CastVector(data.find("position")->second.get<picojson::array>());
+                    std::vector<float> position = JsonHelper::CastVector(data.find("position")->second.get<picojson::array>());
                     std::cout << "\033[1;34mINFO for " << name << "\033[0m" << std::endl;
                     std::cout << "\033[36mType:\033[0m     " <<  type << std::endl;
                     std::cout << "\033[36mPosition:\033[0m " <<  "<" << position[0] << ", " << position[1] << ", " << position[2] << ">" << std::endl;

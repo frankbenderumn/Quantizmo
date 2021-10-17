@@ -40,10 +40,10 @@ class JsonHelper {
         }
     }
 
-    static std::vector<double> CastVector(const picojson::array& arr) {
-        std::vector<double> result(3, 0);
+    static std::vector<float> CastVector(const picojson::array& arr) {
+        std::vector<float> result(3, 0);
         for (int i = 0; i < arr.size(); i++) {
-            result.at(i) = static_cast<double>(arr[i].get<double>());
+            result.at(i) = static_cast<float>(arr[i].get<double>());
         }
         return result;
     }
