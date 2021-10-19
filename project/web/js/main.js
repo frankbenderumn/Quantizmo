@@ -1,21 +1,10 @@
 // could add a local version to support no internet connection
 import * as THREE from './three.module.js';
-import Stats from 'https://cdn.skypack.dev/three/examples/jsm/libs/stats.module.js';
 import { ColladaLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/ColladaLoader.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/MTLLoader.js';
-import { FirstPersonControls } from 'https://cdn.skypack.dev/three/examples/jsm/controls/FirstPersonControls.js';
 import { OrbitControls } from 'https://cdn.skypack.dev/three/examples/jsm/controls/OrbitControls.js';
-import { GUI } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/libs/dat.gui.module.js';
-import { Sky } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/objects/Sky.js';
-import { PMREMGenerator } from 'https://cdn.skypack.dev/three@0.132.2/src/extras/PMREMGenerator.js';
-import { Ocean } from './addons/ocean.js';
-import { Rain } from './addons/weather/rain.js';
-import { Tornado } from './addons/weather/tornado.js';
-import { Snow } from './addons/weather/snow.js';
-import { Water } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/objects/Water.js';
-
 
 // Web Sockets API for communication with the backend
 var api = new WSApi();
@@ -33,16 +22,8 @@ const colladaLoader = new ColladaLoader();
 var simSpeed = 1.0;
 var target = "umn";
 let alertCounter = 0;
-let bgTexture;
-let droneB;
 let renderer;
 // let mixer;
-let umnObj;
-let weather = -1;
-let rain, tornado, snow;
-let sun, water, sky, stats;
-let imesh;
-let ocean;
 const fov = 55; // fov = Field Of View
 const aspect = container.clientWidth / container.clientHeight;
 const near = 0.1;
@@ -398,27 +379,6 @@ function saveAsImage() {
 
 }
 
-var saveFile = function(strData, filename) {
-  var link = document.createElement('a');
-  if (typeof link.download === 'string') {
-      document.body.appendChild(link); //Firefox requires the link to be in the body
-      link.download = filename;
-      link.href = strData;
-      link.click();
-      document.body.removeChild(link); //remove the link when done
-  } else {
-      location.replace(uri);
-  }
-}
-
-function grid() {
-  const gridSize = 1000;
-  const gridDivisions = 500;
-  const gridHelper = new THREE.GridHelper( gridSize, gridDivisions, 0x00EE22, 0x000077);
-  if (gridGate == true) {
-    scene.add( gridHelper );
-  }
-}
 
 function base(){
   // define controls
@@ -454,22 +414,22 @@ $.fn.run = () => {
     scene.background = scenes["retro"].background;
   }
 
-  if (target === "umn") {
-    umnScene();
-  }
 
   $.fn.runJson(`${target}.json`);
 
   //========================================SCENE LIGHTING==========================================
-  const ambientLight = new THREE.AmbientLight( 0xffffff, 0.5 );
+  const ambientLight = new THREE.AmbientLight( 0xffffff, 1.0);
   scene.add( ambientLight );
-  const light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+  const light = new THREE.DirectionalLight( 0xffffff, 1.0 );
   light.position.set( 10, 10, 10 );
   scene.add( ambientLight, light );
-  const light2 = new THREE.DirectionalLight( 0xffffff, 0.5 );
+  const light2 = new THREE.DirectionalLight( 0xffffff, 1.0 );
   light2.position.set( 0, 10, -10 );
   scene.add( ambientLight, light2 );
-  scene.add(umnObj);
+  
+  if (target === "umn") {
+    umnScene();
+  }
 
   //====================================SCENE RENDERER==============================================
   // code to allow screenshot
