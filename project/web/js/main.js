@@ -140,10 +140,12 @@ function umnScene() {
       object.traverse(function (node) {
         if (node.name == "EXPORT_GOOGLE_SAT_WM") {
           node.material = objmaterial;
+          //node.material = new THREE.MeshDepthMaterial();
         }
         else if (node.name == "Areas:building") {
           var material = new THREE.MeshStandardMaterial({ color: 0x85868f, map: texture2 });
           node.material = material;
+          //node.material = new THREE.MeshDepthMaterial();
         }
         else if (!node.isGroup) {
           node.visible = false;
@@ -311,41 +313,6 @@ $.fn.runJson = (file, initialScene = true) => {
   });
 }
 
-const views = [
-  {
-    name: "main",
-    left: 0,
-    bottom: 0,
-    width: 1.0,
-    height: 1.0,
-    background: new THREE.Color( 0.5, 0.5, 0.7 ),
-    eye: [ 0, 300, 1800 ],
-    up: [ 0, 1, 0 ],
-    fov: 30,
-    updateCamera: function ( camera, scene, mouseX, mouseY ) {
-      // camera.position.x += 0.05;
-      // camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-      camera.lookAt( scene.position );
-    }
-  },
-  {
-    main: "actor",
-    left: 0.66,
-    bottom: 0.20,
-    width: 0.25,
-    height: 0.25,
-    background: new THREE.Color( 0.7, 0.5, 0.5 ),
-    eye: [ 0, 1800, 0 ],
-    up: [ 0, 0, 1 ],
-    fov: 45,
-    updateCamera: function ( camera, scene, mouseX, mouseY ) {
-      // camera.position = new THREE.Vector3(0, 0, 0);
-      camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-      camera.lookAt( scene.position );
-
-    }
-  }
-];
 
 let umn = new Scene("umn", new THREE.Color( 'skyblue' ), ["drone", "starya", "aku"]);
 
@@ -367,7 +334,7 @@ function saveAsImage() {
   try {
       var strMime = "image/jpeg";
       imgData = renderer.domElement.toDataURL(strMime);
-      api.sendPostCommand("image", {url: imgData}).then(function(data) {
+      api.sendPostCommand("image", {image: imgData}).then(function(data) {
         console.log(data);
       });
       //saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
@@ -390,9 +357,28 @@ function base(){
 
 // This function runs the scene
 $.fn.run = () => {
-  camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 20000 );
+  camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 1000 );
   camera.position.set( -10, 10, 10 );//30, 30, 100 );
   scene = new THREE.Scene();
+  
+  var uniforms = {
+    time: { type: "f", value: 1.0 },
+    resolution: { type: "v2", value: new THREE.Vector2() },
+    viewMatrixInverse: { type: 'm4', value: new THREE.Matrix4() }
+  };
+
+  uniforms.resolution.value.x = window.innerWidth;
+  uniforms.resolution.value.y = window.innerHeight;
+  uniforms.time.value = 1.0;
+
+  var objmaterial = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: document.getElementById('vertexShader').textContent,
+      fragmentShader: document.getElementById('fragmentShader').textContent
+  });
+  scene.overrideMaterial = objmaterial;
+  //scene.overrideMaterial = new THREE.MeshDepthMaterial();
+
   if (target != undefined) {
     let bg = scenes[target].background;
     if (typeof bg === "string") {
@@ -430,6 +416,7 @@ $.fn.run = () => {
   if (target === "umn") {
     umnScene();
   }
+
 
   //====================================SCENE RENDERER==============================================
   // code to allow screenshot
