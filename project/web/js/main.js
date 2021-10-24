@@ -404,7 +404,9 @@ function saveAsImage() {
       imgData = renderer.domElement.toDataURL(strMime);
       // api.sendCommand("image", {url: imgData});
       $.ajax({
-
+        url: "/image",
+        method: "post",
+        data: {image: image}
       });
       saveFile(imgData.replace(strMime, strDownloadMime), "test.jpg");
   } catch (e) {

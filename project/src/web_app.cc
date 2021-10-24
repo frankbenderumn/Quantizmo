@@ -8,5 +8,4 @@ namespace csci3081 {
         // std::cout << e.Serialize() << std::endl;
     }
 
-
 }

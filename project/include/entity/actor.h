@@ -108,60 +108,77 @@ namespace csci3081 {
             }
         }
 
-        /* @brief interprets pressed key for actor */
-        void Press(const std::string& key, int keyCode) {
-            if (strategy->GetType() != MANUAL) return;
-            if (keyCode == 65) { // KeyA
-                negMove[0] = -1;
-            } else if (keyCode == 83) { // KeyS
-                posMove[2] = 1;
-            } else if (keyCode == 68) { // KeyD
-                posMove[0] = 1;
-            } else if (keyCode == 87) { // KeyW
-                negMove[2] = -1;
-            } else if (keyCode == 37) { // ArrowLeft
-                negTurn[0] = -1;
-            } else if (keyCode == 87) { // ArrowRight
-                posTurn[0] = 1;
-            } else if (keyCode == 38) { // ArrowUp
-                posMove[1] = 1;
-            } else if (keyCode == 40) { // ArrowDown
-                negMove[1] = -1;
-            } else if (keyCode == 01) { // dummy var for left mouse click
-                // posMove.z = 1;
-            } else if (keyCode == 02) { // dummy var for right mouse click
-                // posMove.z = 1;
-            } else if (keyCode == 03) { // dummy var for middle mouse click
-                // posMove.z = 1;
-            }
+        // /* @brief interprets pressed key for actor */
+        // void Press(const std::string& key, int keyCode) {
+        //     if (strategy->GetType() != MANUAL) return;
+        //     if (keyCode == 65) { // KeyA
+        //         negMove[0] = -1;
+        //     } else if (keyCode == 83) { // KeyS
+        //         posMove[2] = 1;
+        //     } else if (keyCode == 68) { // KeyD
+        //         posMove[0] = 1;
+        //     } else if (keyCode == 87) { // KeyW
+        //         negMove[2] = -1;
+        //     } else if (keyCode == 37) { // ArrowLeft
+        //         negTurn[0] = -1;
+        //     } else if (keyCode == 87) { // ArrowRight
+        //         posTurn[0] = 1;
+        //     } else if (keyCode == 38) { // ArrowUp
+        //         posMove[1] = 1;
+        //     } else if (keyCode == 40) { // ArrowDown
+        //         negMove[1] = -1;
+        //     } else if (keyCode == 01) { // dummy var for left mouse click
+        //         // posMove.z = 1;
+        //     } else if (keyCode == 02) { // dummy var for right mouse click
+        //         // posMove.z = 1;
+        //     } else if (keyCode == 03) { // dummy var for middle mouse click
+        //         // posMove.z = 1;
+        //     }
+        // }
+
+        // /* @brief interprets released key for actor */
+        // void Release(const std::string& key, int keyCode) {
+        //       if (keyCode == 65) { // KeyA
+        //           negMove[0] = 0;
+        //       } else if (keyCode == 83) { // KeyS
+        //           posMove[2] = 0;
+        //       } else if (keyCode == 68) { // KeyD
+        //           posMove[0] = 0;
+        //       } else if (keyCode == 87) { // KeyW
+        //           negMove[2] = 0;
+        //       } else if (keyCode == 37) { // ArrowLeft
+        //           negTurn[0] = 0;
+        //       } else if (keyCode == 87) { // ArrowRight
+        //           posTurn[0] = 0;
+        //       } else if (keyCode == 38) { // ArrowUp
+        //           posMove[1] = 0;
+        //       } else if (keyCode == 40) { // ArrowDown
+        //           negMove[1] = 0;
+        //       } else if (keyCode == 01) { // dummy var for left mouse click
+        //           // posMove.z = 1;
+        //       } else if (keyCode == 02) { // dummy var for right mouse click
+        //           // posMove.z = 1;
+        //       } else if (keyCode == 03) { // dummy var for middle mouse click
+        //           // posMove.z = 1;
+        //       }
+        // }
+
+        void SetAxis(int axis, int direction) {
+          if (strategy->GetType() != MANUAL) return;
+          if (direction > 0) {
+            posMove.at(axis) = 1;
+          } else if(direction < 0) {
+            negMove.at(axis) = -1;
+          }
         }
 
-        /* @brief interprets released key for actor */
-        void Release(const std::string& key, int keyCode) {
+        void ClearAxis(int axis, int direction) {
           if (strategy->GetType() != MANUAL) return;
-              if (keyCode == 65) { // KeyA
-                  negMove[0] = 0;
-              } else if (keyCode == 83) { // KeyS
-                  posMove[2] = 0;
-              } else if (keyCode == 68) { // KeyD
-                  posMove[0] = 0;
-              } else if (keyCode == 87) { // KeyW
-                  negMove[2] = 0;
-              } else if (keyCode == 37) { // ArrowLeft
-                  negTurn[0] = 0;
-              } else if (keyCode == 87) { // ArrowRight
-                  posTurn[0] = 0;
-              } else if (keyCode == 38) { // ArrowUp
-                  posMove[1] = 0;
-              } else if (keyCode == 40) { // ArrowDown
-                  negMove[1] = 0;
-              } else if (keyCode == 01) { // dummy var for left mouse click
-                  // posMove.z = 1;
-              } else if (keyCode == 02) { // dummy var for right mouse click
-                  // posMove.z = 1;
-              } else if (keyCode == 03) { // dummy var for middle mouse click
-                  // posMove.z = 1;
-              }
+          if (direction > 0) {
+            posMove.at(axis) = 0;
+          } else if(direction < 0) {
+            negMove.at(axis) = 0;
+          }
         }
     
       private:

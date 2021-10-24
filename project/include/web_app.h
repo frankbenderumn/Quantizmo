@@ -17,6 +17,7 @@
 #include "entity/actee.h"
 #include "entity/actor.h"
 #include "observer/observer.h"
+#include "handler.h"
 
 namespace csci3081 {
 
@@ -24,7 +25,9 @@ class WebApp : public JSONSession {
   public:
 
     /* @brief intializes our web server to communicate with front-end */
-    WebApp() : start(std::chrono::system_clock::now()), time(0.0), factory(new Factory()) {}
+    WebApp() : start(std::chrono::system_clock::now()), time(0.0), factory(new Factory()) {
+      handler = new Handler;
+    }
 
     /* @brief called when the server is shutdown -- ENSURE NO MEMORY LEAKS */
     ~WebApp() { Console::Log(WARNING, "Webapp shutting down -- Ensure no memory leaks"); }
@@ -85,10 +88,9 @@ class WebApp : public JSONSession {
             for (auto e : entities) {
                 delete e;
             }
-            if (entities.size() > 0) {
-                entities.clear();
-            }
-            // printf("entities size is: ");
+            // if (entities.size() > 0) {
+            //     entities.clear();
+            // }
             std::cout << entities.size() << std::endl;
         }
         else if (cmd == "createEntity") {
@@ -97,6 +99,7 @@ class WebApp : public JSONSession {
             if (e->GetType() == ACTOR) {
                 Actor* a = dynamic_cast<Actor*>(e);
                 actor = a;
+                controller->SetActor(a);
             } else if (e->GetType() == ACTEE) {
                 Actee* a = dynamic_cast<Actee*>(e);
                 actees.push_back(a);
@@ -119,7 +122,6 @@ class WebApp : public JSONSession {
 
     void Update(double dt, picojson::object& returnValue) {
         for (auto e : entities) {
-            // Actor* actor = dynamic_cast<Actor*>(e);
             if (actor) {
                 actor->Update(dt);
             } else {
@@ -132,45 +134,32 @@ class WebApp : public JSONSession {
 
     void KeyUp(const std::string& key, int keyCode) {
         std::cout << "key code up is: " << keyCode << std::endl;
-        // for (auto e : entities) {
-            // Actor* a = dynamic_cast<Actor*>(e);
-            if (actor) {
-                actor->Release(key, keyCode);
-            }
-        // }
+
+        handler->Release(key, keyCode);
     }
 
     void KeyDown(const std::string& key, int keyCode) {
         std::cout << "key code down is: " << keyCode << std::endl;
-        // for (auto e : entities) {
-        //     Actor* a = dynamic_cast<Actor*>(e);
+
             if (actor) {
+                // image processing temp workaround
                 if (keyCode == 84) {
                     assert(actees.size() > 0);
                     Actee* actee = actees[0];
                     actor->SetTarget(actee);
-                    actees.erase(actees.begin());
-                } else if (keyCode == 89) {
-                    assert(actees.size() > 0);
+                    actees.erase(actees.begin());d
                 } else {
-                    actor->Press(key, keyCode);
+                    handler->Press(key, keyCode);
                 }
             }
-        // }
     }
 
     /* @brief instantiates the destination in which actees will be deemed rescued */
-    void Rescue(Destination* dest) {
-        actor->SetDestination(dest);
-    }
+    void Rescue(Destination* dest) { actor->SetDestination(dest); }
 
-    void AddObserver(Entity* e, IObserver* observer) {
-        e->Attach(observer);
-    }
+    void AddObserver(Entity* e, IObserver* observer) { e->Attach(observer); }
 
-    void RemoveObserver(Entity* e, IObserver* observer) {
-        e->Detach(observer);
-    }
+    void RemoveObserver(Entity* e, IObserver* observer) { e->Detach(observer); }
 
   private:
     /* @brief unix timestamp for when program is started */
@@ -192,6 +181,8 @@ class WebApp : public JSONSession {
     Actor* actor;
 
     Destination* dest;
+
+    Handler* handler;
 };
 
 
