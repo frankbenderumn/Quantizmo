@@ -18,6 +18,7 @@
 #include "observer/observer.h"
 #include "handler.h"
 #include <iostream>
+#include "canny_detect.h"
 
 // /*
 //    base64.cpp and base64.h

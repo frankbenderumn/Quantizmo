@@ -1,10 +1,10 @@
 #include "web_app.h"
 #include "observer/observer.h"
-#define STB_IMAGE_IMPLEMENTATION
+// #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#define STBI_MSC_SECURE_CRT
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+// #define STBI_MSC_SECURE_CRT
+// #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
 namespace csci3081 {
@@ -41,6 +41,8 @@ namespace csci3081 {
             unsigned char* buffer = stbi_load_from_memory((const unsigned char*)decoded.c_str(), decoded.length(), &width, &height, &comp, 4);
             comp = 4;
             std::cout << stbi_write_png("test.png", width, height, comp, buffer, width*4) << std::endl;
+            CannyDetect c;
+            // c.detect();
             //std::cout << stbi_write_jpg("test.jpg", width, height, comp, buffer, 100.0) << std::endl;
         }
         else if (cmd == "reset") {
