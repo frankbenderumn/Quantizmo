@@ -1,4 +1,5 @@
 # instructor-repo
+10/13/2021 - This is a mostly stripped down version of the final project intended to be given to students at the start of iteration 2.
 
 ## Envirnment Configuration
 All the environment configuration settings are stored in [config/settings](config/settings).

@@ -17,13 +17,36 @@
 		<script type="module" src="js/OBJLoader.js"></script> -->
 	</head>
 	<body>
+		<script id="vertexShader" type="x-shader/x-vertex">
+			out vec4 localPos;
+			void main() {
+				localPos = modelMatrix*vec4(position,1.0);
+				gl_Position = projectionMatrix *
+							  modelViewMatrix *
+							  vec4(position,1.0);
+			}
+		</script>
+	
+		<script id="fragmentShader" type="x-shader/x-fragment">
+			in vec4 localPos;
+			void main() {
+				vec3 pos = (localPos.xyz/2.0 + 50.0)/100.0;
+				//pos = localPos.xyz/2.0+0.5;
+				vec3 dir = localPos.xyz-cameraPosition;
+				float dist = 1.0-(length(dir)/50.0);
+				pos = dist*(dir/length(dir)/2.0 + 0.5);
+				gl_FragColor = vec4(pos.x, pos.y, pos.z,  // B
+									1.0); // A
+			  }
+		</script>
+
 
 		<div id="loading-background" class="hide center loading-background">
 			<div class="tY-40">
 			  <H1 id="loading-text" class="loading-text">Project <b>Iris</b></H1>
 			  <!-- <%# <img src="https://starzoku.s3.amazonaws.com/images/alpha_logo.png" class="responsive loader-logo" /> %> -->
 			  <div id="loader">
-				<div class="m-a w-50">
+				<!--div class="m-a w-50">
 				  <div class="sk-cube-grid">
 					<div class="sk-cube sk-cube1 cube"></div>
 					<div class="sk-cube sk-cube2 cube"></div>
@@ -35,7 +58,7 @@
 					<div class="sk-cube sk-cube8 cube"></div>
 					<div class="sk-cube sk-cube9 cube"></div>
 				  </div>
-				</div>
+				</div-->
 			  </div>
 			</div>
 		  </div>
@@ -69,13 +92,13 @@
 					<li data-role="hover-dropdown-trigger" class="trigger" href="#environments"><i class="fas fa-globe"></i> Environment</li>
 					<div id="environments" class="hover-dropdown">
 						<ol>
-							<li data-role="scene-trigger" href="aquatic">Aquatic</li> 
-							<li data-role="scene-trigger" href="mountain">Mountain</li> 
+<!--							<li data-role="scene-trigger" href="aquatic">Aquatic</li> -->
+<!--							<li data-role="scene-trigger" href="mountain">Mountain</li> -->
 							<li data-role="scene-trigger" href="umn">UMN</li> 
-							<li data-role="scene-trigger" href="ikea">Ikea</li> 
-							<li data-role="scene-trigger" href="retro">Retro</li> 
-							<li data-role="scene-trigger" href="space">Space</li> 
-							<li data-role="scene-trigger" href="pompeii">Pompeii</li> 
+<!--							<li data-role="scene-trigger" href="ikea">Ikea</li> -->
+<!--							<li data-role="scene-trigger" href="retro">Retro</li> -->
+<!--							<li data-role="scene-trigger" href="space">Space</li> -->
+<!--							<li data-role="scene-trigger" href="pompeii">Pompeii</li> -->
 						</ol>
 					</div>
 					<li><a class="modal-button" href="#settings-modal"><i class="fas fa-cogs"></i> Settings</a></li> 

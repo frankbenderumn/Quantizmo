@@ -1,21 +1,10 @@
 // could add a local version to support no internet connection
 import * as THREE from './three.module.js';
-import Stats from 'https://cdn.skypack.dev/three/examples/jsm/libs/stats.module.js';
 import { ColladaLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/ColladaLoader.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/MTLLoader.js';
-import { FirstPersonControls } from 'https://cdn.skypack.dev/three/examples/jsm/controls/FirstPersonControls.js';
 import { OrbitControls } from 'https://cdn.skypack.dev/three/examples/jsm/controls/OrbitControls.js';
-import { GUI } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/libs/dat.gui.module.js';
-import { Sky } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/objects/Sky.js';
-import { PMREMGenerator } from 'https://cdn.skypack.dev/three@0.132.2/src/extras/PMREMGenerator.js';
-import { Ocean } from './addons/ocean.js';
-import { Rain } from './addons/weather/rain.js';
-import { Tornado } from './addons/weather/tornado.js';
-import { Snow } from './addons/weather/snow.js';
-import { Water } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/objects/Water.js';
-
 
 // Web Sockets API for communication with the backend
 var api = new WSApi();
@@ -33,16 +22,8 @@ const colladaLoader = new ColladaLoader();
 var simSpeed = 1.0;
 var target = "umn";
 let alertCounter = 0;
-let bgTexture;
-let droneB;
 let renderer;
 // let mixer;
-let umnObj;
-let weather = -1;
-let rain, tornado, snow;
-let sun, water, sky, stats;
-let imesh;
-let ocean;
 const fov = 55; // fov = Field Of View
 const aspect = container.clientWidth / container.clientHeight;
 const near = 0.1;
@@ -159,10 +140,12 @@ function umnScene() {
       object.traverse(function (node) {
         if (node.name == "EXPORT_GOOGLE_SAT_WM") {
           node.material = objmaterial;
+          //node.material = new THREE.MeshDepthMaterial();
         }
         else if (node.name == "Areas:building") {
           var material = new THREE.MeshStandardMaterial({ color: 0x85868f, map: texture2 });
           node.material = material;
+          //node.material = new THREE.MeshDepthMaterial();
         }
         else if (!node.isGroup) {
           node.visible = false;
@@ -334,58 +317,11 @@ $.fn.runJson = (file, initialScene = true) => {
   });
 }
 
-const views = [
-  {
-    name: "main",
-    left: 0,
-    bottom: 0,
-    width: 1.0,
-    height: 1.0,
-    background: new THREE.Color( 0.5, 0.5, 0.7 ),
-    eye: [ 0, 300, 1800 ],
-    up: [ 0, 1, 0 ],
-    fov: 30,
-    updateCamera: function ( camera, scene, mouseX, mouseY ) {
-      // camera.position.x += 0.05;
-      // camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-      camera.lookAt( scene.position );
-    }
-  },
-  {
-    main: "actor",
-    left: 0.66,
-    bottom: 0.20,
-    width: 0.25,
-    height: 0.25,
-    background: new THREE.Color( 0.7, 0.5, 0.5 ),
-    eye: [ 0, 1800, 0 ],
-    up: [ 0, 0, 1 ],
-    fov: 45,
-    updateCamera: function ( camera, scene, mouseX, mouseY ) {
-      // camera.position = new THREE.Vector3(0, 0, 0);
-      camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-      camera.lookAt( scene.position );
 
-    }
-  }
-];
-
-let aquatic = new Scene("aquatic", "aquatic.jpg", ["drone", "starya", "aku"]);
-let mountain = new Scene("mountain", "darkstorm.jpg", ["drone", "starya", "aku"]);
-let umn = new Scene("umn", new THREE.Color(0x00dddd), ["drone", "starya", "aku"]);
-let space = new Scene("space", "stars.jpeg", []);
-let retro = new Scene("retro", "glitch.jpeg", ["drone", "starya", "aku"]);
-let ikea = new Scene("ikea", "cyber.jpeg", []);
-let pompeii = new Scene("pompeii", new THREE.Color(0x00dddd), ["drone", "starya", "aku"]);
+let umn = new Scene("umn", new THREE.Color( 'skyblue' ), ["drone", "starya", "aku"]);
 
 var scenes = {
-  "aquatic" : aquatic,
-  "mountain" : mountain, 
-  "umn" : umn, 
-  "space" : space, 
-  "retro" : retro, 
-  "ikea" : ikea, 
-  "pompeii" : pompeii
+  "umn" : umn
 };
 
 $("[data-role='scene-trigger']").on('click', function() {
@@ -402,6 +338,7 @@ function saveAsImage() {
   try {
       var strMime = "image/jpeg";
       imgData = renderer.domElement.toDataURL(strMime);
+<<<<<<< HEAD
       // api.sendCommand("image", {url: imgData});
       $.ajax({
         url: "/image",
@@ -409,6 +346,13 @@ function saveAsImage() {
         data: {image: image}
       });
       saveFile(imgData.replace(strMime, strDownloadMime), "test.jpg");
+=======
+      api.sendPostCommand("image", {image: imgData}).then(function(data) {
+        console.log(data);
+      });
+      //saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
+      //
+>>>>>>> e538676df1dd9c52c689062df09b61a21b7b3a96
   } catch (e) {
       console.log(e);
       return;
@@ -416,114 +360,39 @@ function saveAsImage() {
 
 }
 
-var saveFile = function(strData, filename) {
-  var link = document.createElement('a');
-  if (typeof link.download === 'string') {
-      document.body.appendChild(link); //Firefox requires the link to be in the body
-      link.download = filename;
-      link.href = strData;
-      link.click();
-      document.body.removeChild(link); //remove the link when done
-  } else {
-      location.replace(uri);
-  }
-}
-
-function grid() {
-  const gridSize = 1000;
-  const gridDivisions = 500;
-  const gridHelper = new THREE.GridHelper( gridSize, gridDivisions, 0x00EE22, 0x000077);
-  if (gridGate == true) {
-    scene.add( gridHelper );
-  }
-}
 
 function base(){
-  // ======================================SUN AND OCEAN==============================================
-  sun = new THREE.Vector3();
-  // Skybox
-  sky = new Sky();
-  sky.scale.setScalar( 10000 );
-  scene.add( sky );
-
-  const skyUniforms = sky.material.uniforms;
-
-  skyUniforms[ 'turbidity' ].value = 10;
-  skyUniforms[ 'rayleigh' ].value = 2;
-  skyUniforms[ 'mieCoefficient' ].value = 0.005;
-  skyUniforms[ 'mieDirectionalG' ].value = 0.8;
-
-  const parameters = {
-    elevation: 2,
-    azimuth: 180
-  };
-
-  const pmremGenerator = new THREE.PMREMGenerator( renderer );
-
-  function updateSun() {
-
-    const phi = THREE.MathUtils.degToRad( 90 - parameters.elevation );
-    const theta = THREE.MathUtils.degToRad( parameters.azimuth );
-
-    sun.setFromSphericalCoords( 1, phi, theta );
-
-    sky.material.uniforms[ 'sunPosition' ].value.copy( sun );
-    if (target == "pompeii") {
-      ocean.water.material.uniforms['sunDirection'].value.copy(sun).normalize();
-    }
-
-    scene.environment = pmremGenerator.fromScene( sky ).texture;
-
-  }
-
-  updateSun();
-
-  // rain = new Rain(scene);
-  // rain.init();
-
-  // tornado = new Tornado(scene);
-  // tornado.init();
-
-  // snow = new Snow(scene);
-  // snow.init();
-
   // define controls
   controls = new OrbitControls( camera, container );
   controls.maxPolarAngle = Math.PI * 0.695;
-  controls.target.set( 0, 10, 0 );
-  controls.minDistance = 40.0;
-  controls.maxDistance = 1000.0;
+  controls.target.set( 0, 0, 0 );
   controls.update();
-  
-
-// ==========================================WEATHER================================================
-
-
 }
-
-// creates multiple cameras to support render slice
-function viewports() {
-  for ( let ii = 0; ii < views.length; ++ ii ) {
-    const view = views[ ii ];
-    // const camera = new THREE.PerspectiveCamera( view.fov, window.innerWidth / window.innerHeight, 1, 10000 );
-    const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-    // camera.position.fromArray( view.eye );
-      camera.position.set( -10, 10, 10 );
-      // camera.up.fromArray( view.up );
-      view.camera = camera;
-      // if (view.name == "main") {
-      controls = new OrbitControls( view.camera, container );
-      // } else {
-      //   controls = new OrbitControls( view.camera, container ); 
-      // }
-  }
-};
 
 // This function runs the scene
 $.fn.run = () => {
-  camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 20000 );
-  camera.position.set( 30, 30, 100 );
+  camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 1000 );
+  camera.position.set( -10, 10, 10 );//30, 30, 100 );
   scene = new THREE.Scene();
+  
+  var uniforms = {
+    time: { type: "f", value: 1.0 },
+    resolution: { type: "v2", value: new THREE.Vector2() },
+    viewMatrixInverse: { type: 'm4', value: new THREE.Matrix4() }
+  };
+
+  uniforms.resolution.value.x = window.innerWidth;
+  uniforms.resolution.value.y = window.innerHeight;
+  uniforms.time.value = 1.0;
+
+  var objmaterial = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: document.getElementById('vertexShader').textContent,
+      fragmentShader: document.getElementById('fragmentShader').textContent
+  });
+  scene.overrideMaterial = objmaterial;
+  //scene.overrideMaterial = new THREE.MeshDepthMaterial();
+
   if (target != undefined) {
     let bg = scenes[target].background;
     if (typeof bg === "string") {
@@ -545,83 +414,23 @@ $.fn.run = () => {
     scene.background = scenes["retro"].background;
   }
 
-  // runs the json to send it to the backend for processing
-
-  // const waterGeometry = new THREE.PlaneBufferGeometry(100000, 100000);
-  // waterGeometry.renderOrder = 2;
-  // water = new Water(
-  //     waterGeometry,
-  //     {
-  //     textureWidth: 512,
-  //     textureHeight: 512,
-  //     waterNormals: new THREE.TextureLoader().load('../assets/texture/waternormals.jpg', function (texture) {
-  //         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-  //     }),
-  //     alpha: 1,
-  //     sunDirection: new THREE.Vector3(),
-  //     sunColor: 0xffffff,
-  //     waterColor: 0x001e0f,
-  //     distortionScale: 0,
-  //     size: 0.1,
-  //     // fog: scene.fog !== undefined
-  //     }
-  // );
-  // water.rotation.x = - Math.PI / 2;
-  // water.position.y = -10;
-
-  // ============================== SCENE ADD ONS AND ENVIRONMENTS==================================
-  switch (target) {
-    case "umn":
-      weather = -1;
-      break;
-    case "aquatic":
-      grid();
-      // adding fog
-      {
-        const color = 0x1f556e;
-        const density = 0.01;
-        // scene.fog = new THREE.FogExp2(color, density);
-
-        const near = 900;
-        const far = 1100;
-        scene.fog = new THREE.Fog(color, near, far);
-      }
-      break;
-    case "pompeii":
-      ocean = new Ocean(scene);
-      ocean.render();
-
-      // scene.add(water);
-      // const gui = new GUI();
-      break;
-    case "mountain":
-      grid();
-      break;
-    case "ikea":
-      grid();
-      break;
-    case "retro":
-      break;
-    default:
-      break;
-  }
-
-  if (target === "umn") {
-    umnScene();
-  }
 
   $.fn.runJson(`${target}.json`);
 
   //========================================SCENE LIGHTING==========================================
-  const ambientLight = new THREE.AmbientLight( 0xffffff, 0.5 );
+  const ambientLight = new THREE.AmbientLight( 0xffffff, 1.0);
   scene.add( ambientLight );
-  const light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+  const light = new THREE.DirectionalLight( 0xffffff, 1.0 );
   light.position.set( 10, 10, 10 );
   scene.add( ambientLight, light );
-  const light2 = new THREE.DirectionalLight( 0xffffff, 0.5 );
+  const light2 = new THREE.DirectionalLight( 0xffffff, 1.0 );
   light2.position.set( 0, 10, -10 );
   scene.add( ambientLight, light2 );
-  scene.add(umnObj);
+  
+  if (target === "umn") {
+    umnScene();
+  }
+
 
   //====================================SCENE RENDERER==============================================
   // code to allow screenshot
@@ -638,13 +447,9 @@ $.fn.run = () => {
 
   // prevents multiple canvases from being generated on scene change
   $('canvas:nth-of-type(1)').remove();
-  renderer = new THREE.WebGLRenderer( { container, alpha: true, antialias: true } );
+  renderer = new THREE.WebGLRenderer( { container, alpha: true, antialias: true, preserveDrawingBuffer: true } );
   renderer.setSize( window.innerWidth, window.innerHeight );
   document.body.appendChild( renderer.domElement );
-
-  // screenshot export type
-  var strMime = "image/jpeg";
-  var imgData = renderer.domElement.toDataURL(strMime);
 
   // adds extra aesthetic code (may refactor to modules)
   base();
@@ -691,54 +496,29 @@ function update() {
   const delta = clock.getDelta();
   time += delta;
 
+<<<<<<< HEAD
     //temporary work around to force models to be loaded first
+=======
+  //temporary work around to force models to be loaded first
+  if (models.length >= 3) {
+    updateReady = true;
+  }
+>>>>>>> e538676df1dd9c52c689062df09b61a21b7b3a96
 
   controls.update();
-
-  // Iterate through and update the animation mixers for each object in the
-  // scene.
-  // for (const clips of mixers) {
-  //   clips.forEach( function ( clip ) {
-  //     mixer.clipAction( clip ).play();
-  //   } );
-  //   // if (mixer.start == undefined || mixer.duration == undefined) {
-  //   //   mixer.mixer.update(delta);
-  //   // }
-  //   // else {
-  //   //   var newTime = time - mixer.start;
-  //   //   var iterations = Math.floor(newTime / mixer.duration);
-  //   //   newTime = newTime - iterations * mixer.duration + mixer.start;
-  //   //   mixer.mixer.setTime(newTime);
-  //   // }
-  // }
-
-  switch (weather) {
-    case -1:
-      break;
-    case 0:
-      rain.update();
-      break;
-    case 1:
-      snow.update();
-      break;
-    case 2:
-      tornado.update();
-      break;
-    default:
-      break;
-  }
-
-  if (target == "pompeii") {
-    ocean.update();
-  }
 
   if (updateReady) {
     console.log("models are: ...");
     console.log(models);
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
       let data = updateData;
+<<<<<<< HEAD
       console.log(data);
       // if (data.entity0 != undefined && data.entity1 != undefined && data.entity2 != undefined ) {
+=======
+      //console.log(data);
+      if (data.entity0 != undefined ) {
+>>>>>>> e538676df1dd9c52c689062df09b61a21b7b3a96
         for (let e in data) {
           // console.log(models.length);
           console.log(data[e].entityId);
@@ -762,43 +542,6 @@ function update() {
 
 // This function simply renders the scene based on the camera position.
 function render() {
-
-  // update the picking ray with the camera and mouse position
-	// raycaster.setFromCamera( mouse, camera );
-
-	// // calculate objects intersecting the picking ray
-	// const intersects = raycaster.intersectObjects( scene.children );
-
-	// for ( let i = 0; i < intersects.length; i ++ ) {
-	// 	intersects[ i ].object.material.color.set( 0xff0000 );
-	// }
-
-  // code that splits render to multiple viewports
-  // for ( let ii = 0; ii < views.length; ++ ii ) {
-
-  //   const view = views[ ii ];
-  //   const camera = view.camera;
-
-  //   // console.log(camera);
-
-  //   view.updateCamera( camera, scene, mouseX, mouseY );
-
-  //   const left = Math.floor( window.innerWidth * view.left );
-  //   const bottom = Math.floor( window.innerHeight * view.bottom );
-  //   const width = Math.floor( window.innerWidth * view.width );
-  //   const height = Math.floor( window.innerHeight * view.height );
-
-  //   renderer.setViewport( left, bottom, width, height );
-  //   renderer.setScissor( left, bottom, width, height );
-  //   renderer.setScissorTest( true );
-  //   // renderer.setClearColor( view.background );
-
-  //   camera.aspect = width / height;
-  //   camera.updateProjectionMatrix();
-
-  //   renderer.render( scene, camera );
-
-  // }
   renderer.render( scene, camera );
 }
 
@@ -816,13 +559,6 @@ function onWindowResize() {
 }
 
 function onMouseMove( event ) {
-
-	// calculate mouse position in normalized device coordinates
-	// (-1 to +1) for both components
-
-	// mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	// mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
     mouseX = ( event.clientX - window.innerWidth / 2 );
     mouseY = ( event.clientY - window.innerHeight / 2 );
 
