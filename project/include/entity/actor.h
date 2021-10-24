@@ -78,7 +78,7 @@ namespace csci3081 {
 
             } else if (strategy->GetType() == AUTOMATIC) {
                 // strategy->Move(this->direction, theta, phi);
-                Console::Log(WARNING, "AUTOMATIC STRATEGY EXECUTING!");
+                // Console::Log(WARNING, "AUTOMATIC STRATEGY EXECUTING!");
 
                 // collision points :
                 // [-110, 0, -62]
@@ -102,7 +102,7 @@ namespace csci3081 {
                 }
 
             } else if (strategy->GetType() == TARGET) {
-                Console::Log(WARNING, "TARGET STRATEGY EXECUTING!");
+                // Console::Log(WARNING, "TARGET STRATEGY EXECUTING!");
                 // position[2] += direction[2] * speed * dt;
                 position = position + (target->GetPosition() - this->position).Normalize() * 2.f * dt;
             }

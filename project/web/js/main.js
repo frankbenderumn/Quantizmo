@@ -338,21 +338,12 @@ function saveAsImage() {
   try {
       var strMime = "image/jpeg";
       imgData = renderer.domElement.toDataURL(strMime);
-<<<<<<< HEAD
-      // api.sendCommand("image", {url: imgData});
-      $.ajax({
-        url: "/image",
-        method: "post",
-        data: {image: image}
-      });
-      saveFile(imgData.replace(strMime, strDownloadMime), "test.jpg");
-=======
+      console.log(`imgData is ${imgData}`);
       api.sendPostCommand("image", {image: imgData}).then(function(data) {
         console.log(data);
       });
       //saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
       //
->>>>>>> e538676df1dd9c52c689062df09b61a21b7b3a96
   } catch (e) {
       console.log(e);
       return;
@@ -496,14 +487,10 @@ function update() {
   const delta = clock.getDelta();
   time += delta;
 
-<<<<<<< HEAD
-    //temporary work around to force models to be loaded first
-=======
   //temporary work around to force models to be loaded first
   if (models.length >= 3) {
     updateReady = true;
   }
->>>>>>> e538676df1dd9c52c689062df09b61a21b7b3a96
 
   controls.update();
 
@@ -512,13 +499,8 @@ function update() {
     console.log(models);
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
       let data = updateData;
-<<<<<<< HEAD
-      console.log(data);
-      // if (data.entity0 != undefined && data.entity1 != undefined && data.entity2 != undefined ) {
-=======
       //console.log(data);
       if (data.entity0 != undefined ) {
->>>>>>> e538676df1dd9c52c689062df09b61a21b7b3a96
         for (let e in data) {
           // console.log(models.length);
           console.log(data[e].entityId);
@@ -531,7 +513,7 @@ function update() {
             // console.log(models[data[e].entityId].scene);
             // console.log("updating actor!");
           }
-        // }
+        }
       }
       updateReady = true;
     });
