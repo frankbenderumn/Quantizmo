@@ -1,9 +1,9 @@
 #include <iostream>
 using namespace std;
 
-#include "canny_detect.h"
-#include "image.h"
-#include "filter.h"
+#include "image/canny_detect.h"
+#include "image/image.h"
+#include "image/filter.h"
 
 namespace csci3081 {
 
@@ -16,7 +16,6 @@ bool CannyDetect::detect(Image input) {
     // dbl thresh
     // hys
     // colorFilter
-
 
     vector<Image*> inputImage = {&input};
     vector<Image*> results = grey.apply(inputImage);

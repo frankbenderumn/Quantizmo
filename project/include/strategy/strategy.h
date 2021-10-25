@@ -15,11 +15,7 @@ namespace csci3081 {
       public:
         Strategy() {}
         virtual ~Strategy() { printf("destroying strategy!\n"); }
-        virtual void Move(Vec3 dir, float theta, float phi) {
-            dir[0] = theta;
-            dir[1] = phi;
-            Console::Log(WARNING, "This strategy should not be running!");
-        }
+        virtual void Move(const Vec3& pos, float dt) = 0;
         StrategyType GetType() { return type; }
       protected:
         StrategyType type = UNDEFINED_STRATEGY;

@@ -7,12 +7,13 @@
 #include "util/console.h"
 #include "util/vec3.h"
 #include "interface/ientity.h"
-#include "observer/iobserver.h"
+#include "interface/iobserver.h"
 
 namespace csci3081 {
 
     class Entity : public IEntity {
       public:
+        Entity() {}
         Entity(const picojson::object& data) {
             this->position = Vec3(JsonHelper::CastVector(data.find("position")->second.get<picojson::array>()));
             this->direction = Vec3(JsonHelper::CastVector(data.find("direction")->second.get<picojson::array>()));
@@ -21,7 +22,7 @@ namespace csci3081 {
             this->id = (int)data.find("entityId")->second.get<double>();
         }
         virtual ~Entity() { printf("destroying entity!\n"); }
-        void virtual Update(float dt) {}
+        virtual void Update(float dt) {};
         const std::string& GetName() { return this->name; }
         EntityType GetType() { return this->type; }
         const int GetId() { return this->id; }
@@ -29,6 +30,42 @@ namespace csci3081 {
         Vec3& GetPosition() { return this->position; }
         void SetPosition(Vec3 rhs) {
             this->position = rhs;
+        }
+
+        picojson::value Serialize() {
+            picojson::object o;
+            picojson::object pos;
+            pos["x"] = picojson::value(this->position[0]);
+            pos["y"] = picojson::value(this->position[1]);
+            pos["z"] = picojson::value(this->position[2]);
+            picojson::object dir;
+            dir["x"] = picojson::value(this->direction[0]);
+            dir["y"] = picojson::value(this->direction[1]);
+            dir["z"] = picojson::value(this->direction[2]);
+            o["type"] = picojson::value(EnumToString(this->type));
+            o["position"] = picojson::value(pos);
+            o["direction"] = picojson::value(dir);
+            o["name"] = picojson::value(this->name);
+            o["radius"] = picojson::value(this->radius);
+            o["entityId"] = picojson::value((double)this->id);
+            // std::cout << "serialized entity is "<< picojson::value(o).serialize() << std::endl;
+            return picojson::value(o);
+        }
+
+        std::string EnumToString(EntityType type) {
+            std::string result;
+            if (type == ACTOR) {
+              result = "Actor";
+            } else if (type == ACTEE) {
+              result = "Actee";
+            } else if (type == DESTINATION) {
+              result = "Destination";
+            } else if (type == CHARGER) {
+              result = "Charger";
+            } else {
+              result = "Undefined";
+            }
+            return result;
         }
         
         bool Attach(IObserver* observer) {

@@ -1,7 +1,7 @@
 #ifndef OBSERVER_H_
 #define OBSERVER_H_
 
-#include "iobserver.h"
+#include "interface/iobserver.h"
 #include "web_app.h"
 
 namespace csci3081 {

@@ -2,9 +2,9 @@
 #include <iostream>
 using namespace std;
 
-#include "image_processor.h"
-#include "image.h"
-#include "filter.h"
+#include "image/image_processor.h"
+#include "image/image.h"
+#include "image/filter.h"
 
 namespace csci3081 {
 

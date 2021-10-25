@@ -1,14 +1,14 @@
-#include "image.h"
+#include "image/image.h"
 
 #include <algorithm>
 #include <cmath>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "image/stb_image.h"
 
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "image/stb_image_write.h"
 
 namespace csci3081 {
 

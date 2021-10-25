@@ -36,6 +36,12 @@ namespace csci3081 {
             return *this;
         }
 
+        inline void SetX(float a) { e[0] = a; }
+        inline void SetY(float a) { e[1] = a; }
+        inline void SetZ(float a) { e[2] = a; }
+
+        void Print() { std::cout << "<" << e[0] << ", " << e[1] << ", " << e[2] << ">" << std::endl; }
+
         // destructor
         ~Vec3(){}
 
@@ -50,7 +56,7 @@ namespace csci3081 {
         }
 
         inline float& operator[](int x) {
-            // assert(x <= 2 && x > 0);
+            // assert(x <= 2 && x >= 0);
             return e[x];
         }
 
@@ -61,10 +67,10 @@ namespace csci3081 {
             return *this;
         }
 
-        inline Vec3& operator*=(const Vec3& v) {
-            e[0] *= v.e[0];
-            e[1] *= v.e[1];
-            e[2] *= v.e[2];
+        inline Vec3& operator+=(const Vec3& v) {
+            e[0] += v.e[0];
+            e[1] += v.e[1];
+            e[2] += v.e[2];
             return *this;
         }
 

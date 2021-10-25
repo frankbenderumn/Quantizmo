@@ -9,6 +9,7 @@ namespace csci3081 {
         Destination(const picojson::object& data) : Entity(data) {
           this->type = DESTINATION;
         }
+        void Update(float dt) {}
         ~Destination() { printf("destroying destination!\n"); }
     };
 }

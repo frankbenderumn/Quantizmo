@@ -3,6 +3,7 @@
 
 namespace csci3081 {
     class Analytics {
+      public:
         Analytics() {}
         virtual ~Analytics() { printf("destroying analytics!\n"); }
     };
