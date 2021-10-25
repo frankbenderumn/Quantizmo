@@ -10,13 +10,14 @@
 #include "actee.h"
 #include "entity/destination.h"
 #include "util/handler.h"
+#include "interface/iactor.h"
 
 namespace csci3081 {
-    class Actor : public Entity {
+    class Actor : public IActor {
 
       public: 
         /* @brief constructs the actor */
-        Actor(const picojson::object& data) {
+        Actor(const picojson::object& data) : IActor(data) {
           if (data.find("speed") != data.end()) {
               this->speed = data.find("speed")->second.get<double>();
           }
@@ -29,38 +30,40 @@ namespace csci3081 {
         ~Actor() { printf("destroying actor!\n"); }
 
         void SetStrategy(Strategy* strategy) { this->strategy = strategy; }
-
         void SetHandler(Handler* handler) { this->handler = handler; }
 
-        void SetTarget(Actee* e) {
+        void SetTarget(Entity* e) {
             this->target = e;
             SetStrategy(new Target(e));
         }
 
-        void SetDestination(Destination* dest) { this->dest = dest; }
-
         /* @brief updates the actor */
         void Update(float dt) {
+
             if (target) {
                 if (Distance(target->GetPosition(), this->GetPosition()) <= 1.f) {
                     this->Notify("alert", "customer picked up");
                     pickedUp = true;
-                    // if (target->GetType() == ACTEE) {
+                    if (target->GetType() == ACTEE) {
                         this->SetStrategy(new Manual(handler));
-                    // } else {
-                    //     this->SetStrategy(new Automatic());
-                    // }
+                    } else {
+                        this->SetStrategy(new Automatic());
+                    }
                 }
-
             }
 
             if (pickedUp) { target->SetPosition(this->position); }
 
-            if (dest && target) {
-                if (Distance(target->GetPosition(), dest->GetPosition()) <= dest->GetRadius()) {
-                    Console::Log(SUCCESS, "Target delivered!\n");
-                    this->Notify("alert", "target successfully delivered!\n");
+            if (target) {
+                
+                Actee* t = dynamic_cast<Actee*>(target);
+                if (t) {
+                    if (Distance(t->GetPosition(), t->GetDestination()->GetPosition()) <= t->GetDestination()->GetRadius()) {
+                        Console::Log(SUCCESS, "Target delivered!\n");
+                        this->Notify("alert", "target successfully delivered!\n");
+                    }
                 }
+
             }
 
             if (strategy) {
@@ -89,10 +92,10 @@ namespace csci3081 {
         Strategy* strategy; 
 
         /* @brief target to be rescued */
-        Actee* target = nullptr;
+        Entity* target = nullptr;
 
-        /* @brief target to drop off rescuee (actee) */
-        Destination* dest = nullptr;
+        // /* @brief target to drop off rescuee (actee) */
+        // Destination* dest = nullptr;
 
         Handler* handler;
     };

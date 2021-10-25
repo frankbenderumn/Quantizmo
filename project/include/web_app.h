@@ -19,6 +19,7 @@
 #include "util/handler.h"
 #include <iostream>
 #include "image/canny_detect.h"
+#include "addon/analytics.h"
 
 namespace csci3081 {
 
@@ -27,11 +28,17 @@ class WebApp : public JSONSession {
 
     /* @brief intializes our web server to communicate with front-end */
     WebApp() : start(std::chrono::system_clock::now()), time(0.0), factory(new Factory()) {
-      handler = new Handler;
+        handler = new Handler;
+        analytics = Analytics::instance();
+        // drone_runtimes = {};
     }
 
     /* @brief called when the server is shutdown -- ENSURE NO MEMORY LEAKS */
-    ~WebApp() { Console::Log(WARNING, "Webapp shutting down -- Ensure no memory leaks"); }
+    ~WebApp() { 
+        Console::Log(WARNING, "Webapp shutting down -- Ensure no memory leaks");
+        // analytics = Analytics::instance();
+        analytics->WriteRuntimesToCache(drone_runtimes);
+     }
 
     /* @brief adds an entity to the global vector */
     void AddEntity(Entity* e) { entities.push_back(e); Console::Log(SUCCESS, "entity successfully added!");  }
@@ -41,10 +48,6 @@ class WebApp : public JSONSession {
 
     /* @brief sends notification through observer back to front-end */
     void SendNotification(const std::string& s) { Console::Log(INFO, s); }
-
-    void Test() { 
-      // Console::Log(SUCCESS, "Observer being sent!"); 
-    }
 
     void receiveJSON(picojson::value& val);
 
@@ -57,20 +60,15 @@ class WebApp : public JSONSession {
     void KeyDown(const std::string& key, int keyCode);
 
     /* @brief instantiates the destination in which actees will be deemed rescued */
-    void Rescue(Destination* dest) { 
-        // if (actor->GetType() == ACTOR) {
-        //     Actor* a = dynamic_cast<Actor*>(actor);
-        //     a->SetDestination(dest); 
-        // } else {
-        //     BatteryActor* b = dynamic_cast<BatteryActor*>(actor);
-        //     b->SetDestination(dest); 
-        // }
-        actor->SetDestination(dest);
+    void Rescue(Actee* actee, Destination* dest) { 
+        actee->SetDestination(dest);
     }
 
     void AddObserver(Entity* e, IObserver* observer) { e->Attach(observer); }
 
     void RemoveObserver(Entity* e, IObserver* observer) { e->Detach(observer); }
+
+    std::vector<Entity*> GetByType(int type);
 
   private:
     /* @brief unix timestamp for when program is started */
@@ -89,11 +87,16 @@ class WebApp : public JSONSession {
     std::vector<Actee*> actees;
 
     /* @brief only one actor will be used, therefore a member var is used for efficiency */
-    Actor* actor;
+    IActor* actor;
 
-    Destination* dest;
+    Decorator* decorator;
 
-    Handler* handler;
+    // Destination* dest;
+
+    Handler* handler;    
+    static std::map<std::string, float> drone_runtimes; // Records the runtime traveled for each drone. Used for Analytics
+    void UpdateTimeMap(const std::string&, float distance = 0); // Update the drone time map
+    Analytics* analytics;
 };
 
 

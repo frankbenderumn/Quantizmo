@@ -303,6 +303,7 @@ $.fn.runJson = (file, initialScene = true) => {
         scenePosition = command.params.position;
       }
       if (command.command == "createEntity") {
+        // if (command.params.type != "actor" || command.params.type != "battery_actor") {
         if (command.params.type != "actor") {
           $.fn.load(command.params, false);
         } else {
@@ -312,6 +313,9 @@ $.fn.runJson = (file, initialScene = true) => {
       }
       if (command.command == "terrain") {
         $.fn.load(command.params, false);
+      }
+      if (command.command == "rescue") {
+        api.sendCommand("rescue", command.params);
       }
     }
   });
@@ -488,23 +492,21 @@ function update() {
   time += delta;
 
   //temporary work around to force models to be loaded first
-  if (models.length >= 3) {
-    updateReady = true;
-  }
 
   controls.update();
 
   if (updateReady) {
-    console.log("models are: ...");
-    console.log(models);
+    // console.log("models are: ...");
+    // console.log(models);
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
       let data = updateData;
-      //console.log(data);
+      console.log(data);
       if (data.entity0 != undefined ) {
         for (let e in data) {
           // console.log(models.length);
           console.log(data[e].entityId);
           if (data[e].type == "Actor") {
+            console.log("SHOULD BE RENDERING");
             models[0].scene.position.copy(new THREE.Vector3(data[e].position.x, data[e].position.y, data[e].position.z));
             models[0].scene.rotation.x = data[e].direction.x;
             models[0].scene.rotation.y = data[e].direction.y;

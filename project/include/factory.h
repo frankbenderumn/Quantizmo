@@ -20,9 +20,6 @@ namespace csci3081 {
             if (type == "actor") {
                 Actor* actor = new Actor(data);
                 return actor;
-            } else if (type == "battery_actor") {
-                BatteryActor* actor = new BatteryActor(new Actor(data));
-                return actor;
             } else if (type == "actee") {
                 Actee* actee = new Actee(data);
                 return actee;
@@ -33,7 +30,7 @@ namespace csci3081 {
                 Charger* charger = new Charger(data);
                 return charger;
             } else {
-                Console::Log(FAILURE, "Invalid Entity type");
+                return nullptr;
             }
         }
     };

@@ -79,6 +79,9 @@ std::string base64_decode(std::string const& encoded_string) {
 
 namespace csci3081 {
 
+    std::map<std::string, float> WebApp::drone_runtimes = {};
+    std::map<std::string, std::vector<float>> Analytics::cachedOutput = {};
+
     void WebApp::receiveJSON(picojson::value& val) {
         picojson::object data = val.get<picojson::object>();
         std::string cmd = data["command"].get<std::string>();
@@ -133,10 +136,11 @@ namespace csci3081 {
         else if (cmd == "createEntity") {
             assert(factory);
             Entity* e = factory->Create(data);
-            // BatteryActor* b = dynamic_cast<BatteryActor*>(e);
-            // if (b) {
+            // if (data.find("type")->second.get<std::string>() == "battery_actor") {
+            //     BatteryActor* b = new BatteryActor(new Actor(data));
             //     b->SetHandler(handler);
-            //     // actor = b;
+            //     decorator = b;
+            //     printf("Adding decorator\n");
             // }
             if (e->GetType() == ACTOR) {
                 Actor* a = dynamic_cast<Actor*>(e);
@@ -146,22 +150,21 @@ namespace csci3081 {
             } else if (e->GetType() == ACTEE) {
                 Actee* a = dynamic_cast<Actee*>(e);
                 actees.push_back(a);
-            } else if (e->GetType() == DESTINATION) {
-                Destination* d = dynamic_cast<Destination*>(e);
-                Rescue(d);
             }
             if (e) { 
                 AddEntity(e);
                 std::cout << entities.size() << std::endl;
                 AddObserver(e, new Observer(this));
-                Console::Log(SUCCESS, "Entity was added!"); 
             } else {
-                Console::Log(FAILURE, "Failed to add entity!");
+                // Console::Log(FAILURE, "Failed to add entity!");
             }
         } 
         else if (cmd == "rescue") {
-          int acteeIdx = (int)data["actee"].get<double>();
-          int destIdx = (int)data["actee"].get<double>();
+            int acteeIdx = (int)data["actee"].get<double>();
+            int destIdx = (int)data["destination"].get<double>();
+            std::cout << "acteeIdx: " << acteeIdx << " destIdx: " << destIdx << std::endl;
+            assert(entities.size() >= 2);
+            Rescue((Actee*)entities.at(acteeIdx), (Destination*)entities.at(destIdx));
         }
         else {
             std::cout << "Unknown command: " << cmd << " - " << picojson::value(data).serialize() << std::endl;
@@ -169,9 +172,19 @@ namespace csci3081 {
     }
 
     void WebApp::Update(double dt, picojson::object& returnValue) {
+        // printf("updating\n");
+        // if (decorator) {
+        //   decorator->Update(dt);
+        //   returnValue["entity"+std::to_string(decorator->GetActor()->GetId())] = decorator->GetActor()->Serialize();
+        //   std::cout << returnValue["entity"+std::to_string(decorator->GetActor()->GetId())] << std::endl;
+        // }
+
         for (auto e : entities) {
             if (actor) {
+                // printf("updating\n");
                 actor->Update(dt);
+                const std::string drone_model = csci3081::JsonHelper::GetString(actor->GetData(), "name");
+                UpdateTimeMap(drone_model, dt);
             } else {
                 e->Update(dt);
             }
@@ -187,19 +200,20 @@ namespace csci3081 {
 
     void WebApp::KeyDown(const std::string& key, int keyCode) {
         std::cout << "key code down is: " << keyCode << std::endl;
+        // if (decorator) { actor = decorator->GetActor(); }
         if (actor) {
             // image processing temp workaround
             if (keyCode == 84) {
                 assert(actees.size() > 0);
                 Actee* actee = actees[0];
-                // if (actor->GetType() == ACTOR) {
-                //     Actor* a = dynamic_cast<Actor*>(actor);
-                //     a->SetTarget(actee); 
-                // } else {
-                //     BatteryActor* b = dynamic_cast<BatteryActor*>(actor);
-                //     b->SetTarget(actee); 
-                // }
-                actor->SetTarget(actee);
+                if (actor->GetType() == ACTOR) {
+                    Actor* a = dynamic_cast<Actor*>(actor);
+                    a->SetTarget(actee); 
+                } else {
+                    BatteryActor* b = dynamic_cast<BatteryActor*>(actor);
+                    b->SetTarget(actee); 
+                }
+                // actor->SetTarget(actee);
                 actees.erase(actees.begin());
             } else {
                 handler->Handle(1, keyCode);
@@ -207,9 +221,26 @@ namespace csci3081 {
         }
     }
 
-    void Observer::OnEvent(const picojson::value& value, const IEntity& e) {
-        sys->Test();
-        // std::cout << e.Serialize() << std::endl;
+    std::vector<Entity*> WebApp::GetByType(int type) {
+        std::vector<Entity*> result;
+        for (auto e : entities) {
+            if (e->GetType() == type) result.push_back(e);
+        }
+        return result;
     }
 
+    void WebApp::UpdateTimeMap(const std::string& drone_model, float distance){
+        auto it = drone_runtimes.find(drone_model);
+        if (it == drone_runtimes.end()){
+            drone_runtimes.insert({drone_model, distance});
+        }
+        else{
+            it->second += distance;
+        }
+    }
+
+    void Observer::OnEvent(const picojson::value& value, const IEntity& e) {
+        sys->SendNotification("Livin la vida loca");
+        // std::cout << e.Serialize() << std::endl;
+    }
 }

@@ -15,6 +15,8 @@ namespace csci3081 {
     class IActor : public Entity {
 
       public: 
+
+        IActor(const picojson::object& data) : Entity(data) {}
         /* @brief destructs the actor */
         virtual ~IActor() { printf("destroying actor!\n"); }
 
@@ -24,7 +26,7 @@ namespace csci3081 {
 
         virtual void SetTarget(Entity* e) = 0;
 
-        virtual void SetDestination(Destination* dest) = 0;
+        // virtual void SetDestination(Destination* dest) = 0;
 
         virtual void Update(float dt) = 0;
     

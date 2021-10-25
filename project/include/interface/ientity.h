@@ -9,7 +9,7 @@
 
 namespace csci3081 {
 
-    enum EntityType { ACTOR, ACTEE, DESTINATION, CHARGER, UNDEFINED_ENTITY };
+    enum EntityType { ACTOR, ACTEE, DESTINATION, CHARGER, BATTERY_ACTOR, UNDEFINED_ENTITY };
 
     class IEntity {
       public:              

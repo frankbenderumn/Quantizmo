@@ -32,6 +32,8 @@ namespace csci3081 {
             this->position = rhs;
         }
 
+        const picojson::object& GetData() { return data; }
+
         picojson::value Serialize() {
             picojson::object o;
             picojson::object pos;
