@@ -9,6 +9,7 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<script type="module" src="js/jquery-3.5.1.min.js"></script>
 		<script type="module" src="js/scaffolding.js"></script>
+		<script type="module" src="js/loader.js"></script>
 		<script src="js/WSApi.js"></script>
 		<script type="module" src="js/main.js"></script>
 		<!-- <script type="module" src="js/three.js"></script>
@@ -101,11 +102,11 @@
 						</ol>
 					</div>
 					<li><a class="modal-button" href="#settings-modal"><i class="fas fa-cogs"></i> Settings</a></li> 
-					<li>
+					<!-- <li>
 					  <a id="sidenav-trigger" href="javascript:void(0);">
 						<i class="fa fa-bars sidenav-trig"></i>
 					  </a>
-					</li>
+					</li> -->
 				  </ul>
 				</div>
 			  </nav>
@@ -135,21 +136,6 @@
 		<!-- START MODALS -->
 		<div id="wire" data-target="wire" data-role="toggle" class="slim modal">
 			<div class="slim modal-box">
-			  <video id="localVideo" playsinline autoplay muted></video>
-			  <video id="remoteVideo" playsinline autoplay></video>
-			  <div class="shell">
-				<button class="bttn" id="startButton">Start</button>
-				<button class="bttn" id="callButton">Call</button>
-				<button class="bttn" id="hangupButton">Hang Up</button>
-			  </div>
-			  <div class="box">
-				<span>SDP Semantics:</span>
-				<select id="sdpSemantics">
-				  <option selected value="">Default</option>
-				  <option value="unified-plan">Unified Plan</option>
-				  <option value="plan-b">Plan B</option>
-				</select>
-			  </div>
 			</div>
 		</div>
 

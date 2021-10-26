@@ -5,20 +5,23 @@ import { GLTFLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/G
 import { OBJLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/MTLLoader.js';
 import { OrbitControls } from 'https://cdn.skypack.dev/three/examples/jsm/controls/OrbitControls.js';
+import { load, umn } from './loader.js';
 
 // Web Sockets API for communication with the backend
 var api = new WSApi();
-// let models = [];
-const glbLoader = new GLTFLoader();
+
+// const colladaLoader = new ColladaLoader();
+// const glbLoader = new GLTFLoader();
+const objLoader = new OBJLoader();
+
+var scene = new THREE.Scene();
 let models = [];
 let mixers = [];
+
 // var camera;
 var controls;
-var scene;
 var container = document.querySelector( '#scene-container' );
 const clock = new THREE.Clock();
-const objLoader = new OBJLoader();
-const colladaLoader = new ColladaLoader();
 var simSpeed = 1.0;
 var target = "umn";
 let alertCounter = 0;
@@ -40,171 +43,6 @@ let camera;
 // let actor_camera, actor_scene, actor_controls, actor_renderer;
 // const actor_aspect = actor_container.clientWidth / actor_container.clientHeight;
 
-$.fn.notify = (type, message) => {
-  let wrap = document.getElementById("alert-wrapper");
-  let alert = document.createElement("div");
-  alert.className = "alert " + alertCounter + " ";
-  let icon = document.createElement("div");
-  icon.className = "icon ";
-  let symbol = document.createElement("i");
-  symbol.className = "fas ";
-  let content = document.createElement("div");
-  content.className = "content ";
-  content.innerHTML += message;
-  switch(type) {
-    case 0:
-      symbol.className += "fa-check-circle ";
-      symbol.className += "success";
-      icon.className += "green-bg";
-      content.className += "success-bg green";
-      alert.className += "green-border";
-      break;
-    case 1:
-      symbol.className += "fa-skull-crossbones ";
-      symbol.className += "danger";
-      icon.className += "red-bg";
-      content.className += "danger-bg red";
-      alert.className += "red-border";
-      break;
-    case 2:
-      symbol.className += "fa-star ";
-      symbol.className += "notice";
-      icon.className += "blue-bg";
-      content.className += "notice-bg blue";
-      alert.className += "blue-border";
-      break;
-    case 3:
-      symbol.className += "fa-exclamation-circle ";
-      symbol.className += "warning";
-      icon.className += "orange-bg";
-      content.className += "warning-bg orange";
-      alert.className += "orange-border";
-      break;
-    default: 
-      break;
-  }
-  icon.append(symbol);
-  alert.append(icon);
-  alert.append(content);
-  wrap.append(alert);
-  alertCounter++;
-  $(".alert").delay(4000).fadeOut(2000);
-}
-
-$.fn.batteryPanel = (val) => {
-  let b = document.getElementById("battery-bar-fill");
-  val *= 100;
-  if (val < 25) {
-    b.style.backgroundColor = "red";    
-  } else if (val >= 25 && val <= 75) {
-    b.style.backgroundColor = "yellow";
-  } else {
-    b.style.backgroundColor = "green";
-  }
-  console.log(`VAL IS ${val}`);
-  b.style.width = val + "%";
-}
-
-let wrap = document.getElementById("battery-wrapper");
-let barEmpty = document.createElement("div");
-barEmpty.className = "battery-bar-empty";
-let bar = document.createElement("div");
-bar.id = "battery-bar-fill";
-bar.style.width = "1%";
-barEmpty.append(bar);
-wrap.append(barEmpty);
-
-$.fn.display = (msg) => {
-  console.log(msg);
-  switch (msg.notification.type) {
-    case "alert":
-      $.fn.notify(2, msg.notification.data);
-      break;
-    case "battery":
-      $.fn.batteryPanel(msg.notification.data);
-      break;
-    case "statistics":
-      break;
-  }
-}
-
-// notify examples
-// $.fn.notify(1, "test failure!");
-// $.fn.notify(0, "drone has successfully been instantiated!");
-// $.fn.notify(2, "Need to create console logger function!");
-// $.fn.notify(3, "This is risky behavior!");
-
-const onProgress = function(xhr) {
-
-  if ( xhr.lengthComputable ) {
-
-    const percentComplete = xhr.loaded / xhr.total * 100;
-    console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
-
-    if (percentComplete == 100) {
-      console.log("Model loaded");
-    }
-
-  }
-
-};
-
-const onError = function() { console.log("failed to load model"); };
-
-function umnScene() {
-  let sceneModel = "../assets/model/umn.obj";
-  let sceneTexture = "../assets/texture/umn.png";
-
-  // load a resource
-  objLoader.load(
-    // resource URL
-    sceneModel,
-    // called when resource is loaded
-    function (object) {
-      object.position.copy(new THREE.Vector3(0, -13, 0))
-      object.scale.copy(new THREE.Vector3(0.05, 0.05, 0.05));
-
-      const textureLoader = new THREE.TextureLoader();
-      const texture = textureLoader.load(sceneTexture + "-ground.png");
-      texture.encoding = THREE.sRGBEncoding;
-      texture.anisotropy = 16;
-      var objmaterial = new THREE.MeshStandardMaterial({ map: texture });
-
-      const texture2 = textureLoader.load(sceneTexture);
-      texture.encoding = THREE.sRGBEncoding;
-      texture.anisotropy = 16;
-
-      object.traverse(function (node) {
-        if (node.name == "EXPORT_GOOGLE_SAT_WM") {
-          node.material = objmaterial;
-          //node.material = new THREE.MeshDepthMaterial();
-        }
-        else if (node.name == "Areas:building") {
-          var material = new THREE.MeshStandardMaterial({ color: 0x85868f, map: texture2 });
-          node.material = material;
-          //node.material = new THREE.MeshDepthMaterial();
-        }
-        else if (!node.isGroup) {
-          node.visible = false;
-        }
-        console.log(node);
-
-      });
-
-      // models.push(object);
-      scene.add(object);
-    },
-    // called when loading is in progresses
-    function (xhr) {
-      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-    },
-    // called when loading has errors
-    function (error) {
-      console.log('An error happened', error);
-    }
-  );
-}
-
 class Model {
   constructor(name, path, scene = '') {
     this.name = name;
@@ -214,11 +52,12 @@ class Model {
   scene() {
     return this.scene;
   }
-  load() {
-    $.fn.load(this.path);
+  loader() {
+    load(this.path);
   }
 }
 
+// changing to World
 class Scene {
   constructor(name, background, models) {
     this.name = name;
@@ -233,94 +72,7 @@ class Scene {
   }
 }
 
-$.fn.load = (params, dynamic = true) => {
-  let arr = params.path.split('.');
-  let ext = arr[arr.length - 1];
-  console.log(`loading ${arr[0]} with dynamic set to ${dynamic}`);
-  switch (ext) {
-    case "glb":
-      $.fn.loadGlb(params, dynamic);
-      break;
-    case "obj":
-      $.fn.loadObj(params, dynamic, params.mtl);
-      break;
-    case "dae":
-      $.fn.loadCollada(params, dynamic);
-      break;
-    default:
-      $.fn.notify(1, "Invalid model type");
-      break;
-  }
-};
-
-$.fn.loadGlb = (params, dynamic) => {
-  console.log(`${params.name} at ../assets/model/${params.path} attempting to be loaded`);
-  glbLoader.load( `../assets/model/${params.path}`, function (obj) {
-
-    let model = obj.scene;
-
-    model.position.copy(new THREE.Vector3(params.position[0], params.position[1], params.position[2]))
-    model.scale.copy(new THREE.Vector3(params.scale[0], params.scale[1], params.scale[2])) //*1.41
-
-    let mixer = new THREE.AnimationMixer( obj.scene );
-    const clips = obj.animations;
-    clips.forEach( function ( clip ) {
-      mixer.clipAction( clip ).play();
-    } );
-    mixers.push(clips);
-
-    if (dynamic) {
-      let m = new Model(params.name, params.path, model);
-      models.push(m);
-    }
-    scene.add(model);
-  }, onProgress, onError(name));
-};
-
-$.fn.loadCollada = (params, dynamic) => {
-  console.log(`${params.name} at ../assets/model/${params.path} attempting to be loaded`);
-  colladaLoader.load( `../assets/model/${params.path}`, function (obj) {
-
-    let model = obj.scene;
-
-    model.position.copy(new THREE.Vector3(params.position[0], params.position[1], params.position[2]))
-    model.scale.copy(new THREE.Vector3(params.scale[0], params.scale[1], params.scale[2])) //*1.41
-
-    // let mixer = new THREE.AnimationMixer( obj.scene );
-    // const clips = obj.animations;
-    // clips.forEach( function ( clip ) {
-    //   mixer.clipAction( clip ).play();
-    // } );
-    // mixers.push(clips);
-
-    if (dynamic) {
-      let m = new Model(params.name, params.path, model);
-      models.push(m);
-    }
-    scene.add(model);
-  }, onProgress, onError(name));
-};
-
-$.fn.loadObj = (params, dynamic, mtl) => {
-  let mtlLoader = new MTLLoader();
-  mtlLoader.load( `../assets/model/${mtl}`, function( materials ) {
-
-      materials.preload();
-
-      objLoader.setMaterials( materials );
-      objLoader.load( `../assets/model/${params}`, function ( object ) {
-
-          if (dynamic) {
-            models.push(object);
-          }
-
-          scene.add(object.scene);
-
-      }, onProgress, onError(name) );
-
-  });
-};
-
+//========================================SCENE SCRIPTING===========================================
 $.fn.runJson = (file, initialScene = true) => {
   sceneFile = `./js/scenes/${file}`;
   $.getJSON(sceneFile, function (json) {
@@ -328,6 +80,8 @@ $.fn.runJson = (file, initialScene = true) => {
     for (var i = 0; i < json.length; i++) {
       var command = json[i];
       console.log(command);
+      // resets the scene and deletes entities in backend. called before every script
+      // to allow dynamic scene changes without browser refresh
       if (command.command == "reset") {
         api.sendCommand("reset", command.params);
         models = [];
@@ -342,57 +96,36 @@ $.fn.runJson = (file, initialScene = true) => {
       if (command.command == "createEntity") {
         // if (command.params.type != "actor" || command.params.type != "battery_actor") {
         if (command.params.type != "actor") {
-          $.fn.load(command.params, false);
+          // if not an actor, then will not be dynamic (for now)
+          load(scene, models, command.params, false);
         } else {
-          $.fn.load(command.params);
+          // if an actor this model will be moving
+          load(scene, models, command.params);
         }
+
+        // execites createEntity command in backend
         api.sendCommand("createEntity", command.params);
       }
+      // extra conditional to help load static objects, specifically terrain
       if (command.command == "terrain") {
-        $.fn.load(command.params, false);
+        load(scene, models, command.params, false);
       }
       if (command.command == "rescue") {
+        // binds rescue information to assist backend
         api.sendCommand("rescue", command.params);
       }
     }
   });
 }
 
+// creates a scene class (will change name to world)
+// paramaters are: name, background color/image, preloaded model references
+let umnScene = new Scene("umn", new THREE.Color( 'skyblue' ), ["drone", "starya", "aku"]);
 
-let umn = new Scene("umn", new THREE.Color( 'skyblue' ), ["drone", "starya", "aku"]);
+// scene object to hold multiple scene information
+var scenes = { "umn" : umnScene };
 
-var scenes = {
-  "umn" : umn
-};
-
-$("[data-role='scene-trigger']").on('click', function() {
-  target = $(this).attr('href');
-  console.log(target);
-  scene = undefined;
-  $("div#loading-background").show();
-  $.fn.run();
-  setTimeout(function() { $("div#loading-background").hide(); }, 2000);
-});
-
-function saveAsImage() {
-  var imgData, imgNode;
-  try {
-      var strMime = "image/jpeg";
-      imgData = renderer.domElement.toDataURL(strMime);
-      console.log(`imgData is ${imgData}`);
-      api.sendPostCommand("image", {image: imgData}).then(function(data) {
-        console.log(data);
-      });
-      //saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
-      //
-  } catch (e) {
-      console.log(e);
-      return;
-  }
-
-}
-
-
+// controls and other shaders. (Ocean and weather patterns were removed)
 function base(){
   // define controls
   controls = new OrbitControls( camera, container );
@@ -401,12 +134,16 @@ function base(){
   controls.update();
 }
 
+//========================================SCENE GENERATION==========================================
 // This function runs the scene
 $.fn.run = () => {
+
+  // initializes scene and camera
   camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 1000 );
   camera.position.set( -10, 10, 10 );//30, 30, 100 );
   scene = new THREE.Scene();
   
+  // depth shader material override code
   var uniforms = {
     time: { type: "f", value: 1.0 },
     resolution: { type: "v2", value: new THREE.Vector2() },
@@ -424,6 +161,7 @@ $.fn.run = () => {
   });
   //scene.overrideMaterial = new THREE.MeshDepthMaterial();
 
+  // skybox generation and dynamic backgrounds for multiple scenes
   if (target != undefined) {
     let bg = scenes[target].background;
     if (typeof bg === "string") {
@@ -458,23 +196,24 @@ $.fn.run = () => {
   light2.position.set( 0, 10, -10 );
   scene.add( ambientLight, light2 );
   
+  // adds scene specific information based on selected scene
   if (target === "umn") {
-    umnScene();
+    umn(scene);
   }
 
-
-  //====================================SCENE RENDERER==============================================
-  // code to allow screenshot
+  //====================================SCREENSHOT LINK=============================================
+  // screenshot link generation
   var saveLink = document.createElement('div');
   saveLink.style.position = 'absolute';
   saveLink.style.top = '60px';
   saveLink.style.width = '100%';
   saveLink.style.color = 'white !important';
   saveLink.style.textAlign = 'center';
-  saveLink.innerHTML =
-      '<a href="#" id="saveLink">Save Frame</a>';
+  saveLink.innerHTML = '<a href="#" id="saveLink">Save Frame</a>';
   document.body.appendChild(saveLink);
   document.getElementById("saveLink").addEventListener('click', saveAsImage);
+
+  //====================================SCENE RENDERER==============================================
 
   // prevents multiple canvases from being generated on scene change
   $('canvas:nth-of-type(1)').remove();
@@ -492,15 +231,16 @@ $.fn.run = () => {
   });
 }
 
-// This is the function that is called once the document is started.
+// this runs everything
 $.fn.run();
 
-
+// This is the function that is called once the document is started.
 $( document ).ready(function() {
 
   // Start checking for when the user resizes their application window.
   window.addEventListener( 'resize', onWindowResize );
 
+  // interprets key press or release and sends information to backend
   var keyAction = function(e) {
     console.log(e);
     api.sendCommand(e.type, {key: e.key, keyCode: e.keyCode});
@@ -510,23 +250,17 @@ $( document ).ready(function() {
   document.onkeyup = keyAction;
 });
 
-// const raycaster = new THREE.Raycaster();
-// const mouse = new THREE.Vector2();
-
-var strDownloadMime = "image/octet-stream";
-var time = 0.0;
-
 // This function updates the scene's animation cycle.
+var time = 0.0;
 function update() {
   // Get the time since the last animation frame.
-  if (models.length >= 1) {
-    updateReady = true;
-  }
-
   const delta = clock.getDelta();
   time += delta;
 
   //temporary work around to force models to be loaded first
+  if (models.length >= 1) {
+    updateReady = true;
+  }
 
   controls.update();
 
@@ -535,16 +269,16 @@ function update() {
     // console.log(models);
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
       let data = updateData;
-      console.log(data);
+      // console.log(data);
       if (data.entity0 != undefined ) {
         for (let e in data) {
           // console.log(models.length);
-          console.log(data[e].entityId);
+          // console.log(data[e].entityId);
           if (data[e].type == "Actor") {
-            console.log("SHOULD BE RENDERING");
-            models[0].scene.position.copy(new THREE.Vector3(data[e].position.x, data[e].position.y, data[e].position.z));
-            models[0].scene.rotation.x = data[e].direction.x;
-            models[0].scene.rotation.y = data[e].direction.y;
+            // console.log("SHOULD BE RENDERING");
+            models[0].position.copy(new THREE.Vector3(data[e].position.x, data[e].position.y, data[e].position.z));
+            models[0].rotation.x = data[e].direction.x;
+            models[0].rotation.y = data[e].direction.y;
             // models[0].scene.rotation.z = data[e].direction.z;
             // models[0].scene.rotation.copy(new THREE.Vector3(data[e].direction.x, data[e].direction.y, data[e].direction.z));
             // console.log(models[data[e].entityId].scene);
@@ -556,6 +290,25 @@ function update() {
     });
     updateReady = false;
   }
+}
+
+// saves the image to a base64 encoded jpg file
+var strDownloadMime = "image/octet-stream";
+function saveAsImage() {
+  var imgData, imgNode;
+  try {
+      var strMime = "image/jpeg";
+      imgData = renderer.domElement.toDataURL(strMime);
+      console.log(`imgData is ${imgData}`);
+      api.sendPostCommand("image", {image: imgData}).then(function(data) {
+        console.log(data);
+      });
+      //saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
+  } catch (e) {
+      console.log(e);
+      return;
+  }
+
 }
 
 // This function simply renders the scene based on the camera position.

@@ -60,6 +60,7 @@ canvas { display: block; }
     background-color:white;
     padding:10px;
     color:black;
+    width:300px;
 }
 
 div[data-role="hover-dropdown-trigger"] {

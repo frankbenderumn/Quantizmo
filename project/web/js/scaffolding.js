@@ -1,4 +1,5 @@
 $(document).ready(function(){
+  
     var taggableTab = 0;
     $("[data-role=trigger]").on('click', function(){
       $("[data-role=extend]").each(function(){
@@ -53,49 +54,111 @@ $(document).ready(function(){
         }
       });
     }
-  //   var alert;
-  //   $.fn.alert = (type, message) => {
-  //     switch(type){
-  //       case 'success':
-  //       $("div#alerts").append(`<span class='alert alert-success'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
-  //       break;
-  //       case 'danger':
-  //       $("div#alerts").append(`<span class='alert alert-danger'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
-  //       break;
-  //       case 'warning':
-  //       $("div#alerts").append(`<span class='alert alert-warning'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
-  //       break;
-  //       case 'notice':
-  //       $("div#alerts").append(`<span class='alert alert-notice'><span class='alert-header'><i class='fas fa-star'></i></span><span class='alert-body'>${message}</span></span>`);
-  //       break;
-  //       default:
-  //       break;
-  //     }
-  //     $(".alert").delay(400).fadeOut(2000);
-  //   };
-  // });
 
-  $(document).ready(function(){
+$.fn.notify = (type, message) => {
+  let wrap = document.getElementById("alert-wrapper");
+  let alert = document.createElement("div");
+  alert.className = "alert " + alertCounter + " ";
+  let icon = document.createElement("div");
+  icon.className = "icon ";
+  let symbol = document.createElement("i");
+  symbol.className = "fas ";
+  let content = document.createElement("div");
+  content.className = "content ";
+  content.innerHTML += message;
+  switch(type) {
+    case 0:
+      symbol.className += "fa-check-circle ";
+      symbol.className += "success";
+      icon.className += "green-bg";
+      content.className += "success-bg green";
+      alert.className += "green-border";
+      break;
+    case 1:
+      symbol.className += "fa-skull-crossbones ";
+      symbol.className += "danger";
+      icon.className += "red-bg";
+      content.className += "danger-bg red";
+      alert.className += "red-border";
+      break;
+    case 2:
+      symbol.className += "fa-star ";
+      symbol.className += "notice";
+      icon.className += "blue-bg";
+      content.className += "notice-bg blue";
+      alert.className += "blue-border";
+      break;
+    case 3:
+      symbol.className += "fa-exclamation-circle ";
+      symbol.className += "warning";
+      icon.className += "orange-bg";
+      content.className += "warning-bg orange";
+      alert.className += "orange-border";
+      break;
+    default: 
+      break;
+  }
+  icon.append(symbol);
+  alert.append(icon);
+  alert.append(content);
+  wrap.append(alert);
+  alertCounter++;
+  $(".alert").delay(4000).fadeOut(2000);
+}
 
-    $("#sidenav-close").on('click', function(){
-      var x = document.getElementById('sidenav');
-      x.style.width = '0';
-    });
-    $("#sidenav-offline-close").on('click', function(){
-      var x = document.getElementById('sidenav-offline');
-      x.style.width = '0';
-    });
-    $("#sidenav-trigger").on('click', function(){
-      var x = document.getElementById('sidenav');
-      console.log('jQuery is going through!');
-      x.style.width = '400px';
-    });
-    $("#sidenav-offline-trigger").on('click', function(){
-      var x = document.getElementById('sidenav-offline');
-      console.log('jQuery is going through!');
-      x.style.width = '400px';
-    });
-  
+// notify examples
+// $.fn.notify(1, "test failure!");
+// $.fn.notify(0, "drone has successfully been instantiated!");
+// $.fn.notify(2, "Need to create console logger function!");
+// $.fn.notify(3, "This is risky behavior!");
+
+$.fn.batteryPanel = (val) => {
+  let b = document.getElementById("battery-bar-fill");
+  val *= 100;
+  if (val < 25) {
+    b.style.backgroundColor = "red";    
+  } else if (val >= 25 && val <= 75) {
+    b.style.backgroundColor = "yellow";
+  } else {
+    b.style.backgroundColor = "green";
+  }
+  console.log(`VAL IS ${val}`);
+  b.style.width = val + "%";
+}
+
+let wrap = document.getElementById("battery-wrapper");
+let barEmpty = document.createElement("div");
+barEmpty.className = "battery-bar-empty";
+let bar = document.createElement("div");
+bar.id = "battery-bar-fill";
+bar.style.width = "1%";
+barEmpty.append(bar);
+wrap.append(barEmpty);
+
+$.fn.display = (msg) => {
+  console.log(msg);
+  switch (msg.notification.type) {
+    case "alert":
+      $.fn.notify(2, msg.notification.data);
+      break;
+    case "battery":
+      $.fn.batteryPanel(msg.notification.data);
+      break;
+    case "statistics":
+      break;
+  }
+}
+
+$("[data-role='scene-trigger']").on('click', function() {
+  target = $(this).attr('href');
+  console.log(target);
+  scene = undefined;
+  $("div#loading-background").show();
+  $.fn.run();
+  setTimeout(function() { $("div#loading-background").hide(); }, 2000);
+});
+
+
     // JAVASCRIPT MODALS
     const modals = document.querySelectorAll('.modal');
     const btn = document.querySelectorAll(".modal-button");
@@ -136,7 +199,6 @@ $(document).ready(function(){
     }
   
   });
-});
-  
+
   // HEADER JS
       
