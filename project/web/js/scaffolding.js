@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  
+
     var taggableTab = 0;
     $("[data-role=trigger]").on('click', function(){
       $("[data-role=extend]").each(function(){
@@ -54,6 +54,8 @@ $(document).ready(function(){
         }
       });
     }
+
+let alertCounter = 0;
 
 $.fn.notify = (type, message) => {
   let wrap = document.getElementById("alert-wrapper");

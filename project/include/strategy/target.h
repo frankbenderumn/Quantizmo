@@ -9,12 +9,11 @@ namespace csci3081 {
       public:
         Target(Entity* e) { this->type = TARGET; this->target = e; }
         ~Target() { printf("destroying target!\n"); }
-        void Move(const Vec3& pos, float dt) {
+        void Move(Vec3& pos, float speed, float dt) {
           if (target == nullptr) {
             Console::Log(WARNING, "target is not being set properly");
           }
-          Vec3& newPos = const_cast<Vec3&>(pos);
-          newPos += (target->GetPosition() - newPos).Normalize() * 2.f * dt;
+          pos += (target->GetPosition() - pos).Normalize() * speed * dt;
         }
       private:
         Entity* target;

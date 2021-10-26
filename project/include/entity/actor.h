@@ -76,7 +76,7 @@ namespace csci3081 {
             }
 
             if (strategy) {
-                strategy->Move(this->position, dt);
+                strategy->Move(this->position, this->speed, dt);
             } else {
                 Console::Log(WARNING, "No strategy selected");
             }

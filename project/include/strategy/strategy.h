@@ -15,7 +15,7 @@ namespace csci3081 {
       public:
         Strategy() {}
         virtual ~Strategy() { printf("destroying strategy!\n"); }
-        virtual void Move(const Vec3& pos, float dt) = 0;
+        virtual void Move(Vec3& pos, float speed, float dt) = 0;
         StrategyType GetType() { return type; }
       protected:
         StrategyType type = UNDEFINED_STRATEGY;

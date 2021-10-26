@@ -8,7 +8,6 @@ const colladaLoader = new ColladaLoader();
 const glbLoader = new GLTFLoader();
 const objLoader = new OBJLoader();
 
-
 export function load(scene, models, params, dynamic = true) {
     let arr = params.path.split('.');
     let ext = arr[arr.length - 1];

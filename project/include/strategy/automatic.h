@@ -8,8 +8,7 @@ namespace csci3081 {
       public:
         Automatic() { this->type = AUTOMATIC; }
         ~Automatic() { printf("destroying automatic!\n"); }
-        void Move(const Vec3& pos, float dt) {
-            Vec3& newPos = const_cast<Vec3&>(pos);
+        void Move(Vec3& pos, float speed, float dt) {
 
             // set route index
             if (boxIndex == -1) { boxIndex++; }
@@ -19,10 +18,10 @@ namespace csci3081 {
 
             // integrate
             Vec3 poi = box.at(boxIndex);
-            newPos += ((poi - newPos).Normalize()) * 3.f * dt;
+            pos += ((poi - pos).Normalize()) * speed * dt;
 
             // collision detection
-            if (Distance(newPos, poi) <= 2.f) {
+            if (Distance(pos, poi) <= 2.f) {
                 boxIndex++;
             }
         }
