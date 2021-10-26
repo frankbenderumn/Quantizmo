@@ -9,6 +9,7 @@ namespace csci3081 {
         ~Battery() { printf("destroying battery!\n"); }
         bool IsFull() { return (charge == max_charge); }
         bool IsLow() { return (charge / max_charge <= 0.25f) ? true : false; }
+        bool IsDead() { return (charge == 0.f); }
         void Deplete(float dt) {
             if (charge == 0) return;
             charge -= deplete_rate * dt;
@@ -19,6 +20,10 @@ namespace csci3081 {
             charge += charge_rate * dt;
             if (charge > max_charge) charge = max_charge;
         }
+        void GetLife() {
+            std::cout << "charge is: " << charge << std::endl;
+        }
+
       private:
         float charge = 10.f;
         float max_charge = 20.f;

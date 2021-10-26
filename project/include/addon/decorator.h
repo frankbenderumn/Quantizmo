@@ -3,7 +3,7 @@
 
 #include "strategy/strategy.h"
 #include "util/handler.h"
-#include "entity/actee.h"
+#include "entity/entity.h"
 #include "entity/destination.h"
 #include "interface/iactor.h"
 
@@ -14,9 +14,9 @@ namespace csci3081 {
         ~Decorator() {}
         void SetStrategy(Strategy* strategy) { actor->SetStrategy(strategy); }
         void SetHandler(Handler* handler) { actor->SetHandler(handler); }
-        void SetTarget(Actee* e) { actor->SetTarget(e); }
+        void SetTarget(Entity* e) { actor->SetTarget(e); }
         // void SetDestination(Destination* dest) { actor->SetDestination(dest); }
-        void Update(float dt) { actor->Update(dt); }
+        virtual void Update(float dt) { actor->Update(dt); }
         // int GetId() { return actor->GetId(); }
         IActor* GetActor() { return actor; }
 

@@ -135,13 +135,25 @@ namespace csci3081 {
         }
         else if (cmd == "createEntity") {
             assert(factory);
+
+            if (data.find("decorator") != data.end()) {
+                picojson::object battery = data.find("decorator")->second.get<picojson::object>();
+                picojson::array arr = battery["battery"].get<picojson::array>();
+                float charge = static_cast<float>(arr[0].get<double>());
+                float max_charge = static_cast<float>(arr[1].get<double>());
+                Actor* a = new Actor(data); 
+                // AddEntity(a);
+                AddObserver(a, new Observer(this));
+                BatteryActor* b = new BatteryActor(a, new Battery(charge, max_charge));
+                printf("init battery life is:\n");
+                b->GetBattery()->GetLife();
+                b->SetHandler(handler);
+                decorator = b;
+                printf("Adding decorator\n");
+                return;
+            }
+
             Entity* e = factory->Create(data);
-            // if (data.find("type")->second.get<std::string>() == "battery_actor") {
-            //     BatteryActor* b = new BatteryActor(new Actor(data));
-            //     b->SetHandler(handler);
-            //     decorator = b;
-            //     printf("Adding decorator\n");
-            // }
             if (e->GetType() == ACTOR) {
                 Actor* a = dynamic_cast<Actor*>(e);
                 assert(handler);
@@ -150,6 +162,9 @@ namespace csci3081 {
             } else if (e->GetType() == ACTEE) {
                 Actee* a = dynamic_cast<Actee*>(e);
                 actees.push_back(a);
+            } else if (e->GetType() == CHARGER) {
+                Charger* a = dynamic_cast<Charger*>(e);
+                chargers.push_back(a);
             }
             if (e) { 
                 AddEntity(e);
@@ -164,7 +179,11 @@ namespace csci3081 {
             int destIdx = (int)data["destination"].get<double>();
             std::cout << "acteeIdx: " << acteeIdx << " destIdx: " << destIdx << std::endl;
             assert(entities.size() >= 2);
-            Rescue((Actee*)entities.at(acteeIdx), (Destination*)entities.at(destIdx));
+            if (decorator) {
+              Rescue((Actee*)entities.at(acteeIdx-1), (Destination*)entities.at(destIdx-1));
+            } else {
+              Rescue((Actee*)entities.at(acteeIdx), (Destination*)entities.at(destIdx));
+            }
         }
         else {
             std::cout << "Unknown command: " << cmd << " - " << picojson::value(data).serialize() << std::endl;
@@ -173,11 +192,18 @@ namespace csci3081 {
 
     void WebApp::Update(double dt, picojson::object& returnValue) {
         // printf("updating\n");
-        // if (decorator) {
-        //   decorator->Update(dt);
-        //   returnValue["entity"+std::to_string(decorator->GetActor()->GetId())] = decorator->GetActor()->Serialize();
-        //   std::cout << returnValue["entity"+std::to_string(decorator->GetActor()->GetId())] << std::endl;
-        // }
+        if (decorator) {
+          BatteryActor* b = (BatteryActor*) decorator;
+          b->SetChargers(chargers);
+          if (b->GetBattery()->IsLow()) {
+            Console::Log(WARNING, "Battery is low\n");
+          }
+          const std::string drone_model = csci3081::JsonHelper::GetString(decorator->GetActor()->GetData(), "name");
+          UpdateTimeMap(drone_model, dt);
+          decorator->Update(dt);
+          returnValue["entity"+std::to_string(decorator->GetActor()->GetId())] = decorator->GetActor()->Serialize();
+          std::cout << returnValue["entity"+std::to_string(decorator->GetActor()->GetId())] << std::endl;
+        }
 
         for (auto e : entities) {
             if (actor) {
@@ -188,7 +214,7 @@ namespace csci3081 {
             } else {
                 e->Update(dt);
             }
-            returnValue["entity"+std::to_string(e->GetId())] = e->Serialize();
+            // returnValue["entity"+std::to_string(e->GetId())] = e->Serialize();
             // std::cout << returnValue["entity"+std::to_string(e->GetId())] << std::endl;
         }
     }
@@ -200,7 +226,7 @@ namespace csci3081 {
 
     void WebApp::KeyDown(const std::string& key, int keyCode) {
         std::cout << "key code down is: " << keyCode << std::endl;
-        // if (decorator) { actor = decorator->GetActor(); }
+        if (decorator) { actor = decorator->GetActor(); }
         if (actor) {
             // image processing temp workaround
             if (keyCode == 84) {

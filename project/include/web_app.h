@@ -20,6 +20,7 @@
 #include <iostream>
 #include "image/canny_detect.h"
 #include "addon/analytics.h"
+#include "addon/battery_actor.h"
 
 namespace csci3081 {
 
@@ -85,15 +86,14 @@ class WebApp : public JSONSession {
 
     /* @brief a vector of all actees needing to be rescued (allows for multiple rescues) */
     std::vector<Actee*> actees;
-
+    std::vector<Charger*> chargers;
+    
     /* @brief only one actor will be used, therefore a member var is used for efficiency */
     IActor* actor;
-
     Decorator* decorator;
-
-    // Destination* dest;
-
+    
     Handler* handler;    
+    
     static std::map<std::string, float> drone_runtimes; // Records the runtime traveled for each drone. Used for Analytics
     void UpdateTimeMap(const std::string&, float distance = 0); // Update the drone time map
     Analytics* analytics;
