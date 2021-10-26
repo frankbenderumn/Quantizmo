@@ -34,17 +34,27 @@ namespace csci3081 {
 
         void SetTarget(Entity* e) {
             this->target = e;
+            if (e == nullptr) return;
+            if (e->GetType() == ACTEE) {
+                this->Notify("alert", "customer spotted");
+            } else if (e->GetType() == CHARGER) {
+                this->Notify("alert", "heading to charger");
+            }
             SetStrategy(new Target(e));
         }
 
         /* @brief updates the actor */
         void Update(float dt) {
 
+            // this->Notify("alert", "spam");
+
             if (target) {
                 if (Distance(target->GetPosition(), this->GetPosition()) <= 1.f) {
-                    this->Notify("alert", "customer picked up");
-                    pickedUp = true;
                     if (target->GetType() == ACTEE) {
+                        if (pickedUp == false) {
+                            this->Notify("alert", "customer picked up");
+                            pickedUp = true;
+                        }
                         this->SetStrategy(new Manual(handler));
                     } else {
                         this->SetStrategy(new Automatic());
@@ -54,8 +64,7 @@ namespace csci3081 {
 
             if (pickedUp) { target->SetPosition(this->position); }
 
-            if (target) {
-                
+            if (target) {  
                 Actee* t = dynamic_cast<Actee*>(target);
                 if (t) {
                     if (Distance(t->GetPosition(), t->GetDestination()->GetPosition()) <= t->GetDestination()->GetRadius()) {
@@ -71,6 +80,26 @@ namespace csci3081 {
             } else {
                 Console::Log(WARNING, "No strategy selected");
             }
+        }
+
+        void Notify(std::string event, std::string msg = "", float timestamp = 0.f) override {
+            // Console::Log(INFO, "NOTIFYING!");
+            picojson::object o;
+            if (event == "analytics") {
+                o["type"] = picojson::value("anayltics");
+                o["data"] = picojson::value(timestamp);
+            } else if (event == "alert") {
+                o["type"] = picojson::value("alert");
+                o["data"] = picojson::value(msg);
+            } else if (event == "battery") {
+                o["type"] = picojson::value("battery");
+                o["data"] = picojson::value(timestamp);
+            } else {
+                Console::Log(FAILURE, "Invalid observer call type");
+                exit(0);
+            }
+            picojson::value v(o);
+            this->NotifyObservers(v);
         }
 
       private:

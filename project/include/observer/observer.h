@@ -12,7 +12,7 @@ class Observer : public IObserver {
   public:
     Observer(WebApp* sys) : sys(sys) {}
     ~Observer() { printf("destroying web observer!\n"); }
-    void OnEvent(const picojson::value& value, const IEntity& e);
+    void OnEvent(const picojson::value& value, IEntity* e);
 
   private:
     WebApp* sys;

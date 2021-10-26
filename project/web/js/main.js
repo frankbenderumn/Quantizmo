@@ -67,7 +67,7 @@ $.fn.notify = (type, message) => {
       alert.className += "red-border";
       break;
     case 2:
-      symbol.className += "fa-question-circle ";
+      symbol.className += "fa-star ";
       symbol.className += "notice";
       icon.className += "blue-bg";
       content.className += "notice-bg blue";
@@ -91,6 +91,43 @@ $.fn.notify = (type, message) => {
   $(".alert").delay(4000).fadeOut(2000);
 }
 
+$.fn.batteryPanel = (val) => {
+  let b = document.getElementById("battery-bar-fill");
+  val *= 100;
+  if (val < 25) {
+    b.style.backgroundColor = "red";    
+  } else if (val >= 25 && val <= 75) {
+    b.style.backgroundColor = "yellow";
+  } else {
+    b.style.backgroundColor = "green";
+  }
+  console.log(`VAL IS ${val}`);
+  b.style.width = val + "%";
+}
+
+let wrap = document.getElementById("battery-wrapper");
+let barEmpty = document.createElement("div");
+barEmpty.className = "battery-bar-empty";
+let bar = document.createElement("div");
+bar.id = "battery-bar-fill";
+bar.style.width = "1%";
+barEmpty.append(bar);
+wrap.append(barEmpty);
+
+$.fn.display = (msg) => {
+  console.log(msg);
+  switch (msg.notification.type) {
+    case "alert":
+      $.fn.notify(2, msg.notification.data);
+      break;
+    case "battery":
+      $.fn.batteryPanel(msg.notification.data);
+      break;
+    case "statistics":
+      break;
+  }
+}
+
 // notify examples
 // $.fn.notify(1, "test failure!");
 // $.fn.notify(0, "drone has successfully been instantiated!");
@@ -105,7 +142,7 @@ const onProgress = function(xhr) {
     console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
 
     if (percentComplete == 100) {
-      $.fn.notify(0, "Model loaded");
+      console.log("Model loaded");
     }
 
   }
@@ -385,7 +422,6 @@ $.fn.run = () => {
       vertexShader: document.getElementById('vertexShader').textContent,
       fragmentShader: document.getElementById('fragmentShader').textContent
   });
-  scene.overrideMaterial = objmaterial;
   //scene.overrideMaterial = new THREE.MeshDepthMaterial();
 
   if (target != undefined) {
@@ -462,7 +498,6 @@ $.fn.run();
 
 $( document ).ready(function() {
 
-
   // Start checking for when the user resizes their application window.
   window.addEventListener( 'resize', onWindowResize );
 
@@ -521,7 +556,6 @@ function update() {
     });
     updateReady = false;
   }
-
 }
 
 // This function simply renders the scene based on the camera position.

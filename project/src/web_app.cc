@@ -146,7 +146,7 @@ namespace csci3081 {
                 AddObserver(a, new Observer(this));
                 BatteryActor* b = new BatteryActor(a, new Battery(charge, max_charge));
                 printf("init battery life is:\n");
-                b->GetBattery()->GetLife();
+                b->GetBattery()->Print();
                 b->SetHandler(handler);
                 decorator = b;
                 printf("Adding decorator\n");
@@ -202,14 +202,15 @@ namespace csci3081 {
           UpdateTimeMap(drone_model, dt);
           decorator->Update(dt);
           returnValue["entity"+std::to_string(decorator->GetActor()->GetId())] = decorator->GetActor()->Serialize();
-          std::cout << returnValue["entity"+std::to_string(decorator->GetActor()->GetId())] << std::endl;
+          // std::cout << returnValue["entity"+std::to_string(decorator->GetActor()->GetId())] << std::endl;
         }
 
         for (auto e : entities) {
-            if (actor) {
-                // printf("updating\n");
-                actor->Update(dt);
-                const std::string drone_model = csci3081::JsonHelper::GetString(actor->GetData(), "name");
+            Actor* a = dynamic_cast<Actor*>(e);
+            if (a) {
+                printf("updating\n");
+                a->Update(dt);
+                const std::string drone_model = csci3081::JsonHelper::GetString(a->GetData(), "name");
                 UpdateTimeMap(drone_model, dt);
             } else {
                 e->Update(dt);
@@ -240,7 +241,7 @@ namespace csci3081 {
                     b->SetTarget(actee); 
                 }
                 // actor->SetTarget(actee);
-                actees.erase(actees.begin());
+                // actees.erase(actees.begin());
             } else {
                 handler->Handle(1, keyCode);
             }
@@ -265,8 +266,18 @@ namespace csci3081 {
         }
     }
 
-    void Observer::OnEvent(const picojson::value& value, const IEntity& e) {
-        sys->SendNotification("Livin la vida loca");
-        // std::cout << e.Serialize() << std::endl;
+    void WebApp::Send(picojson::value& val) {
+        sendJSON(val);
+    }
+
+    void Observer::OnEvent(const picojson::value& value, IEntity* e) {
+        // if (e->GetType() == ACTOR) {
+        //   Actor* a = dynamic_cast<Actor*>(e);
+        // }
+        // std::cout << e->Serialize() << std::endl;
+        picojson::object o;
+        o["notification"] = picojson::value(value);
+        picojson::value v(o);
+        sys->Send(v);
     }
 }

@@ -47,9 +47,6 @@ class WebApp : public JSONSession {
     /* @brief returns global entity vector */
     const std::vector<Entity*> GetEntities() const { return entities; }
 
-    /* @brief sends notification through observer back to front-end */
-    void SendNotification(const std::string& s) { Console::Log(INFO, s); }
-
     void receiveJSON(picojson::value& val);
 
     void ReceiveCommand(const std::string& cmd, picojson::object& data, picojson::object& returnValue);
@@ -61,13 +58,14 @@ class WebApp : public JSONSession {
     void KeyDown(const std::string& key, int keyCode);
 
     /* @brief instantiates the destination in which actees will be deemed rescued */
-    void Rescue(Actee* actee, Destination* dest) { 
-        actee->SetDestination(dest);
-    }
+    void Rescue(Actee* actee, Destination* dest) { actee->SetDestination(dest); }
 
     void AddObserver(Entity* e, IObserver* observer) { e->Attach(observer); }
 
     void RemoveObserver(Entity* e, IObserver* observer) { e->Detach(observer); }
+
+    /* @brief sends notification through observer back to front-end */
+    void Send(picojson::value& val);
 
     std::vector<Entity*> GetByType(int type);
 
@@ -89,7 +87,7 @@ class WebApp : public JSONSession {
     std::vector<Charger*> chargers;
     
     /* @brief only one actor will be used, therefore a member var is used for efficiency */
-    IActor* actor;
+    IActor* actor = nullptr;
     Decorator* decorator;
     
     Handler* handler;    

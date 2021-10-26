@@ -20,14 +20,15 @@ namespace csci3081 {
             charge += charge_rate * dt;
             if (charge > max_charge) charge = max_charge;
         }
-        void GetLife() {
+        void Print() {
             std::cout << "charge is: " << charge << std::endl;
         }
+        float GetLife() { return charge / max_charge; }
 
       private:
         float charge = 10.f;
         float max_charge = 20.f;
-        float charge_rate = 1.f;
+        float charge_rate = 20.f;
         float deplete_rate = 0.5f;
     };
 }

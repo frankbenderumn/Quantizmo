@@ -9,7 +9,7 @@ class IObserver {
   public:
     IObserver() {}
     virtual ~IObserver() { printf("destroying iobserver!\n"); }
-    virtual void OnEvent(const picojson::value& value, const IEntity& e) = 0;
+    virtual void OnEvent(const picojson::value& value, IEntity* e) = 0;
 
 };
 
