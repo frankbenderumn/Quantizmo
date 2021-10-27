@@ -8,19 +8,18 @@ const colladaLoader = new ColladaLoader();
 const glbLoader = new GLTFLoader();
 const objLoader = new OBJLoader();
 
-export function load(scene, models, params, dynamic = true) {
+export function load(scene, models, mixers, params, dynamic = true) {
     let arr = params.path.split('.');
     let ext = arr[arr.length - 1];
-    console.log(`loading ${arr[0]} with dynamic set to ${dynamic}`);
     switch (ext) {
         case "glb":
-            loadGlb(scene, models, params, dynamic);
+            loadGlb(scene, models, mixers, params, dynamic);
             break;
         case "obj":
             loadObj(scene, models, params, dynamic, params.mtl);
             break;
         case "dae":
-            loadCollada(scene, models, params, dynamic);
+            loadCollada(scene, models, mixers, params, dynamic);
             break;
         default:
             console.log("invalid model type in Loader");
@@ -28,33 +27,36 @@ export function load(scene, models, params, dynamic = true) {
     }
 }
 
-function loadGlb(scene, models, params, dynamic) {
+// could be beneficial to switch to async loader and await models
+function loadGlb(scene, models, mixers, params, dynamic) {
     console.log(`${params.name} at ../assets/model/${params.path} attempting to be loaded`);
     glbLoader.load( `../assets/model/${params.path}`, function (obj) {
     
         let model = obj.scene;
-
-        console.log(`YIPPPPPPEEEE KI YAE ITS A`);
     
         model.position.copy(new THREE.Vector3(params.position[0], params.position[1], params.position[2]))
         model.scale.copy(new THREE.Vector3(params.scale[0], params.scale[1], params.scale[2])) //*1.41
     
-    //   let mixer = new THREE.AnimationMixer( obj.scene );
-    //   const clips = obj.animations;
-    //   clips.forEach( function ( clip ) {
-    //     mixer.clipAction( clip ).play();
-    //   } );
-    //   this.mixers.push(clips);
+        let mixer = new THREE.AnimationMixer(model);
+        const animations = obj.animations;
+        animations.forEach( function ( clip ) {
+            mixer.clipAction( clip ).play();
+        } );
     
-        if (dynamic) {
-        // let m = new Model(params.name, params.path, model);
-            models.push(model);
+        let o = {
+            name: params.name,
+            model: model,
+            mixer: mixer,
+            type: params.type
         }
+
+        models[params.entityId] = o;
+
         scene.add(model);
     }, onProgress, onError);
 }
 
-function loadCollada(scene, models, params, dynamic) {
+function loadCollada(scene, models, mixers, params, dynamic) {
     console.log(`${params.name} at ../assets/model/${params.path} attempting to be loaded`);
     colladaLoader.load( `../assets/model/${params.path}`, function (obj) {
     
@@ -71,9 +73,9 @@ function loadCollada(scene, models, params, dynamic) {
         mixers.push(clips);
     
         if (dynamic) {
-        // let m = new Model(params.name, params.path, model);
-        models.push(model);
+            models.push(model);
         }
+
         scene.add(model);
     }, onProgress, onError);
 }

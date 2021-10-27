@@ -7,9 +7,8 @@
             "name": "drone",
             "type": "actor",
       	    "path": "drone.glb",
-            "decorator" : {"battery": [40.0, 150.0]},
       	    "position": [0, 2.5, 0],
-      	    "scale": [0.15, 0.15, 0.15],
+      	    "scale": [0.55, 0.55, 0.55],
       	    "rotation": [0, 0, 0, 0],
             "direction": [0,0,0],
             "speed": 5.0,
@@ -26,7 +25,7 @@
             "type": "actee",
             "path": "robot.glb",
             "position": [10, 0, 2],
-            "scale": [0.25, 0.25, 0.25],
+            "scale": [0.5, 0.5, 0.5],
             "direction": [1,0,0],
             "radius": 1.0,
             "rotation": [0, 0, 0, 0]
@@ -47,24 +46,14 @@
         }
     },
     {
-        "command": "createEntity",
-        "params": {
-            "entityId": 3,
-            "name": "recharge station",
-            "type": "charger",
-            "path": "charger.glb",
-            "position": [10, 0, 20],
-            "scale": [1, 1, 1],
-            "direction": [1,0,0],
-            "radius": 1.0,
-            "rotation": [0, 0, 0, 0]
-        }
-    },
-    {
         "command": "rescue",
         "params": {
             "actee": 1,
             "destination": 2
         }
+    },
+    {
+        "command": "size",
+        "size": 3
     }
 ]

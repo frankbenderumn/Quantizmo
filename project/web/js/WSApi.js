@@ -19,6 +19,7 @@ function WSApi() {
             self.callbacks[data.id](data);
         }
 
+        // interprets data from backend sent through observer
         if ("notification" in data) {
           $.fn.display(data);
         }

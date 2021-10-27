@@ -149,6 +149,7 @@ namespace csci3081 {
             assert(factory);
 
             if (data.find("decorator") != data.end()) {
+                printf("should only run on ec\n");
                 picojson::object battery = data.find("decorator")->second.get<picojson::object>();
                 picojson::array arr = battery["battery"].get<picojson::array>();
                 float charge = static_cast<float>(arr[0].get<double>());
@@ -220,14 +221,14 @@ namespace csci3081 {
         for (auto e : entities) {
             Actor* a = dynamic_cast<Actor*>(e);
             if (a) {
-                printf("updating\n");
+                // printf("updating\n");
                 a->Update(dt);
                 const std::string drone_model = csci3081::JsonHelper::GetString(a->GetData(), "name");
                 UpdateTimeMap(drone_model, dt);
             } else {
                 e->Update(dt);
             }
-            // returnValue["entity"+std::to_string(e->GetId())] = e->Serialize();
+            returnValue["entity"+std::to_string(e->GetId())] = e->Serialize();
             // std::cout << returnValue["entity"+std::to_string(e->GetId())] << std::endl;
         }
     }

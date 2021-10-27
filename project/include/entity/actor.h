@@ -70,6 +70,7 @@ namespace csci3081 {
                     if (Distance(t->GetPosition(), t->GetDestination()->GetPosition()) <= t->GetDestination()->GetRadius()) {
                         Console::Log(SUCCESS, "Target delivered!\n");
                         this->Notify("alert", "target successfully delivered!\n");
+                        t->SetPosition(Vec3(0, 1000, 0));
                     }
                 }
 

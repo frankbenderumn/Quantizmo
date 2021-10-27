@@ -20,7 +20,7 @@ namespace csci3081 {
         const int GetId() { return this->id; }
         const int GetRadius() { return this->radius; }
         Vec3& GetPosition() { return this->position; }
-                void SetPosition(Vec3 rhs) {
+          void SetPosition(Vec3 rhs) {
             this->position = rhs;
         }
 

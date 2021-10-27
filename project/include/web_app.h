@@ -88,7 +88,7 @@ class WebApp : public JSONSession {
     
     /* @brief only one actor will be used, therefore a member var is used for efficiency */
     IActor* actor = nullptr;
-    Decorator* decorator;
+    Decorator* decorator = nullptr;
     
     Handler* handler;    
     

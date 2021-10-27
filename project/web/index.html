@@ -1,11 +1,8 @@
 <html>
 	<head>
 		<title>3081 Project</title>
-		<link rel="stylesheet" type="text/css" href="css/loader.css" />
-		<link rel="stylesheet" type="text/css" href="css/messenger.css" />
 		<link rel="stylesheet" type="text/css" href="css/main.css" />
 		<link rel="stylesheet" type="text/css" href="css/final.css" />
-		<link rel="stylesheet" type="text/css" href="css/navigation.css" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<script type="module" src="js/jquery-3.5.1.min.js"></script>
 		<script type="module" src="js/scaffolding.js"></script>
@@ -64,7 +61,7 @@
 		  </div>
 
 		<style>
-
+			body, html { overflow: hidden; }
 		</style>
 
 		<script type="module">
@@ -88,7 +85,7 @@
 				<span class="left"><b class="brand" style="color:white;">CSCI3081W Project</b></span>
 				<span><img id="starzoku-logo starzoku-logo-mobile" class="logo" src="https://starzoku.s3.amazonaws.com/favicon-32x32.png"/></span>
 				  <ul id="navbar" class="header-navbar right white">
-					<li data-role="hover-dropdown-trigger" class="trigger"><i class="fas fa-camera"></i> Camera</li>
+					<li id="camera-trigger" data-role="hover-dropdown-trigger" class="trigger"><i class="fas fa-camera"></i> Camera</li>
 					<li data-role="hover-dropdown-trigger" class="trigger" href="#environments"><i class="fas fa-globe"></i> Environment</li>
 					<div id="environments" class="hover-dropdown">
 						<ol>
@@ -110,118 +107,65 @@
 				  </ul>
 				</div>
 			  </nav>
-			<ol class="sidenav white" id="sidenav">
-				<div class="p-20">
-					<span id="sidenav-close"><span id="closebtn" class="closebtn" onclick="closeNav()">&times;</span></span>
-					<H2>Menu</H2>
-					<li><i class="fas fa-chart-pie"></i> Statistics</li>
-					<li><i class="fas fa-trophy"></i> Accolades</li>
-					<li><i class="fas fa-drafting-compass"></i> Alpha</li>
-					<li><i class="fas fa-user-shield"></i> Admin</li>
-					<li><a class="modal-button" href="#wire">OPEN BASIC MODAL</a></li>
-				</div>
-			</ol>
 		  </header>
 
-		<!-- <div id="notification-bar"></div> -->
-
 		<div id ="alert-wrapper"></div>
-
 		<div id ="battery-wrapper"></div>
-
 		<div id="scene-container"></div>
-		<!-- <div id="actor-container" style="z-index:99;position:absolute;top:100px;left:200px; background-color:var(--black);width:400px;height:300px;"></div> -->
-    	<!-- Include the "main" graphics script and run it. -->
+		<div id="depth-container" style="z-index:900000;position:absolute;"></div>
 
-		<!-- START MODALS -->
-		<div id="wire" data-target="wire" data-role="toggle" class="slim modal">
-			<div class="slim modal-box">
-			</div>
-		</div>
+		<style>
 
-		<script type="module">
-			$(document).ready(function(){
-			  $("[data-role=trigger]").on('click', function(){
-				$("[data-role=extend]").each(function(){
-				  $(this).height(0);
-				  $(this).hide();
-				});
-				let id = $(this).attr('data-unique');
-				$("[data-role=show][data-unique='"+id+"']").toggle();
-				$("[data-role=target][data-unique='"+id+"']").toggle();
-				$("[data-role=modal][data-unique='"+id+"']").show();
-				$("[data-role=extend][data-unique='"+id+"']").show().animate({height: '400px'});
-				if($(this).attr('data-unique') == 'approve-image'){
-				  $("[data-unique=approve-image][data-role=modal] .slim.modal-box #pending-image").html('');
-				  $("[data-role=modal]").each(function(){
-					$(this).hide();
-				  });
-				  let number = $(this).attr('data-number');
-				  $("[data-role=modal][data-unique=approve-image]").show();
-				  let image = $("[data-role=trigger][data-unique=approve-image][data-number="+number+"] img").clone();
-				  image.css('width', '100%');
-				  image.css('height', 'auto');
-				  $("[data-unique=approve-image][data-role=modal] .slim.modal-box #pending-image").prepend(image);
-				  let url = image.attr('src');
-				  console.log("url is: "+url);
-				  $("[data-role=select][data-unique=messenger-background-image]").attr('data-selected', url);
-				}
-			  });
-			  $("[data-role=select]").click(function(){
-				let url = $(this).attr('data-selected');
-				let id = $(this).attr('data-unique');
-				$("[data-field='"+id+"']").val(url);
-				console.log($("[data-field='"+id+"']").val());
-			  });
-				$("[data-role=upload]").click(function(){
-				  console.log("upload clicked!");
-				  let id = $(this).attr('data-unique');
-				  $("[data-field='"+id+"']").click();
-				});
-			  if($(".slim.modal:visible")){
-				$(window).on('click', function(e){
-				  if($(e.target).is(".slim.modal")){
-				  $(".slim.modal").each(function(){
-					$(this).hide();
-				  });
-				}
-				});
-			  }
-			});
-		  $(document).ready(function(){
-			$("#convo-settings[data-role='trigger']").on('click', function(){
-			  let convo = $(this).attr('data-convo');
-			  $("#convo-settings[data-role='content'][data-convo='"+convo+"']").toggle();
-			});
-		  });
-		  </script>
+			div.c3081 > input, div.c3081 > select, div.c3081 > div {
+				width:100%;
+				text-align:center;
+			}
+
+			div.c3081 > H4 {
+				display:block;
+				margin: 0px 5px;
+			}
+
+		</style>
 
 		<div id="settings-modal" class="slim modal" data-unique="editor" data-role='modal'>
 			<div class="slim modal-box">
-				<div id="menu">
+				<div class="c3081">
 					<input type="button" value="Kill Simulation" onclick='kill()'>
-					<div>
-						<br>Change View:<br>	
-						<select id="entitySelect" onchange='changeView()'>
+					<div class="center">
+						<H4>Change View</H4>	
+						<select id="entitySelect" style="width:100%;padding:10px;" onchange='changeView()'>
 							<option value="-1">Select entity...</option>
 						</select>
 					</div>
-					<div>
-						<br>Simulation Speed:<br>	
-						<input type="range" min="1" max="100" value="10" class="slider" id="simSpeed">
+					<div class="center">
+						<H4>Simulation Speed</H4>	
+						<input type="range" min="1" max="100" value="10" class="slider" style="width:100%;" id="simSpeed">
 					</div>
-					<div>
-						<br><input type="checkbox" onclick='togglePaths()' checked> Show Current Routes		
-					</div>
-					<div>
-						<br><input type="checkbox" onclick='toggleRoutes()'> Show All Routes		
-					</div>
-					<!--div><input type="checkbox" onclick='kill()' checked>Show Map</div>
-					<div><input type="checkbox" onclick='kill()'>Show Routes</div-->
 				</div>
 
-			  <button class="inkd" data-role="none" id="inkd-bold"><b>B</b></button>
-			  <button class="inkd" data-role="none" id="inkd-italic"><i>I</i></button>
+				<!-- <ol id="inkd-font-color-list" class="select-list" data-role="extend" data-unique="inkd-font-color">
+					<button id="inkd-font-color" data-style="red" class="red">Red</button>
+					<button id="inkd-font-color" data-style="orange" class="orange">Orange</button>
+					<button id="inkd-font-color" data-style="yellow" class="yellow">Yellow</button>
+					<button id="inkd-font-color" data-style="green" class="green">Green</button>
+					<button id="inkd-font-color" data-style="blue" class="blue">Blue</button>
+					<button id="inkd-font-color" data-style="purple" class="purple">Purple</button>
+					<button id="inkd-font-color" data-style="grey" class="grey">Grey</button>
+				  </ol>
+				  <ol id="inkd-font-bgcolor" class="select-list" data-role="extend" data-unique="inkd-font-bgcolor">
+					<button data-style="red" class="white red-bg">Red</button>
+					<button data-style="orange" class="white orange-bg">Orange</button>
+					<button data-style="yellow" class="white yellow-bg">Yellow</button>
+					<button data-style="green" class="white green-bg">Green</button>
+					<button data-style="blue" class="white blue-bg">Blue</button>
+					<button data-style="purple" class="white purple-bg">Purple</button>
+					<button data-style="grey" class="white grey-bg">Grey</button>
+				  </ol> -->
+	
+
+			  <!-- <button class="inkd" data-role="none" id="inkd-bold"><b>Graphics</b></button>
+			  <button class="inkd" data-role="none" id="inkd-italic"><i>Drone</i></button>
 			  <button class="inkd" data-role="trigger" data-unique="inkd-font-style">T</button>
 			  <button class="inkd block" id="inkd-font-size" data-unique="inkd-font-size" data-role="trigger">px</button>
 			  <button class="inkd red" data-role="trigger" data-unique="inkd-font-color">A</button>
@@ -267,7 +211,7 @@
 				<button class="helvetica" id="inkd-font-name" data-style="helvetica">Helvetica</button>
 				<button class="times-new-roman" id="inkd-font-name" data-style="times">Times New Roman</button>
 				<button class="arial-black" id="inkd-font-name" data-style="arial_black">Arial Black</button>
-			  </ol>
+			  </ol> -->
 			</div>
 			</div>
 
