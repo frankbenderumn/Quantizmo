@@ -3,11 +3,11 @@
 #include <algorithm>
 #include <cmath>
 
-#define STB_IMAGE_IMPLEMENTATION
+// #define STB_IMAGE_IMPLEMENTATION
 #include "image/stb_image.h"
 
-#define STBI_MSC_SECURE_CRT
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+// #define STBI_MSC_SECURE_CRT
+// #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "image/stb_image_write.h"
 
 namespace csci3081 {

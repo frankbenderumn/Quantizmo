@@ -15,6 +15,7 @@ var api = new WSApi();
 const objLoader = new OBJLoader();
 
 var scene = new THREE.Scene();
+let scene2;
 let models = [];
 let mixers = [];
 
@@ -25,7 +26,7 @@ const clock = new THREE.Clock();
 var simSpeed = 1.0;
 var target = "umn";
 let alertCounter = 0;
-let renderer;
+let renderer, renderer2;
 // let mixer;
 const fov = 55; // fov = Field Of View
 const aspect = container.clientWidth / container.clientHeight;
@@ -35,6 +36,7 @@ let sceneFile;
 let gridGate = false;
 let updateReady = false;
 let mouseX, mouseY;
+let objMaterial;
 
 let camera;
 
@@ -134,6 +136,25 @@ function base(){
   controls.update();
 }
 
+// saves the image to a base64 encoded jpg file
+var strDownloadMime = "image/octet-stream";
+function saveAsImage() {
+  var imgData, imgNode;
+  try {
+      var strMime = "image/jpeg";
+      imgData = renderer.domElement.toDataURL(strMime);
+      console.log(`imgData is ${imgData}`);
+      api.sendPostCommand("image", {image: imgData}).then(function(data) {
+        console.log(data);
+      });
+      //saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
+  } catch (e) {
+      console.log(e);
+      return;
+  }
+
+}
+
 //========================================SCENE GENERATION==========================================
 // This function runs the scene
 $.fn.run = () => {
@@ -154,12 +175,12 @@ $.fn.run = () => {
   uniforms.resolution.value.y = window.innerHeight;
   uniforms.time.value = 1.0;
 
-  var objmaterial = new THREE.ShaderMaterial({
+  objMaterial = new THREE.ShaderMaterial({
       uniforms: uniforms,
       vertexShader: document.getElementById('vertexShader').textContent,
       fragmentShader: document.getElementById('fragmentShader').textContent
   });
-  //scene.overrideMaterial = new THREE.MeshDepthMaterial();
+  // scene.overrideMaterial = new THREE.MeshDepthMaterial();
 
   // skybox generation and dynamic backgrounds for multiple scenes
   if (target != undefined) {
@@ -217,9 +238,19 @@ $.fn.run = () => {
 
   // prevents multiple canvases from being generated on scene change
   $('canvas:nth-of-type(1)').remove();
-  renderer = new THREE.WebGLRenderer( { container, alpha: true, antialias: true, preserveDrawingBuffer: true } );
+  renderer = new THREE.WebGLRenderer( { container, alpha: true, antialias: true } );
   renderer.setSize( window.innerWidth, window.innerHeight );
   document.body.appendChild( renderer.domElement );
+
+  // scene2 = new THREE.Scene();
+  // umn(scene2);
+  // scene2.add( ambientLight, light2 );
+  // // scene2 = scene;
+  // scene2.overrideMaterial = objMaterial;
+  // renderer2 = new THREE.WebGLRenderer( { container, preserveDrawingBuffer: true });
+  // renderer2.setPixelRatio( window.devicePixelRatio );
+  // renderer2.setSize( window.innerWidth, window.innerHeight / 2 );
+  // document.body.appendChild( renderer2.domElement );
 
   // adds extra aesthetic code (may refactor to modules)
   base();
@@ -229,6 +260,11 @@ $.fn.run = () => {
     update();
     render();
   });
+
+  // renderer2.setAnimationLoop( () => {
+  //   update();
+  //   render();
+  // });
 }
 
 // this runs everything
@@ -292,28 +328,71 @@ function update() {
   }
 }
 
-// saves the image to a base64 encoded jpg file
-var strDownloadMime = "image/octet-stream";
-function saveAsImage() {
-  var imgData, imgNode;
-  try {
-      var strMime = "image/jpeg";
-      imgData = renderer.domElement.toDataURL(strMime);
-      console.log(`imgData is ${imgData}`);
-      api.sendPostCommand("image", {image: imgData}).then(function(data) {
-        console.log(data);
-      });
-      //saveFile(imgData.replace(strMime, strDownloadMime), "screenshot.jpg");
-  } catch (e) {
-      console.log(e);
-      return;
-  }
+// ===================================MULTIPLE RENDERERS============================================
 
-}
+// let alert = document.createElement("c");
+
+// const canvas1 = document.createElement('canvas');
+// canvas1.id = 'canvas1';
+// const canvas2 = document.createElement('canvas');
+// canvas2.id = 'canvas2';
+// const canvas3 = document.createElement('canvas');
+// canvas3.id = 'canvas3';
+// const canvas4 = document.createElement('canvas');
+// canvas4.id = 'canvas4';
+
+// container.append(canvas1);
+// container.append(canvas2);
+// container.append(canvas3);
+// container.append(canvas4);
+
+// const w = 300, h = 200;
+
+// // let w = container.clientWidth / 2;
+// // let h = container.clientHeight / 2;
+
+// const fullWidth = w * 2;
+// const fullHeight = h * 2;
+
+// var views = [];
+
+// views.push( new View( canvas1, fullWidth, fullHeight, w * 0, h * 0, w, h ) );
+// views.push( new View( canvas2, fullWidth, fullHeight, w * 1, h * 0, w, h ) );
+// views.push( new View( canvas3, fullWidth, fullHeight, w * 0, h * 1, w, h ) );
+// views.push( new View( canvas4, fullWidth, fullHeight, w * 1, h * 1, w, h ) );
+
+// function View( canvas, fullWidth, fullHeight, viewX, viewY, viewWidth, viewHeight ) {
+
+//   canvas.width = viewWidth * window.devicePixelRatio;
+//   canvas.height = viewHeight * window.devicePixelRatio;
+
+//   const context = canvas.getContext( '2d' );
+
+//   const camera = new THREE.PerspectiveCamera( 20, viewWidth / viewHeight, 1, 10000 );
+//   camera.setViewOffset( fullWidth, fullHeight, viewX, viewY, viewWidth, viewHeight );
+//   camera.position.z = 10;
+
+//   this.render = function () {
+
+//     camera.position.x += ( mouseX - camera.position.x ) * 0.05;
+//     camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
+//     camera.lookAt( scene.position );
+
+//     renderer.render( scene, camera );
+
+//     context.drawImage( renderer.domElement, 0, 0 );
+
+//   };
+
+// }
 
 // This function simply renders the scene based on the camera position.
 function render() {
+
   renderer.render( scene, camera );
+  // renderer.autoClear = false;
+  // renderer2.render( scene2, camera );
+  // renderer.render( scene, camera );
 }
 
 // This function updates the projection matrix and renderer whenever the
@@ -327,6 +406,7 @@ function onWindowResize() {
 
   // update the size of the renderer AND the canvas
   renderer.setSize( container.clientWidth, container.clientHeight );
+  // renderer2.setSize( );
 }
 
 function onMouseMove( event ) {
