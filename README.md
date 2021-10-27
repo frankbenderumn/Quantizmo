@@ -1,79 +1,39 @@
-# instructor-repo
-10/13/2021 - This is a mostly stripped down version of the final project intended to be given to students at the start of iteration 2.
+# instructor-rep
+10/27/21 - beginning documentation
 
-## Envirnment Configuration
-All the environment configuration settings are stored in [config/settings](config/settings).
- * ```DOCKER_IMAGE_PREFIX``` is the docker image repository.
- * ```DEP_DIR``` is the dependency build directory for both CSE Labs and the docker image.
+## Patterns Overview
+ * ```Factory``` entities are generated in factory.h
+ * ```Strategy``` supports three movement strategies: Automatic, Target, Manual
+ * ```Observer``` observer pattern linking entities and Web App to support notifications in front-end
+ * ```Decorator``` decorated entity to add a battery and seek charger entity when low battery
+ * ```Command``` handler class to support input management for manual strategy pattern (not fully command pattern)
+ * ```Singleton``` analytics used to output number of rescues and time taken
 
-These settings should change every semeseter.
+## Rubric
+ * ```Factory``` 10 pts
+ * ```Strategy``` (Automatic - 5pts, Target - 5pts, Manual - 5pts)
+ * ```Observer``` 15 pts
+ * ```Decorator``` EC up to 10pts
+ * ```Charger Entity``` EC up 5pts
+ * ```Command``` support-code or 10 pts
+ * ```Image Detection``` 25 pts
+ * ```Google Tests``` 10pts (5 unit and 1 integration)
+ * ```Compilation``` 10pts
+ * ```Singleton``` 10pts
 
-## Setting up Dependencies and the Development Environment
-All the dependencies are stored in the [env](env) folder.  This folder is precompiled on the CSE Labs and the Docker image.
+ ## Lab Ideas
 
-#### Updating CSE Labs Environment
-```bash
-cd env
-./setup.sh
-```
+ * ```picojson and uml```
+ * ```Patterns: Observer, forward declarations, and circular dependencies```
+ * ```Patterns: Decorator (Starbucks menu example)```
+ * ```Patterns: Strategy (Physics movement)```
+ * ```Patterns: Command (Calculator example)```
 
-#### Updating the Docker Base Image
-```bash
-./bin/build-base.sh
-```
+ ## TODO
+ * ```updated UML```
+ * ```actual blob detection to return true or false```
+ * ```finish analytics```
+ * ```decide if we scrap anything```
 
-#### Building the Docker Development Environent
-```bash
-./bin/build-env.sh
-```
-
-#### Running the project
-```bash
-./bin/run-env.sh
-cd project
-make -j
-
-# Run the basic scene
-./bin/run.sh
-
-# Run any scene
-./bin/run.sh scenes/umn.json
-```
-* Navigate to http://127.0.0.1:8081
-
-#### Debugging the Environment
-```bash
-# Run the development environment
-./bin/run-env.sh
-
-# Edit and reinstall the entity project
-cd env/EntityProject
-make install -j
-
-# Test the project
-cd ../../project
-make -j
-./bin/run.sh
-```
-
-#### Using the SSH Environment on CSE Labs
-```bash
-# Run the ssh environment
-# Example: ./bin/ssh-env.sh <x500> <port> <computer num>
-./bin/ssh-env.sh myx500 8081 05
-
-cd /path/to/project
-make -j
-./bin/run.sh
-```
-
-* Navigate to http://127.0.0.1:8081
-
-#### Using VOLE Environment
-```bash
-cd /path/to/project
-make -j
-./bin/run.sh
-```
-
-* Navigate to http://127.0.0.1:8081 on VOLE (better performance with VOLE-3D)
+ ## UML
+ [UML Diagram](https://lucid.app/lucidchart/86c08e02-27b6-4cc4-8cc9-2efdf2986a67/edit?viewport_loc=-3249%2C-2552%2C6918%2C3480%2C0_0&invitationId=inv_68ca02b9-89ec-44c1-a246-f13728b9d918)

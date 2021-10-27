@@ -336,9 +336,6 @@ function update() {
         scene2.add(models[1].model.clone());
         models2.push("wow");
       } 
-      // scene2.add(models[1].model.clone()); 
-      // scene2.add(models[1].model.clone()); 
-      // scene2.add(models[1].model.clone()); 
     }
 
     api.sendCommand("update", {delta: delta, simSpeed: simSpeed}).then(function(updateData) {
