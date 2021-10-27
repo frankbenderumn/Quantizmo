@@ -14,17 +14,17 @@ export function load(scene, models, params, dynamic = true) {
     console.log(`loading ${arr[0]} with dynamic set to ${dynamic}`);
     switch (ext) {
         case "glb":
-        loadGlb(scene, models, params, dynamic);
-        break;
+            loadGlb(scene, models, params, dynamic);
+            break;
         case "obj":
-        loadObj(scene, models, params, dynamic, params.mtl);
-        break;
+            loadObj(scene, models, params, dynamic, params.mtl);
+            break;
         case "dae":
-        loadCollada(scene, models, params, dynamic);
-        break;
+            loadCollada(scene, models, params, dynamic);
+            break;
         default:
-        console.log("invalid model type in Loader");
-        break;
+            console.log("invalid model type in Loader");
+            break;
     }
 }
 
@@ -48,7 +48,7 @@ function loadGlb(scene, models, params, dynamic) {
     
         if (dynamic) {
         // let m = new Model(params.name, params.path, model);
-        models.push(model);
+            models.push(model);
         }
         scene.add(model);
     }, onProgress, onError);

@@ -32,10 +32,10 @@ namespace csci3081 {
     
       protected:
         /* @brief horizontal rotation */
-        float theta = 0;
+        float theta = 0.f;
 
          /* @brief vertical rotation */
-        float phi = 0;
+        float phi = 0.f;
 
         bool pickedUp = false;
 
@@ -43,7 +43,7 @@ namespace csci3081 {
         float turnSpeed = 1;
 
         /* @brief actor speed */
-        float speed = 0.0000001;
+        float speed = 0.1f;
         
         /* @brief actor movement strategy */
         Strategy* strategy; 
@@ -52,7 +52,7 @@ namespace csci3081 {
         Entity* target = nullptr;
 
         /* @brief target to drop off rescuee (actee) */
-        Destination* dest;
+        // Destination* dest;
 
         Handler* handler;
     };

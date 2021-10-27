@@ -19,9 +19,9 @@ function WSApi() {
             self.callbacks[data.id](data);
         }
 
-        // if ("notification" in data) {
-        //   $.fn.display(data);
-        // }
+        if ("notification" in data) {
+          $.fn.display(data);
+        }
 
         if (self.onmessage) {
             self.onmessage(msg, data);

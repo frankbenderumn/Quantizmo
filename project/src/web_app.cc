@@ -85,9 +85,13 @@ namespace csci3081 {
     std::map<std::string, std::vector<float>> Analytics::cachedOutput = {};
 
     void WebApp::receiveJSON(picojson::value& val) {
-        picojson::object data = val.get<picojson::object>();
-        std::string cmd = data["command"].get<std::string>();
+        picojson::object data;
         picojson::object returnValue;
+        std::string cmd;
+        if (val.is<picojson::object>()) {
+            data = val.get<picojson::object>();
+            cmd = data["command"].get<std::string>();
+        }
         returnValue["id"] = data["id"];
         ReceiveCommand(cmd, data, returnValue);
         picojson::value retVal(returnValue);
@@ -120,10 +124,15 @@ namespace csci3081 {
             KeyDown(data["key"].get<std::string>(), data["keyCode"].get<double>());
         }
         else if (cmd == "image") {
+        std::string decoded;
           std::cout << "IMAGE GOING THROUGH" << std::endl;
-            std::string decoded = base64_decode(data["image"].get<std::string>().substr(23));
+            if (data["image"].is<std::string>()) {
+                decoded = base64_decode(data["image"].get<std::string>().substr(23));
+            } else {
+                Console::Log(FAILURE, "picojson value is not a string");
+            }
             int width, height, comp;
-            std::cout << decoded << std::endl;
+            // std::cout << decoded << std::endl;
             unsigned char* buffer = stbi_load_from_memory((const unsigned char*)decoded.c_str(), decoded.length(), &width, &height, &comp, 4);
             comp = 4;
             std::cout << stbi_write_png("test.png", width, height, comp, buffer, width*4) << std::endl;
@@ -281,6 +290,6 @@ namespace csci3081 {
         picojson::object o;
         o["notification"] = picojson::value(value);
         picojson::value v(o);
-        // sys->Send(v);
+        sys->Send(v);
     }
 }
