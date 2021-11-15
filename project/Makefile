@@ -8,7 +8,7 @@ CXXFLAGS = -std=c++11 -g -fPIC $(ITERATION_DEFINES)
 
 INCLUDES = -I.. -I$(DEP_DIR)/include -Isrc -I. -I$(DEP_DIR)/include -Iinclude -I.
 LIBDIRS = -L$(DEP_DIR)/lib 
-LIBS = 
+LIBS = -lpthread
 
 SOURCES = $(wildcard src/*.cc) $(wildcard src/*/*.cc) $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
 

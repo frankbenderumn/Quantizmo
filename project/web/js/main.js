@@ -1,6 +1,6 @@
 // could add a local version to support no internet connection
 import * as THREE from './three.module.js';
-import { OrbitControls } from 'https://cdn.skypack.dev/three/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/controls/OrbitControls.js';
 import { load, umn } from './loader.js';
 
 // Web Sockets API for communication with the backend
@@ -193,7 +193,7 @@ function main(){
     console.log(scenes.retro.background);
     scene.background = scenes.retro.background;
   }
-
+ 
   // runs json script
   $.fn.runJson(scene,`${target}.json`);
 
@@ -251,12 +251,14 @@ function main(){
   renderer3.setSize( window.innerWidth / 4, window.innerHeight / 4);
   container2.appendChild( renderer3.domElement );
 
-  // adds extra aesthetic code (may refactor to modules)
-  // controls and other shaders. (Ocean and weather patterns were removed)
   // define controls
   controls = new OrbitControls( camera, container );
   controls.maxPolarAngle = Math.PI * 0.695;
   controls.target.set( 0, 0, 0 );
+
+  // controls = new ThirdPersonControls( camera, container );
+  // controls.target.set(new THREE.Vector3(0, 0, 0));
+
   controls.update();
 
   cam1 = camera;

@@ -1,0 +1,219 @@
+<html>
+	<head>
+		<title>3081 Project</title>
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<link rel="stylesheet" type="text/css" href="css/final.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<script type="module" src="js/jquery-3.5.1.min.js"></script>
+		<script type="module" src="js/scaffolding.js"></script>
+		<script type="module" src="js/loader.js"></script>
+		<script src="js/WSApi.js"></script>
+		<script type="module" src="js/stocket.module.js"></script>
+		<!-- <script type="module" src="js/three.js"></script>
+		<script type="module" src="js/OrbitControls.js"></script>
+		<script type="module" src="js/GLTFLoader.js"></script>
+		<script type="module" src="js/OBJLoader.js"></script> -->
+	</head>
+	<body>
+		<script id="vertexShader" type="x-shader/x-vertex">
+			out vec4 localPos;
+			void main() {
+				localPos = modelMatrix*vec4(position,1.0);
+				gl_Position = projectionMatrix *
+							  modelViewMatrix *
+							  vec4(position,1.0);
+			}
+		</script>
+	
+		<script id="fragmentShader" type="x-shader/x-fragment">
+			in vec4 localPos;
+			void main() {
+				vec3 pos = (localPos.xyz/2.0 + 50.0)/100.0;
+				//pos = localPos.xyz/2.0+0.5;
+				vec3 dir = localPos.xyz-cameraPosition;
+				float dist = 1.0-(length(dir)/50.0);
+				pos = dist*(dir/length(dir)/2.0 + 0.5);
+				gl_FragColor = vec4(pos.x, pos.y, pos.z,  // B
+									1.0); // A
+			  }
+		</script>
+
+		<div id="loading-background" class="hide center loading-background">
+			<div class="tY-40">
+			  <H1 id="loading-text" class="loading-text">Project <b>Iris</b></H1>
+			  <!-- <%# <img src="https://starzoku.s3.amazonaws.com/images/alpha_logo.png" class="responsive loader-logo" /> %> -->
+			  <div id="loader">
+				<!--div class="m-a w-50">
+				  <div class="sk-cube-grid">
+					<div class="sk-cube sk-cube1 cube"></div>
+					<div class="sk-cube sk-cube2 cube"></div>
+					<div class="sk-cube sk-cube3 cube"></div>
+					<div class="sk-cube sk-cube4 cube"></div>
+					<div class="sk-cube sk-cube5 cube"></div>
+					<div class="sk-cube sk-cube6 cube"></div>
+					<div class="sk-cube sk-cube7 cube"></div>
+					<div class="sk-cube sk-cube8 cube"></div>
+					<div class="sk-cube sk-cube9 cube"></div>
+				  </div>
+				</div-->
+			  </div>
+			</div>
+		  </div>
+
+		<style>
+			body, html { overflow: hidden; }
+		</style>
+
+		<script type="module">
+			$(document).ready(function(){
+				$("li[data-role='hover-dropdown-trigger']").on("mouseover", function(){
+					$(".hover-dropdown").each(function(){
+						$(this).hide();
+					});
+					let target = $(this).attr("href");
+					console.log("TARGET IS: "+target);
+					$(`${target}`).show();
+				});
+				$(".hover-dropdown").on("mouseleave", function(){
+					$(this).hide();
+				});
+			});
+		</script>
+		  <header>
+			<div class="container">
+			  <nav id="navbar" class="nav-header">
+				<span class="left"><b class="brand" style="color:white;">CSCI3081W Project</b></span>
+				<span><img id="starzoku-logo starzoku-logo-mobile" class="logo" src="https://starzoku.s3.amazonaws.com/favicon-32x32.png"/></span>
+				  <ul id="navbar" class="header-navbar right white">
+					<li id="camera-trigger" data-role="hover-dropdown-trigger" class="trigger"><i class="fas fa-camera"></i> Camera</li>
+					<li data-role="hover-dropdown-trigger" class="trigger" href="#environments"><i class="fas fa-globe"></i> Environment</li>
+					<div id="environments" class="hover-dropdown">
+						<ol>
+<!--							<li data-role="scene-trigger" href="aquatic">Aquatic</li> -->
+<!--							<li data-role="scene-trigger" href="mountain">Mountain</li> -->
+							<li data-role="scene-trigger" href="umn">UMN</li> 
+<!--							<li data-role="scene-trigger" href="ikea">Ikea</li> -->
+<!--							<li data-role="scene-trigger" href="retro">Retro</li> -->
+<!--							<li data-role="scene-trigger" href="space">Space</li> -->
+<!--							<li data-role="scene-trigger" href="pompeii">Pompeii</li> -->
+						</ol>
+					</div>
+					<li><a class="modal-button" href="#settings-modal"><i class="fas fa-cogs"></i> Settings</a></li> 
+					<!-- <li>
+					  <a id="sidenav-trigger" href="javascript:void(0);">
+						<i class="fa fa-bars sidenav-trig"></i>
+					  </a>
+					</li> -->
+				  </ul>
+				</div>
+			  </nav>
+		  </header>
+
+		<div id ="alert-wrapper"></div>
+		<div id ="battery-wrapper"></div>
+		<div id="scene-container"></div>
+		<div id="depth-container" style="z-index:900000;position:absolute;"></div>
+
+		<style>
+
+			div.c3081 > input, div.c3081 > select, div.c3081 > div {
+				width:100%;
+				text-align:center;
+			}
+
+			div.c3081 > H4 {
+				display:block;
+				margin: 0px 5px;
+			}
+
+		</style>
+
+		<div id="settings-modal" class="slim modal" data-unique="editor" data-role='modal'>
+			<div class="slim modal-box">
+				<div class="c3081">
+					<input type="button" value="Kill Simulation" onclick='kill()'>
+					<div class="center">
+						<H4>Change View</H4>	
+						<select id="entitySelect" style="width:100%;padding:10px;" onchange='changeView()'>
+							<option value="-1">Select entity...</option>
+						</select>
+					</div>
+					<div class="center">
+						<H4>Simulation Speed</H4>	
+						<input type="range" min="1" max="100" value="10" class="slider" style="width:100%;" id="simSpeed">
+					</div>
+				</div>
+
+				<!-- <ol id="inkd-font-color-list" class="select-list" data-role="extend" data-unique="inkd-font-color">
+					<button id="inkd-font-color" data-style="red" class="red">Red</button>
+					<button id="inkd-font-color" data-style="orange" class="orange">Orange</button>
+					<button id="inkd-font-color" data-style="yellow" class="yellow">Yellow</button>
+					<button id="inkd-font-color" data-style="green" class="green">Green</button>
+					<button id="inkd-font-color" data-style="blue" class="blue">Blue</button>
+					<button id="inkd-font-color" data-style="purple" class="purple">Purple</button>
+					<button id="inkd-font-color" data-style="grey" class="grey">Grey</button>
+				  </ol>
+				  <ol id="inkd-font-bgcolor" class="select-list" data-role="extend" data-unique="inkd-font-bgcolor">
+					<button data-style="red" class="white red-bg">Red</button>
+					<button data-style="orange" class="white orange-bg">Orange</button>
+					<button data-style="yellow" class="white yellow-bg">Yellow</button>
+					<button data-style="green" class="white green-bg">Green</button>
+					<button data-style="blue" class="white blue-bg">Blue</button>
+					<button data-style="purple" class="white purple-bg">Purple</button>
+					<button data-style="grey" class="white grey-bg">Grey</button>
+				  </ol> -->
+	
+
+			  <!-- <button class="inkd" data-role="none" id="inkd-bold"><b>Graphics</b></button>
+			  <button class="inkd" data-role="none" id="inkd-italic"><i>Drone</i></button>
+			  <button class="inkd" data-role="trigger" data-unique="inkd-font-style">T</button>
+			  <button class="inkd block" id="inkd-font-size" data-unique="inkd-font-size" data-role="trigger">px</button>
+			  <button class="inkd red" data-role="trigger" data-unique="inkd-font-color">A</button>
+			  <button class="inkd red-bg white" id="inkd-font-bgcolor" data-role="trigger" data-unique="inkd-font-bgcolor">A</button>
+			  <button class="inkd underline" data-role="none" id="inkd-underline">A</button>
+			  <button class="inkd line-through" data-role="none" id="inkd-strikethrough">A</button>
+			  <button class="inkd" data-role="none" id="inkd-superscript"><i class="fas fa-superscript"></i></button>
+			  <button class="inkd" data-role="none" id="inkd-subscript"><i class="fas fa-subscript"></i></button>
+			  <button class="inkd" data-role="image-upload" data-type="message" data-unique="convo-<%= convo.id %>"><i class="fas fa-image"></i></button>
+			  <BR>
+			  <ol id="inkd-font-size" class="select-list" data-role="extend" data-unique="inkd-font-size">
+				<li data-style="6">6px</li>
+				<li data-style="8">8px</li>
+				<li data-style="10">10px</li>
+				<li data-style="12">12px</li>
+				<li data-style="14">14px</li>
+				<li data-style="16">16px</li>
+				<li data-style="18">18px</li>
+			  </ol>
+			  <ol id="inkd-font-color-list" class="select-list" data-role="extend" data-unique="inkd-font-color">
+				<button id="inkd-font-color" data-style="red" class="red">Red</button>
+				<button id="inkd-font-color" data-style="orange" class="orange">Orange</button>
+				<button id="inkd-font-color" data-style="yellow" class="yellow">Yellow</button>
+				<button id="inkd-font-color" data-style="green" class="green">Green</button>
+				<button id="inkd-font-color" data-style="blue" class="blue">Blue</button>
+				<button id="inkd-font-color" data-style="purple" class="purple">Purple</button>
+				<button id="inkd-font-color" data-style="grey" class="grey">Grey</button>
+			  </ol>
+			  <ol id="inkd-font-bgcolor" class="select-list" data-role="extend" data-unique="inkd-font-bgcolor">
+				<button data-style="red" class="white red-bg">Red</button>
+				<button data-style="orange" class="white orange-bg">Orange</button>
+				<button data-style="yellow" class="white yellow-bg">Yellow</button>
+				<button data-style="green" class="white green-bg">Green</button>
+				<button data-style="blue" class="white blue-bg">Blue</button>
+				<button data-style="purple" class="white purple-bg">Purple</button>
+				<button data-style="grey" class="white grey-bg">Grey</button>
+			  </ol>
+			  <ol class="select-list" data-role="extend" data-unique="inkd-font-style">
+				<button class="arial" id="inkd-font-name" data-style="arial">Arial</button>
+				<button class="tahoma" id="inkd-font-name" data-style="tahoma">Tahoma</button>
+				<button class="gill-sans" id="inkd-font-name" data-style="open_sans">Gill Sans</button>
+				<button class="comic-sans" id="inkd-font-name" data-style="comic_sans">Open Sans</button>
+				<button class="helvetica" id="inkd-font-name" data-style="helvetica">Helvetica</button>
+				<button class="times-new-roman" id="inkd-font-name" data-style="times">Times New Roman</button>
+				<button class="arial-black" id="inkd-font-name" data-style="arial_black">Arial Black</button>
+			  </ol> -->
+			</div>
+			</div>
+
+	</body>
+</html>

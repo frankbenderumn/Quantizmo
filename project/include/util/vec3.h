@@ -10,7 +10,6 @@ namespace csci3081 {
     class Vec3 {
       public:
         float e[3] = {0.0f, 0.0f, 0.0f};
-        const int size = 2;
 
         // default constructor
         Vec3(){}
@@ -106,9 +105,10 @@ namespace csci3081 {
         // given a vector, return its unit vector
         // making the unit vector in the same direction as the input vector
         inline Vec3 Normalize() {
-            e[0] /= this->Magnitude();
-            e[1] /= this->Magnitude();
-            e[2] /= this->Magnitude();
+            float mag = this->Magnitude();
+            e[0] /= mag;
+            e[1] /= mag;
+            e[2] /= mag;
             return *this;
         }
 

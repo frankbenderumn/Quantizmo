@@ -1,103 +1,87 @@
-import * as THREE from './three.module.js';
+import * as THREE from 'https://cdn.skypack.dev/three@0.134.0'
 import { ColladaLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/ColladaLoader.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/OBJLoader.js';
+import { FBXLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/FBXLoader.js';
 import { MTLLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/MTLLoader.js';
 
+// const manager = THREE.LoadingManager();
 const colladaLoader = new ColladaLoader();
 const glbLoader = new GLTFLoader();
 const objLoader = new OBJLoader();
+const fbxLoader = new FBXLoader();
+const mtlLoader = new MTLLoader();
 
-export function load(scene, models, mixers, params, dynamic = true) {
+let dir = "../assets/models/";
+
+export function setDir(d) {
+    dir = d;
+}
+
+export async function load(params) {
     let arr = params.path.split('.');
     let ext = arr[arr.length - 1];
+    let m;
     switch (ext) {
         case "glb":
-            loadGlb(scene, models, mixers, params, dynamic);
+            m = await loadGlb(params);
             break;
         case "obj":
-            loadObj(scene, models, params, dynamic, params.mtl);
+            m = await loadObj(params);
             break;
         case "dae":
-            loadCollada(scene, models, mixers, params, dynamic);
+            m = await loadCollada(params);
+            break;
+        case "fbx":
+            m = await loadFbx(params);
             break;
         default:
             console.log("invalid model type in Loader");
             break;
     }
+    console.log("m is:");
+    console.log(m);
+    return m;
 }
 
 // could be beneficial to switch to async loader and await models
-function loadGlb(scene, models, mixers, params, dynamic) {
-    console.log(`${params.name} at ../assets/model/${params.path} attempting to be loaded`);
-    glbLoader.load( `../assets/model/${params.path}`, function (obj) {
-    
-        let model = obj.scene;
-    
-        model.position.copy(new THREE.Vector3(params.position[0], params.position[1], params.position[2]))
-        model.scale.copy(new THREE.Vector3(params.scale[0], params.scale[1], params.scale[2])) //*1.41
-    
-        let mixer = new THREE.AnimationMixer(model);
-        const animations = obj.animations;
-        animations.forEach( function ( clip ) {
-            mixer.clipAction( clip ).play();
-        } );
-    
-        let o = {
-            name: params.name,
-            model: model,
-            mixer: mixer,
-            type: params.type
-        }
-
-        models[params.entityId] = o;
-
-        scene.add(model);
-    }, onProgress, onError);
+export async function loadGlb(params, dynamic = true) {
+    let data = await glbLoader.loadAsync(`${dir}${params.path}`);
+    return format(data, params, dynamic);
 }
 
-function loadCollada(scene, models, mixers, params, dynamic) {
-    console.log(`${params.name} at ../assets/model/${params.path} attempting to be loaded`);
-    colladaLoader.load( `../assets/model/${params.path}`, function (obj) {
-    
-        let model = obj.scene;
-    
-        model.position.copy(new THREE.Vector3(params.position[0], params.position[1], params.position[2]))
-        model.scale.copy(new THREE.Vector3(params.scale[0], params.scale[1], params.scale[2])) //*1.41
-    
-        let mixer = new THREE.AnimationMixer( obj.scene );
-        const clips = obj.animations;
-        clips.forEach( function ( clip ) {
-          mixer.clipAction( clip ).play();
-        } );
-        mixers.push(clips);
-    
-        if (dynamic) {
-            models.push(model);
-        }
-
-        scene.add(model);
-    }, onProgress, onError);
+export async function loadCollada(params, dynamic = true) {
+    let data = await colladaLoader.loadAsync(`${dir}${params.path}`);
+    return format(data, params, dynamic);
 }
 
-function loadObj(scene, models, params, dynamic, mtl) {
-    let mtlLoader = new MTLLoader();
-    mtlLoader.load( `../assets/model/${mtl}`, function( materials ) {
-    
-        materials.preload();
-    
-        objLoader.setMaterials( materials );
-        objLoader.load( `../assets/model/${params}`, function ( object ) {
-    
-            if (dynamic) {
-                models.push(object);
-            }
-    
-            scene.add(object.scene);
-    
-        }, onProgress, onError );
-    
-    });
+export async function loadFbx(params, dynamic = true) {
+    let data = await fbxLoader.loadAsync(`${dir}${params.path}`);
+    return format(data, params, dynamic);
+}
+
+
+function format(obj, params, dynamic) {
+    let model = obj.scene;
+
+    model.position.copy(new THREE.Vector3(params.position[0], params.position[1], params.position[2]))
+    model.scale.copy(new THREE.Vector3(params.scale[0], params.scale[1], params.scale[2])) //*1.41
+
+    let mixer = new THREE.AnimationMixer(model);
+    const animations = obj.animations;
+    animations.forEach( function ( clip ) {
+        mixer.clipAction( clip ).play();
+    } );
+
+    let o = {
+        name: params.name,
+        model: model,
+        mixer: mixer,
+        type: params.type,
+        dynamic: dynamic
+    }
+
+    return o;
 }
 
 let onProgress = function(xhr) {
