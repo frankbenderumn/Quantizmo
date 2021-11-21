@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>3081 Project</title>
+		<title>5619 Project</title>
 		<link rel="stylesheet" type="text/css" href="css/main.css" />
 		<link rel="stylesheet" type="text/css" href="css/final.css" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -8,7 +8,7 @@
 		<script type="module" src="js/scaffolding.js"></script>
 		<script type="module" src="js/loader.js"></script>
 		<script src="js/WSApi.js"></script>
-		<script type="module" src="js/stocket.module.js"></script>
+		<script type="module" src="js/main.js"></script>
 		<!-- <script type="module" src="js/three.js"></script>
 		<script type="module" src="js/OrbitControls.js"></script>
 		<script type="module" src="js/GLTFLoader.js"></script>
@@ -36,6 +36,40 @@
 				gl_FragColor = vec4(pos.x, pos.y, pos.z,  // B
 									1.0); // A
 			  }
+		</script>
+
+		<script id="vertexShader2" type="x-shader/x-vertex">
+
+			varying vec2 vUv;
+
+			void main() {
+
+				vUv = uv;
+
+				gl_Position = vec4( position, 1.0 );
+
+			}
+
+		</script>
+
+		<script id="fragmentShader2" type="x-shader/x-fragment">
+
+			uniform sampler2D tAudioData;
+			varying vec2 vUv;
+
+			void main() {
+
+				vec3 backgroundColor = vec3( 0.125, 0.125, 0.125 );
+				vec3 color = vec3( 1.0, 1.0, 0.0 );
+
+				float f = texture2D( tAudioData, vec2( vUv.x, 0.0 ) ).r;
+
+				float i = step( vUv.y, f ) * step( f - 0.0125, vUv.y );
+
+				gl_FragColor = vec4( mix( backgroundColor, color, i ), 1.0 );
+
+			}
+
 		</script>
 
 		<div id="loading-background" class="hide center loading-background">
@@ -82,7 +116,7 @@
 		  <header>
 			<div class="container">
 			  <nav id="navbar" class="nav-header">
-				<span class="left"><b class="brand" style="color:white;">CSCI3081W Project</b></span>
+				<span class="left"><b class="brand" style="color:white;">CSCI5619 Project</b></span>
 				<span><img id="starzoku-logo starzoku-logo-mobile" class="logo" src="https://starzoku.s3.amazonaws.com/favicon-32x32.png"/></span>
 				  <ul id="navbar" class="header-navbar right white">
 					<li id="camera-trigger" data-role="hover-dropdown-trigger" class="trigger"><i class="fas fa-camera"></i> Camera</li>
@@ -112,10 +146,90 @@
 			  </nav>
 		  </header>
 
+		<style>
+			#logger {
+				position:absolute;
+				bottom:100px;
+				right:100px;
+				height:300px;
+				width:480px;
+				opacity:0.9;
+				color:white;
+				background-color:var(--black);
+				border-radius:5px;
+				box-shadow:var(--shadow);
+				z-index:9;
+				padding:20px;
+			}
+
+			#command-bar {
+				position:absolute;
+				top:50px;
+				left:300px;
+				width:auto;
+				opacity:0.9;
+				color:white;
+				background-color:var(--black);
+				border-radius:5px;
+				box-shadow:var(--shadow);
+				z-index:9;
+				padding:20px;
+			}
+
+			#command-bar li {
+				border-radius:10px;
+				padding:3px 10px;
+				float:left;
+				list-style-type: none;
+			}
+
+			#command-bar li:hover {
+				transition:0.2s;
+				background-color:var(--grey);
+				color:var(--black);
+			}
+
+			.dag {
+				width:250px;
+				height:100%;
+				float:left;
+				opacity:0.9;
+				color:white;
+				background-color:var(--black);
+				border-radius:5px;
+				box-shadow:var(--shadow);
+				z-index:9;
+				padding:100px 30px;
+			}
+			.dag li {
+				border-radius:10px;
+				padding:3px 10px;
+				display:block;
+				list-style-type: none;
+			}
+
+			.dag li:hover {
+				transition:0.2s;
+				background-color:var(--grey);
+				color:var(--black);
+			}
+		</style> 
+
 		<div id ="alert-wrapper"></div>
 		<div id ="battery-wrapper"></div>
 		<div id="scene-container"></div>
 		<div id="depth-container" style="z-index:900000;position:absolute;"></div>
+		<div id ="logger">
+			Dynamic Logger
+			<div id="logger-content">
+
+			</div>
+		</div>
+		<div id="command-bar">
+			<li data-role="command">Save</li>
+			<li data-role="command">Open</li>
+			<li data-role="command">Select</li> 
+		</div>
 
 		<style>
 
@@ -129,7 +243,59 @@
 				margin: 0px 5px;
 			}
 
+			form {
+				display:block;
+			}
+
+			form label {
+				font-weight:bold;
+				color:white;
+			}
+
+			input, select {
+				outline:none;
+				border-radius:5px;
+				margin:10px 0px;
+				padding:6px 10px;
+				border:0.03rem solid var(--grey);
+				display:block;
+			}
+
+			select {
+				width:100%;
+				padding:3px 5px;
+			}
+
+			.quad {
+				display:grid;
+				grid-template:
+					[row1-start] "label x y z" auto [row1-end]
+					/ auto 25% auto;
+			}
+			.quad .a {
+				grid-area: label;
+				width:100%;
+			}
+
+			.quad .b {
+				grid-area: x;
+			}
+
+			.quad .c {
+				grid-area: y;
+			}
+
+			.quad .d {
+				grid-area: z;
+			}
+
+
 		</style>
+
+		<div id="inspector" class="slim modal" data-unique="editor" data-role='modal'>
+			<div class="slim modal-box" style="background-color:var(--black);opacity:0.9;color:white;">
+			</div>
+		</div>
 
 		<div id="settings-modal" class="slim modal" data-unique="editor" data-role='modal'>
 			<div class="slim modal-box">

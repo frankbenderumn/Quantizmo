@@ -93,9 +93,23 @@
             "entityId": 6,
             "name": "miami",
             "type": "terrain",
-            "path": "vox_miami.glb",
+            "path": "observatorium.glb",
+            "position": [0, -3, 0],
+            "scale": [5, 5, 5],
+            "direction": [1,0,0],
+            "radius": 1.0,
+            "rotation": [0, 0, 0, 0]
+        }
+    },
+    {
+        "command": "terrain",
+        "params": {
+            "entityId": 6,
+            "name": "arch",
+            "type": "actee",
+            "path": "greek-arch.glb",
             "position": [0, 0, 0],
-            "scale": [0.5, 0.5, 0.5],
+            "scale": [2, 2, 2],
             "direction": [1,0,0],
             "radius": 1.0,
             "rotation": [0, 0, 0, 0]
@@ -109,7 +123,7 @@
             "type": "actee",
             "path": "sun.glb",
             "position": [25, 25, 25],
-            "scale": [25, 25, 25],
+            "scale": [500, 500, 500],
             "direction": [1,0,0],
             "radius": 1.0,
             "rotation": [0, 0, 0, 0]
@@ -180,6 +194,20 @@
             "path": "mars.glb",
             "position": [-25, 0, -25],
             "scale": [25, 25, 25],
+            "direction": [1,0,0],
+            "radius": 1.0,
+            "rotation": [0, 0, 0, 0]
+        }
+    },
+    {
+        "command": "createEntity",
+        "params": {
+            "entityId": 13,
+            "name": "sun",
+            "type": "actee",
+            "path": "asteroid-step.glb",
+            "position": [-2, 0, -2],
+            "scale": [1, 1, 1],
             "direction": [1,0,0],
             "radius": 1.0,
             "rotation": [0, 0, 0, 0]

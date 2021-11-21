@@ -23,11 +23,21 @@ class Entity {
     get model() { return this._model; }
     set name(val) { this._name = val; }
 
-    addComponent(name) {
-        this._components[name] = name;
+    addComponent(component) {
+        if (component.updatable) {
+            this._components.push(component);
+        } else {
+            console.log("invalid component -- needs updatable variable");
+        }
     }
 
     update(dt) {
+        for (let o in this._components) {
+            if (this._components[o].updatable) {
+                this._components[o].update();
+            }
+        }
+
         if (this._dynamic) {
 
             if (this._name == "wumpa") {

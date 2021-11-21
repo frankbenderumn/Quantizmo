@@ -38,6 +38,9 @@ class Controls {
             case "trackball":
                 _controls = new TrackballControls(camera, container);
                 break;
+            case "first":
+                _controls = new FirstPersonControls(camera, container);
+                break;
             default:
                 alert("ERROR: No controls found!");
                 break;
