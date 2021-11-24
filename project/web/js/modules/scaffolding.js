@@ -254,6 +254,10 @@ export function notify(type, message) {
 
 $(document).ready(function(){
 
+    $("[data-role='command']").click(function() {
+        console.log("command clicked!");
+    });
+
     // dynamic modal menu
     $("[data-role=trigger]").on('click', function(){
       $("[data-role=extend]").each(function(){

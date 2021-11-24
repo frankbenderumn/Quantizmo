@@ -2,13 +2,14 @@ class Entity {
     constructor(params) {
         if (params) {
             (params.name) ? this._name = params.name : this._name = "undefined";
-            (params.id) ? this._id = params.id : this._id = -1;
+            (params.entityId > -1) ? this._entityId = params.entityId : this._entityId = -1;
             (params.path) ? this._path = params.path : this._path = "undefined";
             (params.position) ? this._1position = params.position : this._position = [0, 0, 0];
             (params.scale) ? this._scale = params.scale : this._scale = [1, 1, 1];
             (params.rotation) ? this._rotation = params.rotation : this._rotation = [0, 0, 0];
             (params.model) ? this._model = params.model : this._model = "undefined";
             (params.dynamic) ? this._dynamic = params.dynamic : this._dynamic = false;
+            (params.type) ? this._type = params.type : this._type = "undefined";
         } else {
             console.log("not asynchronously loading");
         }
@@ -29,6 +30,20 @@ class Entity {
         } else {
             console.log("invalid component -- needs updatable variable");
         }
+    }
+
+    serialize() {
+        let o = {
+            entityId: this._entityId,
+            name: this._name,
+            position: this._model.position,
+            scale: this._model.scale,
+            rotation: this._model.rotation,
+            dynamic: this._dynamic,
+            type: this._type,
+            path: this._path
+        };
+        return o;
     }
 
     update(dt) {

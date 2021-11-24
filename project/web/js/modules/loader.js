@@ -64,8 +64,9 @@ export async function loadFbx(params, dynamic = true) {
 function format(obj, params, dynamic) {
     let model = obj.scene;
 
-    model.position.copy(new THREE.Vector3(params.position[0], params.position[1], params.position[2]))
-    model.scale.copy(new THREE.Vector3(params.scale[0], params.scale[1], params.scale[2])) //*1.41
+    model.position.copy(new THREE.Vector3(params.position.x, params.position.y, params.position.z))
+    model.rotation.copy(params.rotation)
+    model.scale.copy(new THREE.Vector3(params.scale.x, params.scale.y, params.scale.z)) //*1.41
 
     let mixer = new THREE.AnimationMixer(model);
     const animations = obj.animations;
@@ -74,11 +75,13 @@ function format(obj, params, dynamic) {
     } );
 
     let o = {
+        entityId: params.entityId,
         name: params.name,
         model: model,
         mixer: mixer,
         type: params.type,
-        dynamic: dynamic
+        dynamic: dynamic,
+        path: params.path
     }
 
     return o;

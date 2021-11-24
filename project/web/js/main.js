@@ -31,7 +31,7 @@ let stateCommand = {
 };
 
 async function main() {
-    world = new Scene(container, "umn.json", false);
+    world = new Scene(container, "scene.json", false);
     await world.init();
     world.start();
     raycast = new Raycast(world.scene, world.camera);
@@ -195,6 +195,10 @@ let press = function(e) {
     //     controls.clearTurn(1, 1);
     // }
   }
+
+  $("#command-save").click(function(){
+    world.save();
+  });
 
 // $(document).ready(function(){
     document.onkeyup = release;

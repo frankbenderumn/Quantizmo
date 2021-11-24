@@ -5,8 +5,6 @@
 		<link rel="stylesheet" type="text/css" href="css/final.css" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<script type="module" src="js/jquery-3.5.1.min.js"></script>
-		<script type="module" src="js/scaffolding.js"></script>
-		<script type="module" src="js/loader.js"></script>
 		<script src="js/WSApi.js"></script>
 		<script type="module" src="js/main.js"></script>
 		<!-- <script type="module" src="js/three.js"></script>
@@ -190,7 +188,7 @@
 			}
 
 			.dag {
-				width:250px;
+				width:150px;
 				height:100%;
 				float:left;
 				opacity:0.9;
@@ -219,16 +217,17 @@
 		<div id ="battery-wrapper"></div>
 		<div id="scene-container"></div>
 		<div id="depth-container" style="z-index:900000;position:absolute;"></div>
-		<div id ="logger">
+		<div id ="logger" style="display:none;">
 			Dynamic Logger
 			<div id="logger-content">
 
 			</div>
 		</div>
 		<div id="command-bar">
-			<li data-role="command">Save</li>
-			<li data-role="command">Open</li>
-			<li data-role="command">Select</li> 
+			<li id="command-save" data-role="command">Save</li>
+			<li id="command-open" data-role="command">Open</li>
+			<li id="command-select" data-role="command">Select</li> 
+			<li id="command-run" data-role="command">Run</li>
 		</div>
 
 		<style>

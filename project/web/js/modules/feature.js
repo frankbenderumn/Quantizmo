@@ -10,7 +10,7 @@ import { Scene,
     Clock,
     sRGBEncoding
         } from 'https://cdn.skypack.dev/three@0.134.0';
-import * as Loader from '../loader.js';
+import * as Loader from './loader.js';
 import { Controls } from './controls.js';
 import { VRButton } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/VRButton.js';
 import { CanvasUI } from './ui/canvas.js';

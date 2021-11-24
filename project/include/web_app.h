@@ -21,6 +21,7 @@
 #include "image/canny_detect.h"
 #include "addon/analytics.h"
 #include "addon/battery_actor.h"
+#include "builder.h"
 
 namespace csci3081 {
 

@@ -88,9 +88,19 @@ namespace csci3081 {
         picojson::object data;
         picojson::object returnValue;
         std::string cmd;
+        Console::Log(INFO, "PICOJSON::VAL");
+        std::cout << picojson::value(val).serialize() << std::endl;
         if (val.is<picojson::object>()) {
             data = val.get<picojson::object>();
-            cmd = data["command"].get<std::string>();
+            // cmd = data["command"].get<std::string>();
+            Console::Log(INFO, "SCENE FILE");
+            std::cout << picojson::value(data).serialize() << std::endl;
+        } else if (val.is<picojson::array>()) {
+            picojson::array arr = val.get<picojson::array>();
+            picojson::object o;
+            cmd = "save";
+            o["scene"] = picojson::value(arr);
+            data = o;
         }
         returnValue["id"] = data["id"];
         ReceiveCommand(cmd, data, returnValue);
@@ -197,6 +207,13 @@ namespace csci3081 {
             } else {
               Rescue((Actee*)entities.at(acteeIdx), (Destination*)entities.at(destIdx));
             }
+        } else if (cmd == "save") {
+            Console::Log(INFO, "HEART IS HURTING");
+            std::cout << picojson::value(data).serialize() << std::endl;
+            auto arr = data["scene"].get<picojson::array>();
+            Builder* b = new Builder(arr);
+            b->build();
+            delete b;
         }
         else {
             std::cout << "Unknown command: " << cmd << " - " << picojson::value(data).serialize() << std::endl;

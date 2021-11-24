@@ -1,4 +1,4 @@
-import * as Loader from '../loader.js';
+import * as Loader from './loader.js';
 let _api = new WSApi();
 let idx = -1;
 
@@ -34,10 +34,17 @@ export async function run(file, modelsDir) {
         if (command.command == "rescue") {
             // _api.sendCommand("rescue", command.params);
         }
+
     }
 
     return _entities;
 
+}
+
+export function send(command, params) {
+    _api.sendCommand("save", params).then(function(data){
+        console.log(data);
+    });
 }
 
 export async function generate(type) {

@@ -133,6 +133,16 @@ class Scene {
         });
     }
 
+    save() {
+        let items = [];
+        for (const e of _entities) {
+            items.push(e.serialize());
+        }
+        console.log("#############");
+        console.log(items);
+        Script.send("save", items);
+    }
+
     vr(val) {
         this._vr = val;
     }
