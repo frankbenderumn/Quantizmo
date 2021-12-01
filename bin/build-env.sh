@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ROOTDIR=`git rev-parse --show-toplevel`
-echo "WHAT IS ${ROOTDIR}"
+
 source ${ROOTDIR}/config/settings
 
 echo ${DEP_DIR}

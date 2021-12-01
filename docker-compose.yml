@@ -1,0 +1,23 @@
+services:
+  app:
+    image: ${PREFIX}/env
+    ports:
+      - 127.0.0.1:8082:8082
+    # user: $UID:$GID
+    working_dir: $HOME
+    stdin_open: true
+    tty: true
+    volumes: 
+      - ${ROOTDIR}:/home/user/repo
+
+  postgres:
+    build: ./db/ 
+    # image: stocket
+    restart: always
+    volumes: 
+      - ${ROOTDIR}:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+    ports:
+      - '5438:5432'
