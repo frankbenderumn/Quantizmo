@@ -109,6 +109,18 @@
 				$(".hover-dropdown").on("mouseleave", function(){
 					$(this).hide();
 				});
+				$("li[data-role=toggle]").click(function(){
+					let target = $(this).attr('data-target');
+					console.log(target);
+					$(`#${target}`).show();
+					$("#command-bar").hide();
+				});
+				$("[data-role=close]").click(function(){
+					let target = $(this).attr('data-target');
+					console.log(target);
+					$(`#${target}`).hide();	
+					$("#command-bar").show();				
+				});
 			});
 		</script>
 		  <header>
@@ -117,6 +129,7 @@
 				<span class="left"><b class="brand" style="color:white;">CSCI5619 Project</b></span>
 				<span><img id="starzoku-logo starzoku-logo-mobile" class="logo" src="https://starzoku.s3.amazonaws.com/favicon-32x32.png"/></span>
 				  <ul id="navbar" class="header-navbar right white">
+					<li id="fullscreen-menu-trigger" data-role="toggle" data-target="fullscreen-menu" class="trigger"><i class="fas fa-globe"></i> Menu</li>
 					<li id="camera-trigger" data-role="hover-dropdown-trigger" class="trigger"><i class="fas fa-camera"></i> Camera</li>
 					<li data-role="hover-dropdown-trigger" class="trigger" href="#environments"><i class="fas fa-globe"></i> Environment</li>
 					<div id="environments" class="hover-dropdown">
@@ -144,7 +157,60 @@
 			  </nav>
 		  </header>
 
+		  <div class="fullscreen-menu" id="fullscreen-menu">&nbsp;
+			  <span class="fullscreen-menu-close" data-role="close" data-target="fullscreen-menu">&times;</span>
+			  <div class="content">
+				  <span class="applet red-bg"><i class="fas fa-film"></i></span>
+				  <span class="applet red-bg"><i class="far fa-square"></i></span>
+				  <span class="applet red-bg"><i class="fas fa-wave-square"></i></span>
+				  <span class="applet red-bg"><i class="fas fa-boxes"></i></span>
+			  </div>
+		  </div>
+
 		<style>
+			.fullscreen-menu {
+				background-color:var(--black);
+				height:100%;
+				display:none;
+				z-index:99;
+			}
+
+			.applet {
+				height:50px;
+				width:50px;
+				float:left;
+				border-radius:50%;
+				padding:50px;
+				display:block;
+				margin:20px; 
+				text-align:center;
+				font-size:3rem;
+			}
+
+			.applet:hover {
+				width:100px;
+				height:100px;
+				transition:0.2s;
+				background-color:grey !important;
+				padding:100px;
+				font-size:6rem;
+			}
+
+			.fullscreen-menu .content {
+				position:absolute;
+				top:100px;
+				left:20px;
+				color:white;
+			}
+
+			span.fullscreen-menu-close {
+				color: white;
+				font-size:2rem;
+				position:absolute;
+				top:50px;
+				left:20px;
+			}
+
 			#logger {
 				position:absolute;
 				bottom:100px;
@@ -156,7 +222,7 @@
 				background-color:var(--black);
 				border-radius:5px;
 				box-shadow:var(--shadow);
-				z-index:9;
+				z-index:0;
 				padding:20px;
 			}
 
@@ -170,7 +236,6 @@
 				background-color:var(--black);
 				border-radius:5px;
 				box-shadow:var(--shadow);
-				z-index:9;
 				padding:20px;
 			}
 
@@ -311,75 +376,6 @@
 						<input type="range" min="1" max="100" value="10" class="slider" style="width:100%;" id="simSpeed">
 					</div>
 				</div>
-
-				<!-- <ol id="inkd-font-color-list" class="select-list" data-role="extend" data-unique="inkd-font-color">
-					<button id="inkd-font-color" data-style="red" class="red">Red</button>
-					<button id="inkd-font-color" data-style="orange" class="orange">Orange</button>
-					<button id="inkd-font-color" data-style="yellow" class="yellow">Yellow</button>
-					<button id="inkd-font-color" data-style="green" class="green">Green</button>
-					<button id="inkd-font-color" data-style="blue" class="blue">Blue</button>
-					<button id="inkd-font-color" data-style="purple" class="purple">Purple</button>
-					<button id="inkd-font-color" data-style="grey" class="grey">Grey</button>
-				  </ol>
-				  <ol id="inkd-font-bgcolor" class="select-list" data-role="extend" data-unique="inkd-font-bgcolor">
-					<button data-style="red" class="white red-bg">Red</button>
-					<button data-style="orange" class="white orange-bg">Orange</button>
-					<button data-style="yellow" class="white yellow-bg">Yellow</button>
-					<button data-style="green" class="white green-bg">Green</button>
-					<button data-style="blue" class="white blue-bg">Blue</button>
-					<button data-style="purple" class="white purple-bg">Purple</button>
-					<button data-style="grey" class="white grey-bg">Grey</button>
-				  </ol> -->
-	
-
-			  <!-- <button class="inkd" data-role="none" id="inkd-bold"><b>Graphics</b></button>
-			  <button class="inkd" data-role="none" id="inkd-italic"><i>Drone</i></button>
-			  <button class="inkd" data-role="trigger" data-unique="inkd-font-style">T</button>
-			  <button class="inkd block" id="inkd-font-size" data-unique="inkd-font-size" data-role="trigger">px</button>
-			  <button class="inkd red" data-role="trigger" data-unique="inkd-font-color">A</button>
-			  <button class="inkd red-bg white" id="inkd-font-bgcolor" data-role="trigger" data-unique="inkd-font-bgcolor">A</button>
-			  <button class="inkd underline" data-role="none" id="inkd-underline">A</button>
-			  <button class="inkd line-through" data-role="none" id="inkd-strikethrough">A</button>
-			  <button class="inkd" data-role="none" id="inkd-superscript"><i class="fas fa-superscript"></i></button>
-			  <button class="inkd" data-role="none" id="inkd-subscript"><i class="fas fa-subscript"></i></button>
-			  <button class="inkd" data-role="image-upload" data-type="message" data-unique="convo-<%= convo.id %>"><i class="fas fa-image"></i></button>
-			  <BR>
-			  <ol id="inkd-font-size" class="select-list" data-role="extend" data-unique="inkd-font-size">
-				<li data-style="6">6px</li>
-				<li data-style="8">8px</li>
-				<li data-style="10">10px</li>
-				<li data-style="12">12px</li>
-				<li data-style="14">14px</li>
-				<li data-style="16">16px</li>
-				<li data-style="18">18px</li>
-			  </ol>
-			  <ol id="inkd-font-color-list" class="select-list" data-role="extend" data-unique="inkd-font-color">
-				<button id="inkd-font-color" data-style="red" class="red">Red</button>
-				<button id="inkd-font-color" data-style="orange" class="orange">Orange</button>
-				<button id="inkd-font-color" data-style="yellow" class="yellow">Yellow</button>
-				<button id="inkd-font-color" data-style="green" class="green">Green</button>
-				<button id="inkd-font-color" data-style="blue" class="blue">Blue</button>
-				<button id="inkd-font-color" data-style="purple" class="purple">Purple</button>
-				<button id="inkd-font-color" data-style="grey" class="grey">Grey</button>
-			  </ol>
-			  <ol id="inkd-font-bgcolor" class="select-list" data-role="extend" data-unique="inkd-font-bgcolor">
-				<button data-style="red" class="white red-bg">Red</button>
-				<button data-style="orange" class="white orange-bg">Orange</button>
-				<button data-style="yellow" class="white yellow-bg">Yellow</button>
-				<button data-style="green" class="white green-bg">Green</button>
-				<button data-style="blue" class="white blue-bg">Blue</button>
-				<button data-style="purple" class="white purple-bg">Purple</button>
-				<button data-style="grey" class="white grey-bg">Grey</button>
-			  </ol>
-			  <ol class="select-list" data-role="extend" data-unique="inkd-font-style">
-				<button class="arial" id="inkd-font-name" data-style="arial">Arial</button>
-				<button class="tahoma" id="inkd-font-name" data-style="tahoma">Tahoma</button>
-				<button class="gill-sans" id="inkd-font-name" data-style="open_sans">Gill Sans</button>
-				<button class="comic-sans" id="inkd-font-name" data-style="comic_sans">Open Sans</button>
-				<button class="helvetica" id="inkd-font-name" data-style="helvetica">Helvetica</button>
-				<button class="times-new-roman" id="inkd-font-name" data-style="times">Times New Roman</button>
-				<button class="arial-black" id="inkd-font-name" data-style="arial_black">Arial Black</button>
-			  </ol> -->
 			</div>
 			</div>
 
