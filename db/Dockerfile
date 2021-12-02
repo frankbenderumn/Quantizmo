@@ -29,7 +29,7 @@ RUN echo "listen_addresses='*'" >> /etc/postgresql/10/main/postgresql.conf
 # Expose the PostgreSQL port
 EXPOSE 5432
 
-RUN /bin/bash -c 'chmod 777 /var/lib/postgresql/data'
+# RUN /bin/bash -c 'chmod 777 /var/lib/postgresql/data'
 
 # Add VOLUMEs to allow backup of config, logs and databases
 VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]

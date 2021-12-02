@@ -7,6 +7,7 @@ services:
     working_dir: $HOME
     stdin_open: true
     tty: true
+    user: root
     volumes: 
       - ${ROOTDIR}:/home/user/repo
 
