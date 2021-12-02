@@ -3,6 +3,7 @@ import { BoxLineGeometry } from 'https://cdn.skypack.dev/three/examples/jsm/geom
 import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/XRControllerModelFactory.js';
 import { Scene } from './modules/scene.js'
 import { Raycast } from './modules/raycast.js'
+import * as Script from './modules/script.js'
 
 let container = document.getElementById( 'scene-container' );
 let world;
@@ -201,11 +202,12 @@ let press = function(e) {
     world.save();
   });
 
+
+
   $("#command-stock").click(function(){
     world.stock();
   });
 
-// $(document).ready(function(){
     document.onkeyup = release;
 
     document.onkeydown = press;
@@ -219,11 +221,13 @@ let press = function(e) {
         pointer.x = ( e.clientX / window.innerWidth );
         pointer.y = ( e.clientY / window.innerHeight );
         let newPoint = new THREE.Vector2(pointer.x, pointer.y);
-        let newDist = lastPoint.distanceTo(newPoint);
+        // let newDist = lastPoint.distanceTo(newPoint);
     
         if (mouseState.left) {
-            xMove = (pointer.x - lastPoint.x) / lastPoint.x;
-            yMove = (pointer.y - lastPoint.y) / lastPoint.y;
+            xMove = 0;
+            yMove = 0;
+            // xMove = (pointer.x - lastPoint.x) / lastPoint.x;
+            // yMove = (pointer.y - lastPoint.y) / lastPoint.y;
             drag = true;
         } else if (mouseState.right) {
             // mouseMove = true; 
@@ -286,7 +290,7 @@ let press = function(e) {
             // controls.clearTurn(1, 1);
         }
     
-        drag = false;
+        // drag = false;
         mouseState.left = false;
     }
     document.onmousedown = function(e) {

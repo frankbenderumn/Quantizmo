@@ -218,7 +218,8 @@ namespace csci3081 {
             std::cout << picojson::value(data).serialize() << std::endl;
             std::string token = "Tpk_64ae4b7c2dca48c7bb11970baaf64f1c";
             Iex* client = new Iex(token);
-            picojson::value iex = client->Quote("AAPL");
+            std::string ticker = data["ticker"].get<std::string>();
+            picojson::value iex = client->Quote(ticker);
             std::cout << iex.serialize() << std::endl;
             picojson::object child;
             child["type"] = picojson::value("stock");

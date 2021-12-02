@@ -2,6 +2,28 @@ import * as Loader from './loader.js';
 let _api = new WSApi();
 let idx = -1;
 
+$.getJSON("./js/scenes/stocks.json", function(data) {
+    for (let i = 0; i < data.length; i++) {
+        console.log(data[i]);
+        let li = document.createElement("li");
+        li.append(data[i].stock.ticker);
+        li.append(" - ");
+        li.append(data[i].stock.name);
+        li.setAttribute("id", "stock");
+        li.setAttribute("data-role", "stock");
+        li.setAttribute("data-target", data[i].stock.ticker);
+        $("#stocks").append(li);
+    }
+}).then(function(){
+    $("li#stock").click(function(){
+        let o = {
+            ticker: $(this).attr("data-target"),
+            name: "none"
+        };
+        send("stock", o);
+    });
+});
+
 export async function run(file, modelsDir) {
     var _entities = [];
     Loader.setDir(modelsDir);
@@ -43,6 +65,7 @@ export async function run(file, modelsDir) {
 
 export function send(command, params) {
     _api.sendCommand(command, params).then(function(data){
+        console.log("$$$$");
         console.log(data);
     });
 }

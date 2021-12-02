@@ -293,8 +293,68 @@
 			<li id="command-open" data-role="command">Open</li>
 			<li id="command-select" data-role="command">Select</li> 
 			<li id="command-run" data-role="command">Run</li>
-			<li id="command-stock" data-role="command">Stock</li>			
+			<li id="command-stock" data-role="command">Stock</li>		
 		</div>
+
+		<style>
+			.list {
+				position:relative;
+				top:50px;
+				width:300px;
+				background-color:white;
+				color:var(--black);
+				border-radius:5px;
+				box-shadow:var(--shadow);
+				display:none;
+			}
+
+			.list li {
+				padding:6px 10px;
+				text-align:left;
+			}
+
+			.list li:hover {
+				background-color:#777777;
+			}
+			.search-bar {
+				width:200px;
+				background-color:white;
+				padding:6px 10px;
+				color:var(--grey);
+				border-radius:5px;
+			}
+		</style>
+
+		<div id="command-bar" class="kid" style="position:absolute;top:100px;">
+			<div id="search-bar" class="search-bar" contenteditable="true" data-role="search" data-target="stocks"></div>
+			<ol id="stocks" class="list">
+				<li>Sample result</li>
+			</ol>
+		</div>
+
+		<script type="module">
+		$(document).ready(function(){
+			// import * as Script from './js/modules/script.js';
+			$("div.search-bar").keyup(function(){
+				let target = $(this).attr('data-target');
+				console.log(`search target is ${target}`);
+				$(`#${target}`).show();
+			});
+
+			$("li#stock").click(function(){
+				console.log("vvvv"); 
+				// console.log($(this).attr("data-target"));
+				// Script.send("stock", $(this).attr("data-target"));
+			});
+
+			$(document).click(function(){
+				console.log("why");
+			});
+		});
+
+
+
+		</script> 
 
 		<style>
 

@@ -1,0 +1,16 @@
+[
+    { "stock": { "ticker": "RCL",   "name": "Royal Carribean Company, Ltd."} },
+    { "stock": { "ticker": "AAPL",  "name": "Apple, Inc."} },
+    { "stock": { "ticker": "RIVN",  "name": "Rivian Automotive"} },
+    { "stock": { "ticker": "CCL",   "name": "Carnival Cruises"} },
+    { "stock": { "ticker": "TSLA",  "name": "Tesla Automotive"} },
+    { "stock": { "ticker": "AAL",   "name": "American Airlines"} },
+    { "stock": { "ticker": "DAL",   "name": "Delta Airlines"} },
+    { "stock": { "ticker": "NCLH",  "name": "Norweigan Cruise Line Holdings"} },
+    { "stock": { "ticker": "LUV",   "name": "Southwest Airlines"} },
+    { "stock": { "ticker": "F",     "name": "Ford Automotive"} },
+    { "stock": { "ticker": "V",     "name": "Visa"} },
+    { "stock": { "ticker": "NVDA",  "name": "Nvidia Graphics"} },
+    { "stock": { "ticker": "AMD",   "name": "AMD devices"} },
+    { "stock": { "ticker": "AMC",   "name": "AMC, Inc."} }
+]
