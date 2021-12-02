@@ -4,21 +4,29 @@ services:
     ports:
       - 127.0.0.1:8082:8082
     # user: $UID:$GID
-    working_dir: $HOME
+    # working_dir: $HOME
     stdin_open: true
     tty: true
     user: root
     volumes: 
       - ${ROOTDIR}:/home/user/repo
+    ports: 
+      - '8081:8081'
+    depends_on: 
+    - postgres
 
   postgres:
-    build: ./db/ 
-    # image: stocket
-    restart: always
-    volumes: 
-      - ${ROOTDIR}:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=docker
-    ports:
-      - '5438:5432'
+      image: postgres:10.5
+      restart: always
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      logging:
+        options:
+          max-size: 10m
+          max-file: "3"
+      ports:
+        - '5438:5432'
+      volumes: 
+       - ${ROOTDIR}:/var/lib/postgresql/data
+       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql

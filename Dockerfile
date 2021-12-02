@@ -22,7 +22,8 @@ RUN apt-get update && apt-get install -y \
     cmake \
     libcurl4-openssl-dev\
     postgresql \
-    libpqxx-dev
+    libpqxx-dev \
+    nano
 
 ARG USER_ID
 ARG GROUP_ID
@@ -46,21 +47,28 @@ RUN mkdir -p ${SRC_DIR}/gtest/build
 
 WORKDIR ${SRC_DIR}/CppWebServer/build
 RUN cmake -DCMAKE_INSTALL_PREFIX=${DEP_DIR} ..
-RUN make install
+RUN make install -j
 WORKDIR ${SRC_DIR}/gtest/build
 RUN cmake -DCMAKE_INSTALL_PREFIX=${DEP_DIR} ..
-RUN make install
+RUN make install -j
 
 RUN echo OPENCV_INCLUDES=`pkg-config --cflags opencv` >> ${DEP_DIR}/env
 RUN echo OPENCV_LIBS=`pkg-config --libs opencv` >> ${DEP_DIR}/env
 
 WORKDIR ${DEP_DIR}
-RUN ls
 
 RUN find ${install_dir} -type d -exec chmod 777 {} \;
 RUN find ${install_dir} -type f -exec chmod 777 {} \;
 
 RUN mkdir -p /home/user
 WORKDIR /home/user/repo
+# RUN chown -R postgres .
 
-USER root
+
+# RUN cp /mnt/d/stocket/instructor-repo/setup/pg_hba.conf /etc/postgresql/10/main/pg_hba.conf
+USER user
+# USER root
+# RUN service postgresql start
+
+# USER postgres
+# CMD ["service", "postgresql", "start"]

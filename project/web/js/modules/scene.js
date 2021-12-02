@@ -143,6 +143,14 @@ class Scene {
         Script.send("save", items);
     }
 
+    stock() {
+        let o = {
+            ticker: "AAPL",
+            data: "20211201"
+        };
+        Script.send("stock", o);
+    }
+
     vr(val) {
         this._vr = val;
     }

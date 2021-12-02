@@ -201,6 +201,10 @@ let press = function(e) {
     world.save();
   });
 
+  $("#command-stock").click(function(){
+    world.stock();
+  });
+
 // $(document).ready(function(){
     document.onkeyup = release;
 

@@ -42,7 +42,7 @@ export async function run(file, modelsDir) {
 }
 
 export function send(command, params) {
-    _api.sendCommand("save", params).then(function(data){
+    _api.sendCommand(command, params).then(function(data){
         console.log(data);
     });
 }

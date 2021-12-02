@@ -22,6 +22,7 @@
 #include "addon/analytics.h"
 #include "addon/battery_actor.h"
 #include "builder.h"
+#include "financial/iex.h"
 
 namespace csci3081 {
 

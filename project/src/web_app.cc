@@ -92,7 +92,7 @@ namespace csci3081 {
         std::cout << picojson::value(val).serialize() << std::endl;
         if (val.is<picojson::object>()) {
             data = val.get<picojson::object>();
-            // cmd = data["command"].get<std::string>();
+            cmd = data["command"].get<std::string>();
             Console::Log(INFO, "SCENE FILE");
             std::cout << picojson::value(data).serialize() << std::endl;
         } else if (val.is<picojson::array>()) {
@@ -214,6 +214,20 @@ namespace csci3081 {
             Builder* b = new Builder(arr);
             b->build();
             delete b;
+        } else if (cmd == "stock") {
+            std::cout << picojson::value(data).serialize() << std::endl;
+            std::string token = "Tpk_64ae4b7c2dca48c7bb11970baaf64f1c";
+            Iex* client = new Iex(token);
+            picojson::value iex = client->Quote("AAPL");
+            std::cout << iex.serialize() << std::endl;
+            picojson::object child;
+            child["type"] = picojson::value("stock");
+            child["data"] = iex;
+            picojson::object o;
+            o["notification"] = picojson::value(child);
+            picojson::value toSend(o);
+            this->Send(toSend);
+            delete client;
         }
         else {
             std::cout << "Unknown command: " << cmd << " - " << picojson::value(data).serialize() << std::endl;

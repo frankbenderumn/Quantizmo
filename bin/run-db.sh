@@ -7,11 +7,11 @@
 #     -e PSQL_DATABASE=stocket_dev \
 #     psql:10
 
-# docker run \
-#     --name stocket \
-#     -e POSTGRES_USER=joeybenz \
-#     -e POSTGRES_PASSWORD=password \
-#     -d -p 5432:5432 postgres
+docker run \
+    --name stocket \
+    -e POSTGRES_USER=joeybenz \
+    -e POSTGRES_PASSWORD=password \
+    -d -p 5432:5432 postgresql
 
-export ROOTDIR=`git rev-parse --show-toplevel`
-docker-compose -f docker-compose.yml up postgres
+# export ROOTDIR=`git rev-parse --show-toplevel`
+# docker-compose -f docker-compose.yml up postgres

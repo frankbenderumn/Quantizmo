@@ -371,6 +371,12 @@ $(document).ready(function(){
           break;
         case "statistics":
           break;
+        case "stock":
+          console.log("====> STOCK IN FRONT <====");
+          console.log(msg.notification.data);
+          $.fn.notify(2, msg.notification.data.companyName);
+          $.fn.notify(2, msg.notification.data.iexOpen);
+          break;
       }
     }
     
