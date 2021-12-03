@@ -47,10 +47,10 @@ RUN mkdir -p ${SRC_DIR}/gtest/build
 
 WORKDIR ${SRC_DIR}/CppWebServer/build
 RUN cmake -DCMAKE_INSTALL_PREFIX=${DEP_DIR} ..
-RUN make install -j
+RUN make install
 WORKDIR ${SRC_DIR}/gtest/build
 RUN cmake -DCMAKE_INSTALL_PREFIX=${DEP_DIR} ..
-RUN make install -j
+RUN make install
 
 RUN echo OPENCV_INCLUDES=`pkg-config --cflags opencv` >> ${DEP_DIR}/env
 RUN echo OPENCV_LIBS=`pkg-config --libs opencv` >> ${DEP_DIR}/env
@@ -62,11 +62,11 @@ RUN find ${install_dir} -type f -exec chmod 777 {} \;
 
 RUN mkdir -p /home/user
 WORKDIR /home/user/repo
-# RUN chown -R postgres .
+RUN chown -R postgres .
 
 
 # RUN cp /mnt/d/stocket/instructor-repo/setup/pg_hba.conf /etc/postgresql/10/main/pg_hba.conf
-USER user
+USER postgres
 # USER root
 # RUN service postgresql start
 

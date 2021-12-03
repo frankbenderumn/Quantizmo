@@ -15,4 +15,8 @@ fi
 
 ROOTDIR=`git rev-parse --show-toplevel`
 
+service postgresql start
+psql -f ../test.sql
+make -j
+
 ${ROOTDIR}-build/bin/web-app $PORT web $SCENE
