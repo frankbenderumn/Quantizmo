@@ -7,19 +7,16 @@
 #include "util/console.h"
 #include "util/vec3.h"
 
-namespace csci3081 {
+enum StrategyType {AUTOMATIC, TARGET, MANUAL, UNDEFINED_STRATEGY };
 
-    enum StrategyType {AUTOMATIC, TARGET, MANUAL, UNDEFINED_STRATEGY };
-
-    class Strategy {
-      public:
-        Strategy() {}
-        virtual ~Strategy() { printf("destroying strategy!\n"); }
-        virtual void Move(Vec3& pos, float speed, float dt) = 0;
-        StrategyType GetType() { return type; }
-      protected:
-        StrategyType type = UNDEFINED_STRATEGY;
-    };
-}
+class Strategy {
+  public:
+    Strategy() {}
+    virtual ~Strategy() { printf("destroying strategy!\n"); }
+    virtual void Move(Vec3& pos, float speed, float dt) = 0;
+    StrategyType GetType() { return type; }
+  protected:
+    StrategyType type = UNDEFINED_STRATEGY;
+};
 
 #endif

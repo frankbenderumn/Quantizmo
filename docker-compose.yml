@@ -1,32 +1,37 @@
 services:
   app:
-    image: ${PREFIX}/env
-    ports:
-      - 127.0.0.1:8082:8082
-    # user: $UID:$GID
-    # working_dir: $HOME
-    stdin_open: true
-    tty: true
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+      args:
+        - USER_ID=${UID}
+        - GROUP_ID=${GID}
+        - SRC_DIR=${SRC_DIR}
+        - DEP_DIR=${DEP_DIR}
+    # image: ${PREFIX}/env
+    # ports:
+    #   - "8081:8081"
+    # stdin_open: true
+    # tty: true
     user: root
     volumes: 
       - ${ROOTDIR}:/home/user/repo
-    ports: 
-      - '8081:8081'
-    depends_on: 
-    - postgres
+      # - ${ROOTDIR}/exec:/bin
+    # depends_on: 
+    # - postgres
 
   postgres:
       image: postgres:10.5
       restart: always
       environment:
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_USER=${POSTGRESUSER}
+        - POSTGRES_PASSWORD=${POSTGRESPASSWORD}
       logging:
         options:
           max-size: 10m
           max-file: "3"
       ports:
         - '5438:5432'
-      volumes: 
-       - ${ROOTDIR}:/var/lib/postgresql/data
-       - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      # volumes: 
+      #  - ${ROOTDIR}:/var/lib/postgresql/data
+      #  - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql

@@ -4,8 +4,6 @@
 #include <picojson.h>
 #include "util/api.h"
 
-namespace csci3081 {
-
 class Iex {
   public:
     Iex(std::string token) {
@@ -53,7 +51,5 @@ class Iex {
     std::string _base = "https://sandbox.iexapis.com/stable/";
     std::string _token = "undefined";
 };
-
-}
 
 #endif

@@ -4,11 +4,7 @@
 #include <curl/curl.h>
 #include "util/console.h"
 
-#define LOG_FAIL csci3081::Console::Log(FAILURE,
-
-namespace csci3081 {
-
-
+#define LOG_FAIL Console::Log(FAILURE,
 
 class Api {
   public:
@@ -40,6 +36,8 @@ class Api {
                 curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
                 curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
                 curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+                // dangerous to add... but iex not responding without it
+                curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
 
                 /* Perform the request, res will get the return code */
                 res = curl_easy_perform(curl);
@@ -51,11 +49,11 @@ class Api {
 
                 /* always cleanup */
                 curl_easy_cleanup(curl);
-                csci3081::Console::Log(SUCCESS, "Curl retrieved!");
+                Console::Log(SUCCESS, "Curl retrieved!");
                 // std::cout << response << std::endl;
                 return response;
             } else {
-                csci3081::Console::Log(FAILURE, "Invalid Curl call");
+                Console::Log(FAILURE, "Invalid Curl call");
             }
         }
         
@@ -65,7 +63,5 @@ class Api {
         }
     }
 };
-
-}
 
 #endif 

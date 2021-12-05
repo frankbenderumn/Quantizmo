@@ -15,8 +15,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::set;
 
-namespace csci3081 {
-
 class OsmParser {
 public:
   static const OSMGraph* LoadGraphFromFile(string filename, bool debug);
@@ -30,7 +28,5 @@ private:
   static float asRadians(float degrees);
   static float getLon(float lat, float lon, float centerLat, float centerLon);
 };
-
-};  // namespace csci3081
 
 #endif  // ITERATION2_SOLN_SRC_XML_TOOLS_OSM_PARSER_H_

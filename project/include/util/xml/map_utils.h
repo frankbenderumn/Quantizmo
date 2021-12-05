@@ -3,8 +3,6 @@
 
 using std::unordered_map;
 
-namespace csci3081 {
-
 template <class T, class V>
 unordered_map<V, int>* count_value_occurrences(const unordered_map<T, V>* to_count) {
     unordered_map<V, int>* result = new unordered_map<V, int>();
@@ -52,6 +50,4 @@ unordered_map<T, bool>* where_equal(const unordered_map<T, int>* mapping, V equa
     }
 
     return result;
-}
-
-}
+};

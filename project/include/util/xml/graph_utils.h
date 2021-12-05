@@ -9,9 +9,6 @@
 using std::string;
 using std::unordered_map;
 
-
-namespace csci3081
-{
 class GraphUtils {
     public :  
         static unordered_map<string, int>* ConnectedComponents(const IGraph* graph);
@@ -20,7 +17,5 @@ class GraphUtils {
     private:
         static void dfs_visit(const IGraphNode* n, unordered_map<string, int>* record, int index);
 };
-} // namespace csci3081
-
 
 #endif // ITERATION2_SOLN_SRC_XML_TOOLS_GRAPH_UTILS_H_

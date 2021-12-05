@@ -7,23 +7,21 @@
 #include "entity/destination.h"
 #include "interface/iactor.h"
 
-namespace csci3081 {
-    class Decorator {
-      public:
-        Decorator(IActor* a) : actor(a) {}
-        ~Decorator() {}
-        void SetStrategy(Strategy* strategy) { actor->SetStrategy(strategy); }
-        void SetHandler(Handler* handler) { actor->SetHandler(handler); }
-        void SetTarget(Entity* e) { actor->SetTarget(e); }
-        // void SetDestination(Destination* dest) { actor->SetDestination(dest); }
-        virtual void Update(float dt) { actor->Update(dt); }
-        // int GetId() { return actor->GetId(); }
-        IActor* GetActor() { return actor; }
+class Decorator {
+  public:
+    Decorator(IActor* a) : actor(a) {}
+    ~Decorator() {}
+    void SetStrategy(Strategy* strategy) { actor->SetStrategy(strategy); }
+    void SetHandler(Handler* handler) { actor->SetHandler(handler); }
+    void SetTarget(Entity* e) { actor->SetTarget(e); }
+    // void SetDestination(Destination* dest) { actor->SetDestination(dest); }
+    virtual void Update(float dt) { actor->Update(dt); }
+    // int GetId() { return actor->GetId(); }
+    IActor* GetActor() { return actor; }
 
-      protected:
-        IActor* actor;
-    };
-}
+  protected:
+    IActor* actor;
+};
 
 #endif
         

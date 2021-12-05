@@ -24,8 +24,6 @@
 #include "builder.h"
 #include "financial/iex.h"
 
-namespace csci3081 {
-
 class WebApp : public JSONSession {
   public:
 
@@ -98,8 +96,5 @@ class WebApp : public JSONSession {
     void UpdateTimeMap(const std::string&, float distance = 0); // Update the drone time map
     Analytics* analytics;
 };
-
-
-}
 
 #endif

@@ -6,8 +6,6 @@ using namespace std;
 #include "image/image.h"
 #include "image/filter.h"
 
-namespace csci3081 {
-
 int ImageProcessor::run(int argc, char* argv[]) {
 //    // Problem 1 is setting up the environment
 //
@@ -137,6 +135,4 @@ int ImageProcessor::run(int argc, char* argv[]) {
 //    finalBlob.saveAs("data/results/robot_blobs_edges.png");
 
     return 0;
-}
-
 }

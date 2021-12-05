@@ -10,8 +10,6 @@
 // #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "image/stb_image_write.h"
 
-namespace csci3081 {
-
 Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {
 }
 
@@ -339,6 +337,4 @@ void Kernel::convolv(const Image& image, Image& filtered, bool asFloat) const{
 
         }
     }
-}
-
 }

@@ -11,52 +11,49 @@
 #include "entity/destination.h"
 #include "util/handler.h"
 
-namespace csci3081 {
-    class IActor : public Entity {
+class IActor : public Entity {
 
-      public: 
+  public: 
 
-        IActor(const picojson::object& data) : Entity(data) {}
-        /* @brief destructs the actor */
-        virtual ~IActor() { printf("destroying actor!\n"); }
+    IActor(const picojson::object& data) : Entity(data) {}
+    /* @brief destructs the actor */
+    virtual ~IActor() { printf("destroying actor!\n"); }
 
-        virtual void SetStrategy(Strategy* strategy) = 0;
+    virtual void SetStrategy(Strategy* strategy) = 0;
 
-        virtual void SetHandler(Handler* handler) = 0;
+    virtual void SetHandler(Handler* handler) = 0;
 
-        virtual void SetTarget(Entity* e) = 0;
+    virtual void SetTarget(Entity* e) = 0;
 
-        // virtual void SetDestination(Destination* dest) = 0;
+    // virtual void SetDestination(Destination* dest) = 0;
 
-        virtual void Update(float dt) = 0;
+    virtual void Update(float dt) = 0;
+
+  protected:
+    /* @brief horizontal rotation */
+    float theta = 0.f;
+
+      /* @brief vertical rotation */
+    float phi = 0.f;
+
+    bool pickedUp = false;
+
+    /* @brief turn speed */
+    float turnSpeed = 1;
+
+    /* @brief actor speed */
+    float speed = 0.1f;
     
-      protected:
-        /* @brief horizontal rotation */
-        float theta = 0.f;
+    /* @brief actor movement strategy */
+    Strategy* strategy; 
 
-         /* @brief vertical rotation */
-        float phi = 0.f;
+    /* @brief target to be rescued */
+    Entity* target = nullptr;
 
-        bool pickedUp = false;
+    /* @brief target to drop off rescuee (actee) */
+    // Destination* dest;
 
-        /* @brief turn speed */
-        float turnSpeed = 1;
-
-        /* @brief actor speed */
-        float speed = 0.1f;
-        
-        /* @brief actor movement strategy */
-        Strategy* strategy; 
-
-        /* @brief target to be rescued */
-        Entity* target = nullptr;
-
-        /* @brief target to drop off rescuee (actee) */
-        // Destination* dest;
-
-        Handler* handler;
-    };
-
-}
+    Handler* handler;
+};
 
 #endif

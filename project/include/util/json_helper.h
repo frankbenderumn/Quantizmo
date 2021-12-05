@@ -6,8 +6,6 @@
 #include <picojson.h>
 #include <vector>
 
-namespace csci3081 {
-
 class JsonHelper {
   public:
     static const picojson::value& GetValue(const picojson::object& obj, std::string key) {
@@ -80,5 +78,4 @@ class JsonHelper {
     }
 };
 
-}  // namespace csci3081
 #endif

@@ -5,9 +5,8 @@ CREATE TABLE IF NOT EXISTS product (
   PRIMARY KEY (product_id)
 );
 
-CREATE TABLE IF NOT EXISTS stock (
-  stock_id INT NOT NULL,
-  name varchar(250) NOT NULL,
-  price double precision NULL,
-  PRIMARY KEY (stock_id)
+CREATE TABLE IF NOT EXISTS stocks (
+  id SERIAL PRIMARY KEY,
+  ticker varchar(250) NOT NULL,
+  name varchar(250) NOT NULL
 );

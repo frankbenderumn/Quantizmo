@@ -5,8 +5,6 @@
 #include <vector>
 #include <picojson.h>
 
-namespace csci3081 {
-
 class IGraphNode;
 
 /// Represents a read only graph object
@@ -40,7 +38,5 @@ public:
 	virtual const std::vector<picojson::object> GetEdges() const = 0;
 
 };
-
-}
 
 #endif

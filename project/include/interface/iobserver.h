@@ -3,8 +3,6 @@
 
 #include "entity/entity.h"
 
-namespace csci3081 {
-
 class IObserver {
   public:
     IObserver() {}
@@ -12,7 +10,5 @@ class IObserver {
     virtual void OnEvent(const picojson::value& value, IEntity* e) = 0;
 
 };
-
-}  // namespace csci3081
 
 #endif

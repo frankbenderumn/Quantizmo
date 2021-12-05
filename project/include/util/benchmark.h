@@ -5,8 +5,6 @@
 #include <chrono>  // NOLINT
 #include <iostream>
 
-namespace csci3081 {
-
 /* @brief used to time function execution */
 class Benchmark {
  public:
@@ -28,5 +26,4 @@ class Benchmark {
   std::chrono::duration<double> duration;
 };
 
-}  // namespace csci3081
 #endif

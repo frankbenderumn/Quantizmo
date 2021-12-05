@@ -4,20 +4,18 @@
 #include "strategy.h"
 #include "entity/entity.h"
 
-namespace csci3081 {
-    class Target : public Strategy {
-      public:
-        Target(Entity* e) { this->type = TARGET; this->target = e; }
-        ~Target() { printf("destroying target!\n"); }
-        void Move(Vec3& pos, float speed, float dt) {
-          if (target == nullptr) {
-            Console::Log(WARNING, "target is not being set properly");
-          }
-          pos += (target->GetPosition() - pos).Normalize() * speed * dt;
-        }
-      private:
-        Entity* target;
-    };
-}
+class Target : public Strategy {
+  public:
+    Target(Entity* e) { this->type = TARGET; this->target = e; }
+    ~Target() { printf("destroying target!\n"); }
+    void Move(Vec3& pos, float speed, float dt) {
+      if (target == nullptr) {
+        Console::Log(WARNING, "target is not being set properly");
+      }
+      pos += (target->GetPosition() - pos).Normalize() * speed * dt;
+    }
+  private:
+    Entity* target;
+};
 
 #endif

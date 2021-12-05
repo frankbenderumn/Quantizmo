@@ -8,8 +8,6 @@
 #include "image.h"
 #include "filter.h"
 
-namespace csci3081 {
-
 class CannyDetect {
 public:
     bool detect(Image input);
@@ -25,7 +23,5 @@ private:
     float ratioThresh = 3;
 
 };
-
-}
 
 #endif //INSTRUCTOR_REPO_CANNYDETECT_H

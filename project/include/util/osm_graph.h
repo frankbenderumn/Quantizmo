@@ -15,8 +15,6 @@ using std::invalid_argument;
 using std::out_of_range;
 using std::numeric_limits;
 
-namespace csci3081 {
-
 struct Point {
   float p[3];
 
@@ -204,7 +202,5 @@ class OSMGraph : public IGraph {
             return result->second;
         };
 };
-
-}
 
 #endif

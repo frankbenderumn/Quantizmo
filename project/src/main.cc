@@ -11,58 +11,88 @@ Copyright (c) 2019 Dan Orban
 #include <pqxx/pqxx>
 // #include "financial/iex.h"
 #include <fstream>
+#include "db/database.h"
+#include <iterator>
+#include <sstream>
+#include <string_view>
+#include <unistd.h>
 // #include <opencv2/opencv.hpp>
-
-using namespace csci3081;
 
 enum DataType { OBJECT, ARRAY, UNDEFINED_DATA };
 
-class JsonParser {
-    static DataType read() {
-
-    }
+enum class CSVState {
+    UnquotedField,
+    QuotedField,
+    QuotedQuote
 };
 
-// struct MemoryStruct {
-//     char* memory;
-//     size_t size;
-// };
+std::vector<std::string> readCSVRow(const std::string &row) {
+    CSVState state = CSVState::UnquotedField;
+    std::vector<std::string> fields {""};
+    size_t i = 0; // index of the current field
+    for (char c : row) {
+        switch (state) {
+            case CSVState::UnquotedField:
+                switch (c) {
+                    case ',': // end of field
+                              fields.push_back(""); i++;
+                              break;
+                    case '"': state = CSVState::QuotedField;
+                              break;
+                    default:  fields[i].push_back(c);
+                              break; }
+                break;
+            case CSVState::QuotedField:
+                switch (c) {
+                    case '"': state = CSVState::QuotedQuote;
+                              break;
+                    default:  fields[i].push_back(c);
+                              break; }
+                break;
+            case CSVState::QuotedQuote:
+                switch (c) {
+                    case ',': // , after closing quote
+                              fields.push_back(""); i++;
+                              state = CSVState::UnquotedField;
+                              break;
+                    case '"': // "" -> "
+                              fields[i].push_back('"');
+                              state = CSVState::QuotedField;
+                              break;
+                    default:  // end of quote
+                              state = CSVState::UnquotedField;
+                              break; }
+                break;
+        }
+    }
+    return fields;
+}
 
-// size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp) {
-//     size_t realsize = size* nmemb;
-//     struct MemoryStruct* mem = (struct MemoryStruct*)userp;
-
-//     char *ptr = realloc(mem->memory, mem->size + realsize + 1);
-//     if(ptr == NULL) {
-//         printf("error: not enough memory\n");
-//         return 0;
-//     }
-
-//     mem->memory = ptr;
-//     memcpy(&(mem->memory[mem->size]), contents, realsize);
-//     mem->size += realsize;
-//     mem->memory[mem->size] = 0;
-
-//     return realsize;
-// }
+/// Read CSV file, Excel dialect. Accept "quoted fields ""with quotes"""
+std::vector<std::vector<std::string>> readCSV(std::istream &in) {
+    std::vector<std::vector<std::string>> table;
+    std::string row;
+    while (!in.eof()) {
+        // std::cout << "row" << std::endl;
+        std::getline(in, row);
+        if (in.bad() || in.fail()) {
+            break;
+        }
+        auto fields = readCSVRow(row);
+        table.push_back(fields);
+    }
+    return table;
+}
 
 int main(int argc, char**argv) {
     if (argc > 1) {
 
         // pqxx::connection* C;
+        Database* db = new Database();
+        db->GetTables();
 
-        // try {
-        //     C = new pqxx::connection("dbname=postgres user=root password=1234 \
-        //                                 hostaddr=127.0.0.1 port=5432");
-            
-        //     Console::Log(SUCCESS, "connection established");
-        //     std::cout << "Connected to " << C->dbname() << '\n';
-        // }
-        
-        // catch (const std::exception &e) {
-        //     Console::Log(FAILURE, "Failed to connect to database");
-        //     std::cerr << e.what() << std::endl;
-        // }
+
+
 
         // try {
         //     // Connect to the database.

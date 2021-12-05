@@ -8,8 +8,6 @@
 #include <math.h>
 #include <vector>
 
-namespace csci3081 {
-
 class Filter{
 public:
     virtual std::vector<Image*> apply(std::vector<Image*> original) = 0;
@@ -338,7 +336,5 @@ private:
     float strong;
     float weak;
 };
-
-}
 
 #endif // THRESHOLD_FILTER_H_

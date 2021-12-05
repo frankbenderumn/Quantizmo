@@ -1,0 +1,10 @@
+INSERT INTO stock (ticker, name) VALUES ('RCL', 'Royal Carribean Company, Ltd.');
+INSERT INTO stock (ticker, name) VALUES ('AAPL', 'Apple, Inc.');
+INSERT INTO stock (ticker, name) VALUES ('RIVN', 'Rivian Automotive');
+INSERT INTO stock (ticker, name) VALUES ('AMZN', 'Amazon, Inc.');
+INSERT INTO stock (ticker, name) VALUES ('CCL', 'Carnival Cruise Lines, Inc.');
+INSERT INTO stock (ticker, name) VALUES ('GOOG', 'Google, Inc.');
+INSERT INTO stock (ticker, name) VALUES ('TSLA', 'Tesla Automotive');
+INSERT INTO stock (ticker, name) VALUES ('NCLH', 'Norweigan Cruise Line Holdings, Ltd.');
+INSERT INTO stock (ticker, name) VALUES ('AAL', 'American Airlines');
+INSERT INTO stock (ticker, name) VALUES ('DAL', 'Delta Airlines');

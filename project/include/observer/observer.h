@@ -4,8 +4,6 @@
 #include "interface/iobserver.h"
 #include "web_app.h"
 
-namespace csci3081 {
-
 class WebApp;
 
 class Observer : public IObserver {
@@ -18,7 +16,5 @@ class Observer : public IObserver {
     WebApp* sys;
 
 };
-
-}  // namespace csci3081
 
 #endif
