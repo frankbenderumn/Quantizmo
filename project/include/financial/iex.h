@@ -3,6 +3,7 @@
 
 #include <picojson.h>
 #include "util/api.h"
+#include "util/parser/json_parser.h"
 
 class Iex {
   public:
@@ -14,21 +15,21 @@ class Iex {
         printf("deleting iex client\n");
     }
 
-    picojson::value Parse(const std::string& response) {
-        picojson::value iex;
-        std::string err = picojson::parse(iex, response);
-        if (!err.empty()) {
-            std::cerr << err << std::endl;
-        } else {
-            printf("fin data parsed\n");
-        }
-        return iex;
-    }
+    // picojson::value Parse(const std::string& response) {
+    //     picojson::value iex;
+    //     std::string err = picojson::parse(iex, response);
+    //     if (!err.empty()) {
+    //         std::cerr << err << std::endl;
+    //     } else {
+    //         printf("fin data parsed\n");
+    //     }
+    //     return iex;
+    // }
 
     picojson::value Quote(const std::string ticker) {
         if (Validate()) {
             std::string route = "stock/" + ticker + "/quote";
-            picojson::value result = Parse(Api::Get(_base, route, _token));
+            picojson::value result = JsonParser::Parse(Api::Get(_base, route, _token));
             return result;
         }
     }
@@ -39,7 +40,7 @@ class Iex {
     picojson::value Historical(const std::string ticker, const std::string range, const std::string date) {
         if (Validate()) {
             std::string route = "stock/" + ticker + "/" + range + "/" + date;
-            picojson::value result = Parse(Api::Get(_base, route, _token));
+            picojson::value result = JsonParser::Parse(Api::Get(_base, route, _token));
             return result;
         }
     }

@@ -2,7 +2,7 @@
 #define API_H_
 
 #include <curl/curl.h>
-#include "util/console.h"
+#include "util/debug/console.h"
 
 #define LOG_FAIL Console::Log(FAILURE,
 

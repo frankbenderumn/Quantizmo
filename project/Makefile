@@ -58,7 +58,7 @@ data-files:
 # Build web viewer
 #add data-files to end
 $(EXEFILE): $(BUILD_DIR) $(LIBFILE) data-files
-	$(CXX) $(CXXFLAGS) -Wl,-rpath,$(BUILD_DIR)/lib $(INCLUDES) $(LIBDIRS) -L$(BUILD_DIR)/lib src/main.cc -lcsci3081proj $(LIBS) -lCppWebServer -lwebsockets -lssl -lcrypto -lz -o $@ 
+	$(CXX) $(CXXFLAGS) -Wl,-rpath,$(BUILD_DIR)/lib $(INCLUDES) $(LIBDIRS) -L$(BUILD_DIR)/lib src/main.cc -lcsci3081proj $(LIBS) -lCppWebServer -lwebsockets -lssl -lcrypto -lz -o $@ -DDEBUG
 
 # Build tests
 test: $(LIBFILE)

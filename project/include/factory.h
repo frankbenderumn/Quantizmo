@@ -4,8 +4,6 @@
 #include "entity/actor.h"
 #include "entity/actee.h"
 #include "entity/destination.h"
-#include "util/console.h"
-#include "util/json_helper.h"
 #include "entity/charger.h"
 #include "addon/battery_actor.h"
     

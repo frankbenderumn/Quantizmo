@@ -3,7 +3,7 @@
 
 #include "entity/actor.h"
 #include <vector>
-#include "vec3.h"
+#include "util/math/vec3.h"
     
 class Handler {
     public:

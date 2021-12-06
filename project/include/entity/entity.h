@@ -1,11 +1,6 @@
 #ifndef ENTITY_H_
 #define ENTITY_H_
 
-#include "util/json_helper.h"
-#include <vector>
-#include <string>
-#include "util/console.h"
-#include "util/vec3.h"
 #include "interface/ientity.h"
 #include "interface/iobserver.h"
 

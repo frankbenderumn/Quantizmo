@@ -227,6 +227,30 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         picojson::value toSend(o);
         this->Send(toSend);
         delete client;
+    } else if (cmd == "speech") {
+        Console::Log(SUCCESS, "Receiving speech text");
+        std::cout << picojson::value(data).serialize() << std::endl;
+        std::string s;
+        if(data["text"].is<std::string>()) {
+            s = data["text"].get<std::string>();
+            s = nlp->Parse(s);
+            
+        } else {
+            Console::Log(WARNING, "Text is not being received.");
+        }
+
+        if (s.size() > 0) {
+            if(s.find("Royal Caribbean") != 0 && s.find("Royal Caribbean") != string::npos) {
+                Console::Log(SUCCESS, "SAYING RCL");
+                SendFin("RCL");
+
+            } 
+            else if(s.find("Carnival") != 0 && s.find("Carnival") != string::npos) {
+                Console::Log(SUCCESS, "SAYING CCL");
+                SendFin("CCL");
+            } 
+            s = "";
+        }
     }
     else {
         std::cout << "Unknown command: " << cmd << " - " << picojson::value(data).serialize() << std::endl;
@@ -307,6 +331,21 @@ void WebApp::UpdateTimeMap(const std::string& drone_model, float distance){
     else{
         it->second += distance;
     }
+}
+
+void WebApp::SendFin(std::string ticker) {
+    std::string token = "Tpk_64ae4b7c2dca48c7bb11970baaf64f1c";
+    Iex* client = new Iex(token);
+    picojson::value iex = client->Quote(ticker);
+    // std::cout << iex.serialize() << std::endl;
+    picojson::object child;
+    child["type"] = picojson::value("stock");
+    child["data"] = iex;
+    picojson::object o;
+    o["notification"] = picojson::value(child);
+    picojson::value toSend(o);
+    this->Send(toSend);
+    delete client;
 }
 
 void WebApp::Send(picojson::value& val) {

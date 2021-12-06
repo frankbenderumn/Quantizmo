@@ -4,8 +4,8 @@
 #include "util/json_helper.h"
 #include <vector>
 #include <string>
-#include "util/console.h"
-#include "util/vec3.h"
+#include "util/debug/console.h"
+#include "util/math/vec3.h"
 
 enum StrategyType {AUTOMATIC, TARGET, MANUAL, UNDEFINED_STRATEGY };
 

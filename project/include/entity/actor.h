@@ -5,7 +5,6 @@
 #include "strategy/automatic.h"
 #include "strategy/manual.h"
 #include "strategy/target.h"
-#include "util/console.h"
 #include <stdexcept>
 #include "actee.h"
 #include "entity/destination.h"
