@@ -89,7 +89,7 @@ int main(int argc, char**argv) {
 
         // pqxx::connection* C;
         Database* db = new Database();
-        db->GetTables();
+        db->GetTable("stocks");
 
 
 

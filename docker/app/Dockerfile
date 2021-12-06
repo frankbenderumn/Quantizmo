@@ -5,7 +5,7 @@ RUN groupdel dialout
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-    sudo \
+    # sudo \
     build-essential \
     gdb \
     libssl-dev \
@@ -17,13 +17,14 @@ RUN apt-get update && apt-get install -y \
     libc6-dbg \
     valgrind \
     git \
-    libopencv-dev \
+    # libopencv-dev \
     libomp-dev \
     cmake \
     libcurl4-openssl-dev\
     postgresql \
     libpqxx-dev \
-    nano
+    nano \
+    libyaml-cpp-dev
 
 ARG USER_ID
 ARG GROUP_ID
@@ -58,12 +59,12 @@ RUN echo OPENCV_LIBS=`pkg-config --libs opencv` >> ${DEP_DIR}/env
 
 WORKDIR ${DEP_DIR}
 
-RUN sudo find ${install_dir} -type d -exec chmod 775 {} \;
-RUN sudo find ${install_dir} -type f -exec chmod 644 {} \;
+RUN find ${install_dir} -type d -exec chmod 775 {} \;
+RUN find ${install_dir} -type f -exec chmod 644 {} \;
 
 RUN mkdir -p /home/user
 WORKDIR /home/user/repo
-COPY /exec/nebula /bin
+COPY /cli/nebula /bin
 COPY /db/pg_hba.conf /etc/postgresql/10/main/pg_hba.conf
 
 USER root

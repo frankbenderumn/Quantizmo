@@ -6,9 +6,9 @@ BUILD_DIR=${ROOT_DIR}-build
 CXX = g++
 CXXFLAGS = -std=c++11 -g -fPIC $(ITERATION_DEFINES)
 
-INCLUDES = -I.. -I$(DEP_DIR)/include -Isrc -I. -I$(DEP_DIR)/include -Iinclude -I. -Icurl -Ipqxx
+INCLUDES = -I.. -I$(DEP_DIR)/include -Isrc -I. -I$(DEP_DIR)/include -Iinclude -I. -Icurl -Ipqxx -Iyaml-cpp
 LIBDIRS = -L$(DEP_DIR)/lib 
-LIBS = -lpthread -lcurl -lpqxx
+LIBS = -lpthread -lcurl -lpqxx -lyaml-cpp
 
 SOURCES = $(wildcard src/*.cc) $(wildcard src/*/*.cc) $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
 

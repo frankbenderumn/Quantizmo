@@ -2,6 +2,8 @@
 #define DATABASE_H_
 
 #include <pqxx/pqxx>
+#include <unordered_map>
+#include "db/table.h"
 
 class Database {
   public:
@@ -14,6 +16,12 @@ class Database {
             Console::Log(FAILURE, "Failed to connect to database: postgres");
         }
     }
+
+    ~Database() {
+        printf("destroying database instance\n");
+
+    }
+
     Database(std::string name, 
             std::string role, 
             std::string password, 
@@ -28,34 +36,59 @@ class Database {
         }
     }
 
-    void GetTables() {
+    /* mutates database */
+    void GetTable(std::string name) {
         pqxx::work worker{*C};
-        pqxx::result result = worker.exec("SELECT * FROM stocks;");
-        for (auto const &row: result) {
-            for (auto const &field: row) {
-                std::cout << field.c_str() << '\t';
+        bool commited = true;
+        pqxx::result res;
+        try {
+            res = worker.exec("SELECT * FROM " + name + ";");
+        } 
+        catch (const pqxx::undefined_table& e) {
+            Console::Log(FAILURE, "Undefined table on query: " + e.query());
+            Console::Log(FAILURE, "Table does not exist: " + name);
+            commited = false;
+        }
+
+        if (commited) {
+            std::cout << res.size() << std::endl;
+
+            if (!IsTable(name)) {
+                Console::Log(INFO, "Adding table " + name + " to memory...");
+                AddTable(name, res);
             }
-            std::cout << std::endl;
+
+            // for (int i = 0; i < res.size(); i++) {
+            // pqxx::tuple row = res.at(0);
+            // std::cout << row.size() << std::endl;
+            // std::cout << row.at(0) << " -- " << row.at(1) << " -- " << row.at(2) << std::endl;
+            // pqxx::field c = row.at(1);
+            // std::cout << c.c_str() << std::endl;
+            // for (auto const &field: row) {
+            //     std::cout << field.c_str() << '\t';
+            // }
+            // std::cout << std::endl;
+
         }
     }
 
+    bool IsTable(std::string key) const {
+        return (_tables.find(key) != _tables.end());
+    }
+
+    void AddTable(std::string name, pqxx::result rows) {
+        Table* table = new Table(name, rows);
+        table->Dump();
+        Console::Log(SUCCESS, "Successfully added table " + name + " to memory.");
+        _tables[name] = table;
+    }
+
+    void Print() { printf("TODO: needed for persistent data\n"); }
+
+
   private:
     pqxx::connection* C;
-
-    // pqxx::connection* C;
-
-        // try {
-        //     C = new pqxx::connection("dbname=postgres user=root password=1234 \
-        //                                 hostaddr=127.0.0.1 port=5432");
-            
-        //     Console::Log(SUCCESS, "connection established");
-        //     std::cout << "Connected to " << C->dbname() << '\n';
-        // }
-        
-        // catch (const std::exception &e) {
-        //     Console::Log(FAILURE, "Failed to connect to database");
-        //     std::cerr << e.what() << std::endl;
-        // }
+    std::unordered_map<std::string, Table*> _tables;
 
         // try {
         //     // Connect to the database.
@@ -82,10 +115,6 @@ class Database {
         //     std::cout << "OK.\n";
         // }
         
-        // catch (std::exception const &e) {
-        //     std::cerr << e.what() << '\n';
-        //     return 1;
-        // }
 };
 
 #endif

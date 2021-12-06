@@ -1,0 +1,15 @@
+[
+    {
+        "table": {
+            "name": "quote",
+            "attr:": [
+                {"name": "open",     "type": "double precision"},
+                {"name": "high",     "type": "double precision"},
+                {"name": "low",     "type": "double precision"},
+                {"name": "close",     "type": "double precision"},
+                {"name": "data",     "type": "string"},
+                {"name": "stock_id", "type": "fk"}
+            ]
+        }
+    }
+]
