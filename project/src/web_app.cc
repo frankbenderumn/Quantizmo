@@ -240,15 +240,16 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         }
 
         if (s.size() > 0) {
-            if(s.find("Royal Caribbean") != 0 && s.find("Royal Caribbean") != string::npos) {
-                Console::Log(SUCCESS, "SAYING RCL");
-                SendFin("RCL");
+            // if(s.find("Royal Caribbean") != 0 && s.find("Royal Caribbean") != string::npos) {
+            //     Console::Log(SUCCESS, "SAYING RCL");
+            //     SendFin("RCL");
 
-            } 
-            else if(s.find("Carnival") != 0 && s.find("Carnival") != string::npos) {
-                Console::Log(SUCCESS, "SAYING CCL");
-                SendFin("CCL");
-            } 
+            // } 
+            // else if(s.find("Carnival") != 0 && s.find("Carnival") != string::npos) {
+            //     Console::Log(SUCCESS, "SAYING CCL");
+            //     SendFin("CCL");
+            // } 
+            SendFin(s);
             s = "";
         }
     }

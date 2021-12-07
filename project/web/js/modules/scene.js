@@ -6,6 +6,7 @@ import * as XRController from './xr/controller.js'
 import { XRControls } from './xr/controls.js'
 import * as Analyser from './audio/analyser.js'
 import * as Scaffolding from './scaffolding.js'
+import * as System from './system.js'
 
 let _scene, _renderer, _camera, lights, mixers, script, controls;
 let updatables = [];
@@ -23,6 +24,7 @@ let _dummyCam;
 let _controls;
 let _ui;
 let _uniforms;
+let _socket;
 
 // scene modes
 // production, development
@@ -54,6 +56,7 @@ class Scene {
         _scene = Feature.createScene();
         // _scene.test = test;
         _scene.system = "development";
+        _socket = System.createSocket();
         lights = Feature.createLights();
         _renderer = Feature.createRenderer(container, isVr);
         controls = Feature.createControls(_camera, _renderer.domElement);
@@ -86,16 +89,20 @@ class Scene {
 
             // const btn = new VRButton( this.renderer, { onSessionStart, onSessionEnd } );
             // this.renderer.setAnimationLoop( this.render.bind(this) );
-            // function onSessionStart(){
-                // _ui.mesh.position.set( 0, 0, 10 );
-                // camera.attach( _ui.mesh );
-                // _ui.scene = scene;
-            // }
+            function onSessionStart(){
+                _ui.mesh.position.set( 0, 0, 10 );
+                _camera.attach( _ui.mesh );
+                _ui.scene = _scene;
+            }
             
             // function onSessionEnd(){
                 // camera.remove( _ui.mesh );
             // }
         }
+
+        _ui.mesh.position.set( 0, 0, -10 );
+        _camera.attach( _ui.mesh );
+        _ui.scene = _scene;
 
         _target = target;
         for (const e of lights) {
@@ -142,6 +149,9 @@ class Scene {
         console.log(items);
         Script.send("save", items);
     }
+
+    get UI() { return _ui; }
+    set UI(val) { _ui = val; }
 
     stock() {
         let o = {

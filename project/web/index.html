@@ -5,7 +5,11 @@
 		<link rel="stylesheet" type="text/css" href="css/final.css" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<script type="module" src="js/jquery-3.5.1.min.js"></script>
+
+		<!-- dependencies -->
 		<script src="js/WSApi.js"></script>
+		<script src="js/modules/system/voice.js"></script>
+
 		<script type="module" src="js/main.js"></script>
 		<!-- <script type="module" src="js/three.js"></script>
 		<script type="module" src="js/OrbitControls.js"></script>
@@ -296,72 +300,13 @@
 			<li id="command-stock" data-role="command">Stock</li>		
 		</div>
 
-		<button style="position:absolute;top:200px;left:300px;height:50px;width:100px;" id="button" onclick="toggleStartStop()">Start</button>
+
+		<!-- VOICE INTERPRETER -->
+		<button id="voice-button" style="position:absolute;top:200px;left:300px;height:50px;width:100px;" onclick="toggleVoice()">Start</button>
 		<div style="border:dotted;padding:10px;position:absolute;top:300px;left:300px;height:200px;width:400px;background-color:white;">
-		<span id="final_span"></span>
-		<span id="interim_span" style="color:grey"></span>
+			<span id="final_span"></span>
+			<span id="interim_span" style="color:grey"></span>
 		</div>
-
-		<script type="text/javascript">
-			let api = new WSApi();
-			// if (!('webkitSpeechRecognition' in window)) {
-  			// 	upgrade();
-			// }
-			var recognizing;
-			var recognition = new webkitSpeechRecognition();
-			recognition.continuous = true;
-			recognition.interimResults = true;
-			reset();
-			recognition.onend = reset;
-
-			let timeout;
-
-			function sendSpeech(final) {
-				console.log("====> sending speech: "+final);
-				let o = {
-					text: final
-				};
-				api.sendCommand("speech", o);
-			}
-
-			recognition.onresult = function (event) {
-				var final = "";
-				var interim = "";
-				for (var i = 0; i < event.results.length; ++i) {
-				if (event.results[i].isFinal) {
-					final += event.results[i][0].transcript;
-				} else {
-					interim += event.results[i][0].transcript;
-				}
-				}
-				final_span.innerHTML = final;
-				interim_span.innerHTML = interim;
-
-				if(timeout) {
-					clearTimeout(timeout);
-					timeout = null;
-				}
-				timeout = setTimeout(sendSpeech(final), 5000);
-			}
-
-			function reset() {
-				recognizing = false;
-				button.innerHTML = "Click to Speak";
-			}
-
-			function toggleStartStop() {
-				if (recognizing) {
-				recognition.stop();
-				reset();
-				} else {
-				recognition.start();
-				recognizing = true;
-				button.innerHTML = "Click to Stop";
-				final_span.innerHTML = "";
-				interim_span.innerHTML = "";
-				}
-			}
-		</script>
 
 		<style>
 			.list {

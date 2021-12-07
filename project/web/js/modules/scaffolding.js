@@ -376,8 +376,32 @@ $(document).ready(function(){
           console.log(msg.notification.data);
           $.fn.notify(2, msg.notification.data.companyName);
           $.fn.notify(2, msg.notification.data.iexOpen);
+          stockModal(msg.notification.data);
           break;
       }
+    }
+
+    function stockModal(data) {
+      let modal = document.createElement("div");
+      modal.className = "slim modal";
+      let shell = document.createElement("div");
+      // change to modal-shell naming convention
+      shell.className = "slim modal-box";
+      shell.style.padding = "0px";
+      let header = document.createElement("div");
+      header.className = "header";
+      header.style.padding = "5px";
+      header.innerHTML = data.companyName;
+      let content = document.createElement("div");
+      content.style.padding = "5px";
+      content.innerHTML = data.iexOpen + "<br>";
+      content.innerHTML += data.change + "<br>";
+      content.innerHTML += data.averageTotalVolume + "<br>";
+      shell.append(header);
+      shell.append(content);
+      modal.append(shell);
+      document.body.append(modal);
+      modal.style.display = 'block';
     }
     
     // creates loading background on dynamic scene change
