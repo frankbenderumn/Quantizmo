@@ -7,6 +7,7 @@ import { XRControls } from './xr/controls.js'
 import * as Analyser from './audio/analyser.js'
 import * as Scaffolding from './scaffolding.js'
 import * as System from './system.js'
+// import { WSApi } from './system/socket.js'
 
 let _scene, _renderer, _camera, lights, mixers, script, controls;
 let updatables = [];
@@ -21,10 +22,12 @@ let _entities = [];
 let _controller;
 let _dolly;
 let _dummyCam;
+let _container;
 let _controls;
 let _ui;
 let _uniforms;
 let _socket;
+let _shell = null;
 
 // scene modes
 // production, development
@@ -54,9 +57,10 @@ class Scene {
     constructor(container, target, test = false, isVr = true) {
         _camera = Feature.createCamera();
         _scene = Feature.createScene();
+        _container = container;
         // _scene.test = test;
         _scene.system = "development";
-        _socket = System.createSocket();
+        // _socket = new WSApi();
         lights = Feature.createLights();
         _renderer = Feature.createRenderer(container, isVr);
         controls = Feature.createControls(_camera, _renderer.domElement);
@@ -100,9 +104,9 @@ class Scene {
             // }
         }
 
-        _ui.mesh.position.set( 0, 0, -10 );
-        _camera.attach( _ui.mesh );
-        _ui.scene = _scene;
+        // _ui.mesh.position.set( 0, 0, -10 );
+        // _camera.attach( _ui.mesh );
+        // _ui.scene = _scene;
 
         _target = target;
         for (const e of lights) {
@@ -138,6 +142,80 @@ class Scene {
                 Scaffolding.dag(_entities);
             });
         });
+    }
+
+    graph(data) {
+        console.log("data making it to the scene!");
+        _shell = Feature.createD3(data);
+        _shell.mesh.position.set( 0, 0, -10 );
+        _camera.attach( _shell.mesh );
+        _shell.scene = _scene;
+        let circ = document.createElement("svg");
+        let circC = document.createElement("circle");
+        circC.className = "target";
+        circC.style="fill: #69b3a2; position:absolute;top:100px;left:1000px;";
+        circC.setAttribute("stroke","black");
+        circC.setAttribute("cx","50");
+        circC.setAttribute("cy","50");
+        circC.setAttribute("r","40");
+        circ.append(circC);
+        _container.append(circ);
+        // const floader = new FontLoader();
+
+        // floader.load( 'fonts/helvetiker_regular.typeface.json', function ( font ) {
+
+        //     const geometry = new TextGeometry( 'Hello three.js!', {
+        //         font: font,
+        //         size: 80,
+        //         height: 5,
+        //         curveSegments: 12,
+        //         bevelEnabled: true,
+        //         bevelThickness: 10,
+        //         bevelSize: 8,
+        //         bevelOffset: 0,
+        //         bevelSegments: 5
+        //     } );
+        // } );
+        let set = [];
+        let createGeometry = function()
+        {
+            set.push(new THREE.Vector3(5,5) );
+            set.push(new THREE.Vector3(10,1));
+            set.push(new THREE.Vector3(15,2));
+            set.push(new THREE.Vector3(20,1));
+            set.push(new THREE.Vector3(17,9));
+            set.push(new THREE.Vector3(23,2));
+
+            let setgeometry = new THREE.BufferGeometry().setFromPoints(set);
+            let setmaterial = new THREE.PointsMaterial({ color : 0xff0000 , size : 10 ,sizeAttenuation : false});
+            let plot = new THREE.Line( setgeometry , setmaterial );
+
+            _scene.add(plot);
+
+        }   
+        createGeometry();
+
+        var canvas1 = document.createElement('canvas');
+        var context1 = canvas1.getContext('2d');
+        context1.font = "10px Arial";
+        context1.fillStyle = "rgba(255,0,0,1)";
+        context1.fillText('Hello, world!', 10, 10, 50);
+
+        // canvas contents will be used for a texture
+        var texture1 = new THREE.Texture(canvas1)
+        texture1.needsUpdate = true;
+
+        var material1 = new THREE.MeshBasicMaterial({ map: texture1, side: THREE.DoubleSide, color: 0x000 });
+
+        var mesh1 = new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 10),
+            material1
+          );
+        mesh1.position.set(0, 5, 10);
+        // mesh1.rotation.x = -0.9;
+        _scene.add(mesh1);
+        // Note that mesh1 gets added to the shape and not to the scene
+
     }
 
     save() {

@@ -71,6 +71,51 @@ export function createUI() {
   return new CanvasUI( content, config );
 }
 
+export function createD3(data) {
+    const config = {
+      header:{
+          type: "text",
+          position:{ top:0 },
+          paddingTop: 30,
+          height: 70
+      },
+      main:{
+          type: "text",
+          position:{ top:70 },
+          height: 372, // default height is 512 so this is 512 - header height:70 - footer height:70
+          backgroundColor: "#bbb",
+          fontColor: "#000"
+      },
+      footer:{
+          type: "text",
+          position:{ bottom:0 },
+          paddingTop: 30,
+          height: 70
+      },
+      panelSize: { width: 3, height: 3 } 
+  }
+  const content = {
+      header: data.companyName + "",
+      main: data.iexOpen + "",
+      footer: data.high + ""
+  }
+
+  // let uiElement = document.getElementById('dag');
+  // navigator.xr.requestSession('immersive-ar', {
+  //     optionalFeatures: ['dom-overlay'],
+  //     domOverlay: { root: uiElement } }).then((session) => {
+  //     // session.domOverlayState.type is now set if supported,
+  //     // or is null if the feature is not supported.
+  //   }
+  // }
+
+  return new CanvasUI( content, config );
+}
+
+export function createSocket() {
+  return new WSApi();
+}
+
 export function createLights() {
   const lights = [];
   const ambient = new AmbientLight( 0xffffff, 1.0);

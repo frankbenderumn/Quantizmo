@@ -12,6 +12,8 @@ import { Mesh,
    } from 'https://cdn.skypack.dev/three@0.134.0';
 import { CanvasKeyboard } from './keyboard.js';
 
+/* credit: https://github.com/NikLever */
+
 /*An element is defined by 
 type: text | button | image | shape
 hover: hex
@@ -115,7 +117,20 @@ constructor(content, config){
         this.content = { body: "" };
         this.config.body.type = "text";
     }else{
+        // let circ = document.createElement("svg");
+        // let circC = document.createElement("circle");
+        // circC.className = "target";
+        // circC.style="fill: #69b3a2";
+        // circC.stroke="black";
+        // circC.cx="50";
+        // circC.cy="50";
+        // circC.r="40";
+        // circ.append(circC);
+        // content.append(circ);
         this.content = content;
+//         <svg> 
+//   <circle class="target" style="fill: #69b3a2" stroke="black" cx=50 cy=50 r=40></circle>
+// </svg>
         const btns = Object.values(this.config).filter( (value) => { return value.type === "button" || value.overflow === "scroll" || value.type === "input-text" });
         if (btns.length>0){
             if ( config === undefined || config.renderer === undefined ){

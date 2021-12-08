@@ -124,43 +124,9 @@ function cameraAngle() {
   let press = function(e) {
     api.sendCommand(e.type, {key: e.key, keyCode: e.keyCode});
     let keyCode = e.keyCode;
-    // if (keyCode == 65) { // KeyA
-    //     controls.move(0, -1);
-    // } else if (keyCode == 83) { // KeyS
-    //     controls.move(2, 1);
-    // } else if (keyCode == 68) { // KeyD
-    //     controls.move(0, 1);
-    // } else if (keyCode == 87) { // KeyW
-    //     controls.move(2, -1);
-    // } else if (keyCode == 37) { // ArrowLeft
-    //     controls.turn(0, -1);
-    // } else if (keyCode == 39) { // ArrowRight
-    //     controls.turn(0, 1);
-    // } else if (keyCode == 38) { // ArrowUp
-    //     controls.turn(1, -1);
-    // } else if (keyCode == 40) { // ArrowDown
-    //     controls.turn(1, 1);
-    // }
   }
   
   let release = function(e) {
     api.sendCommand(e.type, {key: e.key, keyCode: e.keyCode});
     let keyCode = e.keyCode;
-    // if (keyCode == 65) { // KeyA
-    //     controls.clearMove(0, -1);
-    // } else if (keyCode == 83) { // KeyS
-    //     controls.clearMove(2, 1);
-    // } else if (keyCode == 68) { // KeyD
-    //     controls.clearMove(0, 1);
-    // } else if (keyCode == 87) { // KeyW
-    //     controls.clearMove(2, -1);
-    // } else if (keyCode == 37) { // ArrowLeft
-    //     controls.clearTurn(0, -2);
-    // } else if (keyCode == 39) { // ArrowRight
-    //     controls.clearTurn(0, 1);
-    // } else if (keyCode == 38) { // ArrowUp
-    //     controls.clearTurn(1, -1);
-    // } else if (keyCode == 40) { // ArrowDown
-    //     controls.clearTurn(1, 1);
-    // }
   }

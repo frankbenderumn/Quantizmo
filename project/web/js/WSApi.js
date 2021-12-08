@@ -1,3 +1,5 @@
+// import { Scene } from './jsm/scene.js'
+
 function WSApi() {
     var self = this;
     this.socket = new WebSocket("ws://" + location.hostname+(location.port ? ':'+location.port: ''), "web_server");
@@ -6,6 +8,7 @@ function WSApi() {
     this.id = null;
 
     this.onmessage = null;
+    this._scene = null;
 
     this.socket.onmessage = function (msg) {
         if (!self.connected) {
@@ -22,6 +25,7 @@ function WSApi() {
         // interprets data from backend sent through observer
         if ("notification" in data) {
           $.fn.display(data);
+        //   this._scene.graph(data);
         }
 
         if (self.onmessage) {
@@ -52,6 +56,10 @@ function WSApi() {
 WSApi.prototype.sendPostCommand = function(cmd, data, calcVal) {
     console.log(this.id);
     return this.sendCommand(cmd, data, calcVal, true);
+}
+
+WSApi.prototype.setScene = function( scene ) {
+    this._scene = scene;
 }
 
 WSApi.prototype.sendCommand = function(cmd, data, calcVal, isPost = false) {
