@@ -7,6 +7,9 @@ import { XRControls } from './xr/controls.js'
 import * as Analyser from './audio/analyser.js'
 import * as Scaffolding from './scaffolding.js'
 import * as System from './system.js'
+import { Rig } from './rig.js'
+import { Hand } from "./xr/hand.js";
+
 // import { WSApi } from './system/socket.js'
 
 let _scene, _renderer, _camera, lights, mixers, script, controls;
@@ -28,6 +31,9 @@ let _ui;
 let _uniforms;
 let _socket;
 let _shell = null;
+let _rig;
+let _jarvis;
+let _jarvisActive = false;
 
 // scene modes
 // production, development
@@ -65,10 +71,11 @@ class Scene {
         _renderer = Feature.createRenderer(container, isVr);
         controls = Feature.createControls(_camera, _renderer.domElement);
         _ui = Feature.createUI();
+        _jarvis = Feature.createJarvis();
         const texloader = new THREE.TextureLoader();
-        texloader.load('https://images.pexels.com/photos/1205301/pexels-photo-1205301.jpeg' , function(texture) {
-          _scene.background = texture;  
-        });
+        // texloader.load('https://images.pexels.com/photos/1205301/pexels-photo-1205301.jpeg' , function(texture) {
+        //   _scene.background = texture;  
+        // });
 
         Analyser.analyze(_song, _renderer);
         // scene.add(song[0]);
@@ -76,11 +83,16 @@ class Scene {
 
         this._vr = false;
         if (isVr) {
-            let controllers = XRController.create(_renderer);
+            let controllers = XRController.create(_renderer, _scene);
             _controller = controllers[0];
             // _controllerGrip = controllers[1];
-            _scene.add(controllers[0]);
-            _scene.add(controllers[1]);
+            let geometr = new THREE.CylinderGeometry( 1, 1, 2, 32 );
+            let materia = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+            let cylinder = new THREE.Mesh( geometr, materia );
+            cylinder.position.copy(controllers[0].position);
+            controllers[0].add(cylinder);
+
+
 
             _dolly = new THREE.Object3D();
             _dolly.position.z = 5;
@@ -88,8 +100,15 @@ class Scene {
             _scene.add(_dolly);
             _dummyCam = new THREE.Object3D();
             _camera.add(_dummyCam);
-
             _controls = new XRControls(_controller, _dolly, _dummyCam);
+            // let hand = new Hand(controllers[0], controllers[1]);
+            _dolly.add(controllers[0]);
+            _dolly.add(controllers[1]);
+
+            // this._menu = cylinder;        
+
+            // _scene.add(cylinder);
+            _rig = new Rig(_camera, _dolly, controllers);
 
             // const btn = new VRButton( this.renderer, { onSessionStart, onSessionEnd } );
             // this.renderer.setAnimationLoop( this.render.bind(this) );
@@ -147,7 +166,7 @@ class Scene {
     graph(data) {
         console.log("data making it to the scene!");
         _shell = Feature.createD3(data);
-        _shell.mesh.position.set( 0, 0, -10 );
+        _shell.mesh.position.set( 0, 0, 104 );
         _camera.attach( _shell.mesh );
         _shell.scene = _scene;
         let circ = document.createElement("svg");
@@ -228,6 +247,28 @@ class Scene {
         Script.send("save", items);
     }
 
+    launchJarvis() {
+        if (!_jarvisActive) {
+            if (this._vr) {
+                _dolly.add(_jarvis);
+            } else {
+                _scene.add(_jarvis);
+            }
+            updatables.push(_jarvis);
+            _jarvisActive = true;
+        }
+    }
+
+    killJarvis() {
+        updatables = updatables.filter(item => item !== _jarvis);
+        if (this._vr) {
+            _dolly.remove(_jarvis);
+        } else {
+            _scene.remove(_jarvis);
+        }
+        _jarvisActive = false;
+    }
+
     get UI() { return _ui; }
     set UI(val) { _ui = val; }
 
@@ -264,6 +305,10 @@ class Scene {
             for(let e of _entities) {
                 e.update(delta);
             }
+
+            for(let e of updatables) {
+                e.update(delta);
+            }
             // _uniforms.tAudioData.value.needsUpdate = true;
         }
 
@@ -273,6 +318,8 @@ class Scene {
                 _controls.update(delta);
                 // _ui.update();
             }
+
+            _rig.update();
         }
 
     }

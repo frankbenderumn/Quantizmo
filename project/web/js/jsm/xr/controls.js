@@ -1,3 +1,5 @@
+import * as THREE from '../../three.module.js'
+
 class XRControls {
     constructor(controller, dolly, dummyCam) {
         this._controller = controller;
@@ -7,7 +9,14 @@ class XRControls {
 
     update(dt) {
         if (this._controller.gamepad) {
+            console.log("### controller position and gamepad ###");
+            console.log("-----------")
+            console.log(this._controller.position);
+            console.log("-------------")
             console.log(this._controller.gamepad);
+            console.log("===============");
+            let pos = this._controller.position;
+            this._controller.position.copy(new THREE.Vector3(pos[0] * 5, pos[0] * 5, pos[0] * 5));
             if (this._controller.gamepad.buttons[3].touched == true) {
                 let axes = this._controller.gamepad.axes;
                 // joystick

@@ -6,14 +6,18 @@ import { Scene,
     DirectionalLight,
     BoxBufferGeometry,
     MeshBasicMaterial,
+    MeshLambertMaterial,
+    MeshStandardMaterial,
     Mesh,
     Clock,
+    Object3D,
     sRGBEncoding
         } from 'https://cdn.skypack.dev/three@0.134.0';
 import * as Loader from './loader.js';
 import { Controls } from './controls.js';
 import { VRButton } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/VRButton.js';
 import { CanvasUI } from './ui/canvas.js';
+import { TetrahedronGeometry } from '../three.module.js';
 
 export function createCamera() {
   // const camera = new PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 1000 );
@@ -134,7 +138,7 @@ export function createLights() {
 
 export function createScene() {
   let scene = new Scene();
-  scene.background = new Color('skyblue');
+  scene.background = new Color('black');
   return scene;
 }
 
@@ -148,11 +152,51 @@ export function createCube() {
   // create a Mesh containing the geometry and material
   const cube = new Mesh(geometry, material);
 
+  cube.position.x = 10;
+
   cube.update = (dt) => {
     cube.rotation.x += 2 * dt;
   }
 
   return cube;
+}
+
+export function createJarvis() {
+  let group = new Object3D();
+  let num = 4;
+  for(let i = -1 * num; i < num + 1; i++) {
+    for(let j = -1 * num; j < num + 1; j++) {
+      for(let k = -1 * num; k < num + 1; k++) {
+        let geometry = new BoxBufferGeometry(0.1, 0.1, 0.1);
+        let material = new MeshStandardMaterial({color: 0x007777, roughness: 0.7});
+        let cube = new Mesh(geometry, material);
+        cube.position.x = j * 0.3 + 0.1;
+        cube.position.y = i * 0.3 + 0.1;
+        cube.position.z = k * 0.3 + 0.1;
+        group.add(cube);
+      }
+    }
+  }
+
+  let counter = 0;
+
+  group.update = (dt) => {
+    group.rotation.x += 2 * dt;
+    group.rotation.y += 1 * dt;
+    let ct = 1;
+    let nums = num * num * num;
+    let nums2 = num * num;
+    for (let e of group.children) {
+      e.rotation.z += group.rotation.x * (ct / nums) * dt;
+      e.rotation.y += 1 * (ct / nums) * dt;
+      ct++;
+      e.position.x += 0.1 * Math.cos(0.5 * counter);
+      e.position.z += 0.1 * Math.sin(0.5 * counter);
+      counter++;
+    }
+  }
+
+  return group;
 }
 
 export function createRenderer(container, vr = false) {

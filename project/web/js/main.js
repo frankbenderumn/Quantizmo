@@ -428,7 +428,7 @@ var recognizing;
 var recognition = new webkitSpeechRecognition();
 recognition.continuous = true;
 recognition.interimResults = true;
-let timeout;
+let timeout = null;
 
 document.addEventListener("DOMContentLoaded", function(){
 
@@ -446,6 +446,7 @@ function sendSpeech(final) {
         console.log("87678787878787");
         console.log(data);
     });
+    world.killJarvis();
 }
 
 recognition.onresult = function (event) {
@@ -455,6 +456,11 @@ recognition.onresult = function (event) {
     if (event.results[i].isFinal) {
         final += event.results[i][0].transcript;
     } else {
+        console.warn(event.results[i][0].transcipt);
+        if (event.results[i][0].transcript.includes("Jarvis")) {
+            world.launchJarvis();
+            console.log("calling jarvis < --------");
+        }
         interim += event.results[i][0].transcript;
     }
     }
@@ -463,11 +469,9 @@ recognition.onresult = function (event) {
     let interim_span = document.getElementById("interim_span");
     interim_span.innerHTML = interim;
 
-    if(timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-    }
-    timeout = setTimeout(sendSpeech(final), 5000);
+    clearTimeout(timeout);
+
+    timeout = setTimeout(function(){sendSpeech(final)}, 1000);
 }
 
 function reset() {

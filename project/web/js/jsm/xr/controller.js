@@ -38,7 +38,7 @@ function buildController( data ) {
 
 }
 
-export function create(renderer) {
+export function create(renderer, scene) {
     _controller = renderer.xr.getController( 0 );
     _controller.addEventListener( 'selectstart', onSelectStart );
     _controller.addEventListener( 'selectend', onSelectEnd );
@@ -52,13 +52,13 @@ export function create(renderer) {
         this.remove( this.children[ 0 ] );
     } );
 
-    // scene.add( _controller );
+    scene.add( _controller );
     
     const controllerModelFactory = new XRControllerModelFactory();
     
     _controllerGrip = renderer.xr.getControllerGrip( 0 );
     _controllerGrip.add( controllerModelFactory.createControllerModel( _controllerGrip ) );
-    // scene.add( _controllerGrip );
+    scene.add( _controllerGrip );
 
     return [_controller, _controllerGrip];
 }
