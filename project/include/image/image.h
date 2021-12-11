@@ -4,6 +4,8 @@
 #include <string>
 using namespace std;
 
+namespace csci3081 {
+
 class Color {
 public:
     Color(float r, float g, float b, float a);
@@ -104,5 +106,7 @@ private:
     int size;
     float* kernel;
 };
+
+}
 
 #endif // IMAGE_H_

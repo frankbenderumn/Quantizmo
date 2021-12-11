@@ -1,38 +1,39 @@
-# VR Final Project
+# instructor-rep
+10/27/21 - beginning documentation
 
-## Startup
+## Patterns Overview
+ * ```Factory``` entities are generated in factory.h
+ * ```Strategy``` supports three movement strategies: Automatic, Target, Manual
+ * ```Observer``` observer pattern linking entities and Web App to support notifications in front-end
+ * ```Decorator``` decorated entity to add a battery and seek charger entity when low battery
+ * ```Command``` handler class to support input management for manual strategy pattern (not fully command pattern)
+ * ```Singleton``` analytics used to output number of rescues and time taken
 
-Utilizing a linux environment and docker run the following code in the root github directory
+## Rubric
+ * ```Factory``` 10 pts
+ * ```Strategy``` (Automatic - 5pts, Target - 5pts, Manual - 5pts)
+ * ```Observer``` 15 pts
+ * ```Decorator``` EC up to 10pts
+ * ```Charger Entity``` EC up 5pts
+ * ```Command``` support-code or 10 pts
+ * ```Image Detection``` 25 pts
+ * ```Google Tests``` 10pts (5 unit and 1 integration)
+ * ```Compilation``` 10pts
+ * ```Singleton``` 10pts
 
-```
-./bin/compose.sh
-```
-This will use docker-compose.yml to build the image. Compose makes it easier to combine multiple containers and services. Next run:
-```
-./bin/run.sh
-```
-This will launch the image. From here we can use a custom cli to interact with the database and/or launch the webserver. The name of the cli is nebula.
-In order to build, seed, make and launch the database and server with one command, run:
-```
-nebula build
-```
-The database only needs to be built and seeded once. To launch just the server type: 
-```
-nebula s
-```
-Then, open up a browser and navigate to localhost:8081 and website will be displayed
+ ## Lab Ideas
 
-## Database commands
+ * ```picojson and uml```
+ * ```Patterns: Observer, forward declarations, and circular dependencies```
+ * ```Patterns: Decorator (Starbucks menu example)```
+ * ```Patterns: Strategy (Physics movement)```
+ * ```Patterns: Command (Calculator example)```
 
-Below are individual db functions as data may change or new data may be added. These functions are a work in progress, as the end goal is a complete ORM with individual database migrations. To start the database, run:
-```
-nebula db
-```
-To migrate the database and generate the roles, tables, etc run:
-```
-nebula db:migrate
-```
-To seed the databse with dummy info, run:
-```
-nebula db:seed
-```
+ ## TODO
+ * ```updated UML```
+ * ```actual blob detection to return true or false```
+ * ```finish analytics```
+ * ```decide if we scrap anything```
+
+ ## UML
+ [UML Diagram](https://lucid.app/lucidchart/86c08e02-27b6-4cc4-8cc9-2efdf2986a67/edit?viewport_loc=-3249%2C-2552%2C6918%2C3480%2C0_0&invitationId=inv_68ca02b9-89ec-44c1-a246-f13728b9d918)

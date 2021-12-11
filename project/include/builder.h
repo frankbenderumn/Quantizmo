@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include "util/debug/console.h"
+#include "util/console.h"
 #include <time.h>
 
 class Builder {

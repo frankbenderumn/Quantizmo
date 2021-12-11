@@ -5,6 +5,8 @@ using namespace std;
 #include "image/image.h"
 #include "image/filter.h"
 
+namespace csci3081 {
+
 bool CannyDetect::detect(Image input) {
 
     // grey
@@ -71,4 +73,8 @@ bool CannyDetect::detect(Image input) {
     }
     return false;
 
+
 }
+
+}
+

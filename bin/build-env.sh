@@ -12,5 +12,4 @@ docker build $1 \
 	--build-arg GROUP_ID=$(id -g) \
 	--build-arg DEP_DIR="${DEP_DIR}" \
 	--build-arg SRC_DIR=/env \
-	-f ./docker/app/Dockerfile \
 	-t ${DOCKER_IMAGE_PREFIX}/env "$ROOTDIR"

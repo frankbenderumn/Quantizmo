@@ -1,9 +1,9 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.119.0';
 import { BoxLineGeometry } from 'https://cdn.skypack.dev/three/examples/jsm/geometries/BoxLineGeometry.js';
 import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/XRControllerModelFactory.js';
-import { Scene } from './jsm/scene.js'
-import { Raycast } from './jsm/raycast.js'
-import * as Script from './jsm/script.js'
+import { Scene } from './modules/scene.js'
+import { Raycast } from './modules/raycast.js'
+import * as Script from './modules/script.js'
 
 let container = document.getElementById( 'scene-container' );
 let world;
@@ -207,8 +207,6 @@ let press = function(e) {
   $("#command-stock").click(function(){
     world.stock();
   });
-
-  // MOUSE HANDLER INPUT --------------------------------------------------------------------------
 
     document.onkeyup = release;
 
@@ -417,135 +415,3 @@ let press = function(e) {
 //         controls.clearTurn(1, 1);
 //     }
 //   }
-
-// VOICE FUNCTIONALITY --------------------------------------------------------------------------
-
-let api = new WSApi();
-// if (!('webkitSpeechRecognition' in window)) {
-// 	upgrade();
-// }
-var recognizing;
-var recognition = new webkitSpeechRecognition();
-recognition.continuous = true;
-recognition.interimResults = true;
-let timeout = null;
-
-document.addEventListener("DOMContentLoaded", function(){
-
-
-reset();
-recognition.onend = reset;
-
-function sendSpeech(final) {
-    console.log("====> sending speech: "+final);
-    let o = {
-        text: final
-    };
-    api.setScene(world);
-    api.sendCommand("speech", o).then(function(data){
-        console.log("87678787878787");
-        console.log(data);
-    });
-    world.killJarvis();
-}
-
-recognition.onresult = function (event) {
-    var final = "";
-    var interim = "";
-    for (var i = 0; i < event.results.length; ++i) {
-    if (event.results[i].isFinal) {
-        final += event.results[i][0].transcript;
-    } else {
-        console.warn(event.results[i][0].transcipt);
-        if (event.results[i][0].transcript.includes("Jarvis")) {
-            world.launchJarvis();
-            console.log("calling jarvis < --------");
-        }
-        interim += event.results[i][0].transcript;
-    }
-    }
-    let final_span = document.getElementById("final_span");
-    final_span.innerHTML = final;
-    let interim_span = document.getElementById("interim_span");
-    interim_span.innerHTML = interim;
-
-    clearTimeout(timeout);
-
-    timeout = setTimeout(function(){sendSpeech(final)}, 1000);
-}
-
-function reset() {
-    recognizing = false;
-    let buttonv = document.getElementById("voice-button");
-    console.log("refactoring pains --");
-    console.log(buttonv);
-    buttonv.innerHTML = "Click to Speak";
-}
-
-$("#voice-button").click(function(){
-    toggleVoice();
-});
-
-});
-
-function toggleVoice() {
-    if (recognizing) {
-        recognition.stop();
-        reset();
-    } else {
-        recognition.start();
-        console.log("listening");
-        recognizing = true;
-        let button = document.getElementById("voice-button");
-        button.innerHTML = "Click to Stop";
-        let final_span = document.getElementById("final_span");
-        final_span.innerHTML = "";
-        let interim_span = document.getElementById("interim_span");
-        interim_span.innerHTML = "";
-    }
-}
-
-$.fn.display = (msg) => {
-    // console.log(msg);
-    switch (msg.notification.type) {
-      case "alert":
-        $.fn.notify(2, msg.notification.data);
-        break;
-      case "battery":
-        $.fn.batteryPanel(msg.notification.data);
-        break;
-      case "statistics":
-        break;
-      case "stock":
-        console.log("====> STOCK IN FRONTO <====");
-        console.log(msg.notification.data);
-        $.fn.notify(2, msg.notification.data.companyName);
-        $.fn.notify(2, msg.notification.data.iexOpen);
-        stockModal(msg.notification.data);
-        world.graph(msg.notification.data);
-        break;
-    }
-  }
-
-  function stockModal(data) {
-    let modal = document.createElement("div");
-    modal.className = "slim modal";
-    let shell = document.createElement("div");
-    // change to modal-shell naming convention
-    shell.className = "slim modal-box";
-    shell.style.padding = "0px";
-    let header = document.createElement("div");
-    header.className = "header";
-    header.style.padding = "5px";
-    header.innerHTML = data.companyName;
-    let content = document.createElement("div");
-    content.style.padding = "5px";
-    content.innerHTML = data.iexOpen + "<br>";
-    content.innerHTML += data.change + "<br>";
-    content.innerHTML += data.averageTotalVolume + "<br>";
-    shell.append(header);
-    shell.append(content);
-    modal.append(shell);
-    document.body.append(modal);
-    modal.style.display = 'block';
-  }

@@ -425,6 +425,26 @@ small { font-size:70%; }
 .hook.shout{}
 .hook.category{}
 
+/* SHELLS */
+.shell {
+    margin:5px;
+    border-radius:5px;
+    background-color: var(--grey);
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+.shell .header {
+    padding:5px;
+    background-color:var(--white);
+    /* border-bottom:1px solid var(--grey); */
+    border-radius:5px 5px 0px 0px;
+    color:var(--theme);
+    font-size:1rem;
+    font-weight:bold;
+}
+.shell .body { padding:10px; background-color:var(--glass); border-radius:0px 0px 5px 5px; } 
+.shell.alt .header { color:var(--theme); background-color:var(--white); border-radius:5px 5px 0px 0px; }
+.shell.alt .body { border:2px solid var(--lightgrey); border-radius:0px 0px 5px 5px; }
+
 /* APPLETS */
 .applet{}
 .applet .content{}
@@ -614,12 +634,6 @@ div[contenteditable=true]{}
     border-radius:6px;
     color:var(--black);
     padding:6px 10px;
-}
-
-.slim.modal-box .header {
-  background-color:var(--black);
-  color:white;
-  font-weight:bold;
 }
 
 .tooltip{

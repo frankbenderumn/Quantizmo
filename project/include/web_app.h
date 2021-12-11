@@ -5,13 +5,13 @@
 #include "WebServer.h"
 #include <chrono>
 #include <vector>
-#include "util/math/vec3.h"
+#include "util/vec3.h"
 #include "interface/ientity.h"
 #include "factory.h"
 #include <string>
 #include <stdexcept>
 #include <cassert>
-#include "util/debug/console.h"
+#include "util/console.h"
 #include "entity/destination.h"
 #include "entity/actee.h"
 #include "entity/actor.h"
@@ -23,7 +23,8 @@
 #include "addon/battery_actor.h"
 #include "builder.h"
 #include "financial/iex.h"
-#include "ai/nlp.h"
+
+namespace csci3081 {
 
 class WebApp : public JSONSession {
   public:
@@ -32,7 +33,6 @@ class WebApp : public JSONSession {
     WebApp() : start(std::chrono::system_clock::now()), time(0.0), factory(new Factory()) {
         handler = new Handler;
         analytics = Analytics::instance();
-        nlp = new NLP;
         // drone_runtimes = {};
     }
 
@@ -69,8 +69,6 @@ class WebApp : public JSONSession {
     /* @brief sends notification through observer back to front-end */
     void Send(picojson::value& val);
 
-    void SendFin(std::string ticker);
-
     std::vector<Entity*> GetByType(int type);
 
   private:
@@ -99,7 +97,9 @@ class WebApp : public JSONSession {
     static std::map<std::string, float> drone_runtimes; // Records the runtime traveled for each drone. Used for Analytics
     void UpdateTimeMap(const std::string&, float distance = 0); // Update the drone time map
     Analytics* analytics;
-    NLP* nlp;
 };
+
+
+}
 
 #endif

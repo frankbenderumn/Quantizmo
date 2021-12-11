@@ -3,13 +3,15 @@
 
 #include "entity.h"
 
-class Destination : public Entity {
-  public:
-    Destination(const picojson::object& data) : Entity(data) {
-      this->type = DESTINATION;
-    }
-    void Update(float dt) {}
-    ~Destination() { printf("destroying destination!\n"); }
-};
+namespace csci3081 {
+    class Destination : public Entity {
+      public:
+        Destination(const picojson::object& data) : Entity(data) {
+          this->type = DESTINATION;
+        }
+        void Update(float dt) {}
+        ~Destination() { printf("destroying destination!\n"); }
+    };
+}
 
 #endif

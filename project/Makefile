@@ -6,9 +6,9 @@ BUILD_DIR=${ROOT_DIR}-build
 CXX = g++
 CXXFLAGS = -std=c++11 -g -fPIC $(ITERATION_DEFINES)
 
-INCLUDES = -I.. -I$(DEP_DIR)/include -Isrc -I. -I$(DEP_DIR)/include -Iinclude -I. -Icurl -Ipqxx -Iyaml-cpp
+INCLUDES = -I.. -I$(DEP_DIR)/include -Isrc -I. -I$(DEP_DIR)/include -Iinclude -I. -Icurl -Ipqxx
 LIBDIRS = -L$(DEP_DIR)/lib 
-LIBS = -lpthread -lcurl -lpqxx -lyaml-cpp
+LIBS = -lpthread -lcurl -lpqxx
 
 SOURCES = $(wildcard src/*.cc) $(wildcard src/*/*.cc) $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
 
@@ -58,7 +58,7 @@ data-files:
 # Build web viewer
 #add data-files to end
 $(EXEFILE): $(BUILD_DIR) $(LIBFILE) data-files
-	$(CXX) $(CXXFLAGS) -Wl,-rpath,$(BUILD_DIR)/lib $(INCLUDES) $(LIBDIRS) -L$(BUILD_DIR)/lib src/main.cc -lcsci3081proj $(LIBS) -lCppWebServer -lwebsockets -lssl -lcrypto -lz -o $@ -DDEBUG
+	$(CXX) $(CXXFLAGS) -Wl,-rpath,$(BUILD_DIR)/lib $(INCLUDES) $(LIBDIRS) -L$(BUILD_DIR)/lib src/main.cc -lcsci3081proj $(LIBS) -lCppWebServer -lwebsockets -lssl -lcrypto -lz -o $@ 
 
 # Build tests
 test: $(LIBFILE)

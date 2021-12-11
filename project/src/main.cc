@@ -4,35 +4,65 @@ Copyright (c) 2019 Dan Orban
 
 #include <iostream>
 #include <map>
-#include "util/debug/console.h"
+#include "util/console.h"
 #include "web_app.h" 
 #include <curl/curl.h>
 #include <util/api.h>
 #include <pqxx/pqxx>
 // #include "financial/iex.h"
 #include <fstream>
-#include "db/database.h"
-#include <iterator>
-#include <sstream>
-#include <string_view>
-#include <unistd.h>
 // #include <opencv2/opencv.hpp>
 
+using namespace csci3081;
+
 enum DataType { OBJECT, ARRAY, UNDEFINED_DATA };
+
+class JsonParser {
+    static DataType read() {
+
+    }
+};
+
+// struct MemoryStruct {
+//     char* memory;
+//     size_t size;
+// };
+
+// size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+//     size_t realsize = size* nmemb;
+//     struct MemoryStruct* mem = (struct MemoryStruct*)userp;
+
+//     char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+//     if(ptr == NULL) {
+//         printf("error: not enough memory\n");
+//         return 0;
+//     }
+
+//     mem->memory = ptr;
+//     memcpy(&(mem->memory[mem->size]), contents, realsize);
+//     mem->size += realsize;
+//     mem->memory[mem->size] = 0;
+
+//     return realsize;
+// }
 
 int main(int argc, char**argv) {
     if (argc > 1) {
 
         // pqxx::connection* C;
-        Database* db = new Database();
-        db->GetTable("stocks");
 
-#ifdef DEBUG
-    printf("--------------------------------\n");
-    printf("            DEBUGGING           \n");
-    printf("--------------------------------\n");
-#endif
-
+        // try {
+        //     C = new pqxx::connection("dbname=postgres user=root password=1234 \
+        //                                 hostaddr=127.0.0.1 port=5432");
+            
+        //     Console::Log(SUCCESS, "connection established");
+        //     std::cout << "Connected to " << C->dbname() << '\n';
+        // }
+        
+        // catch (const std::exception &e) {
+        //     Console::Log(FAILURE, "Failed to connect to database");
+        //     std::cerr << e.what() << std::endl;
+        // }
 
         // try {
         //     // Connect to the database.
