@@ -1,0 +1,37 @@
+[
+{
+"command": "createEntity",
+"params": {
+    "entityId": 0,
+    "name": "drone",
+    "type": "actor",
+    "path": "times_square.glb",
+    "dynamic": true,
+    "position": {"x":0,"y":0,"z":0},
+    "rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+    "scale": {"x":5.5000000000000004,"y":5.5000000000000004,"z":5.5000000000000004}
+}
+},
+{
+"command": "createEntity",
+"params": {
+    "entityId": 2,
+    "name": "hospital",
+    "type": "destination",
+    "path": "pony.glb",
+    "dynamic": true,
+    "position": {"x":20,"y":0,"z":2},
+    "rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+    "scale": {"x":1,"y":1,"z":1}
+}
+},
+{
+    "command": "skybox",
+    "params": {
+        "entityId": 3,
+        "path": "clouds.jpeg",
+        "type": "skybox",
+        "name": "undefined"
+    }
+}
+]
