@@ -1,5 +1,16 @@
 [
 	{
+        "command": "scene",
+        "params": {
+            "name": "scene",
+            "author": "Frank Bender",
+            "path": "scene",
+            "type": "json",
+            "createdAt": "null",
+            "updatedAt": "null"
+        }
+    },
+	{
 		"command": "createEntity",
 		"params": {
 			"entityId": 0,

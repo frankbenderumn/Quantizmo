@@ -36,6 +36,7 @@ let _jarvis;
 let _jarvisActive = false;
 let _skybox;
 let _clickables = [];
+let _sceneInfo;
 
 // scene modes
 // production, development
@@ -155,12 +156,13 @@ class Scene {
         await Script.run(`${_scriptsDir}${_target}`, _assetsDir).then(function(data) {  
             Promise.all(data).then(function(entities) {
                 console.log("###########################");
-                for (let e of entities) {
+                for (let e of entities[0]) {
                     let d = new Entity(e);
                     console.log(d);
                     _entities.push(d);
                     _scene.add(d.model);
                 }
+                _sceneInfo = entities[1];
                 _updateReady = true;
                 Scaffolding.dag(_entities);
                 console.warn("scene is: ");
@@ -245,6 +247,7 @@ class Scene {
 
     save() {
         let items = [];
+        items.push(_sceneInfo);
         for (const e of _entities) {
             items.push(e.serialize());
         }
