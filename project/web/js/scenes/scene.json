@@ -60,7 +60,7 @@
 			"path": "wumpa.glb",
 			"dynamic": true,
 			"position": {"x":11,"y":0,"z":-28},
-			"rotation": {"_order":"XYZ","_x":-2.1000000000000005,"_y":158452.83240007079,"_z":0},
+			"rotation": {"_order":"XYZ","_x":-2.1000000000000005,"_y":158459.66320007073,"_z":0},
 			"scale": {"x":4.4000000000000004,"y":4.4000000000000004,"z":4.4000000000000004}
 		}
 	},
@@ -73,7 +73,7 @@
 			"path": "wumpa.glb",
 			"dynamic": true,
 			"position": {"x":0,"y":-4,"z":-27},
-			"rotation": {"_order":"XYZ","_x":0,"_y":158450.63240007067,"_z":0},
+			"rotation": {"_order":"XYZ","_x":0,"_y":158457.4632000706,"_z":0},
 			"scale": {"x":0.5,"y":0.5,"z":0.5}
 		}
 	},
@@ -221,12 +221,16 @@
 		}
 	},
 	{
-        "command": "skybox",
-        "params": {
-            "entityId": 16,
-            "path": "nebula_periwinkle.jpeg",
-            "type": "skybox",
-            "name": "undefined"
-        }
-    }
+		"command": "createEntity",
+		"params": {
+			"entityId": 16,
+			"name": "undefined",
+			"type": "skybox",
+			"path": "nebula_periwinkle.jpeg",
+			"dynamic": false,
+			"position": {"x":0,"y":0,"z":0},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1,"y":1,"z":1}
+		}
+	}
 ]
