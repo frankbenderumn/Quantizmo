@@ -3,6 +3,7 @@ import * as Feature from './feature.js';
 
 let _api = new WSApi();
 let idx = -1;
+let _sceneInfo;
 
 $.getJSON("./js/scenes/stocks.json", function(data) {
     for (let i = 0; i < data.length; i++) {
@@ -64,9 +65,13 @@ export async function run(file, modelsDir) {
             _entities.push(o);
         }
 
+        if (command.command == "scene") {
+            _sceneInfo = command.params; 
+        }
+
     }
 
-    return _entities;
+    return [_entities, _sceneInfo];
 
 }
 

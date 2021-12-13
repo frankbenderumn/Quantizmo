@@ -33,6 +33,7 @@ export function icon(name) {
 export function dag(entities) {
     let shell = document.createElement("section");
     shell.className = "dag ";
+    shell.setAttribute("id", "dag");
     _entities = entities;
     for (let e of entities) {    
         let li = document.createElement("li");
@@ -53,6 +54,13 @@ export function dag(entities) {
         log(e.name+" loaded");
     }
     document.body.append(shell); 
+}
+
+export function cleanDag() {
+    let dag = document.getElementById("dag");
+    // console.log("childreeeeeeen");
+    // console.log(dag.children.length);
+    dag.remove();
 }
 
 export function createForm(e) {

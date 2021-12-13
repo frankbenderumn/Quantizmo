@@ -63,6 +63,28 @@ export async function loadFbx(params, dynamic = true) {
 
 function format(obj, params, dynamic) {
     let model = obj.scene;
+    let meshes = [];
+    function walkDown(element){
+        if (element.hasOwnProperty('children')) {
+            if (element.children.length > 0) {
+                console.log(element.children);
+                    for(let e of element.children) {
+                        if (e.type == "Mesh") {
+                            console.warn("mesh");
+                            e.entityId = params.entityId;
+                            e.ancestor = params.name;
+                            meshes.push(e);
+                        } else {
+                            if (e.type == "Group") {
+                                walkDown(e);
+                            }
+                        }
+                    }
+            }
+        }
+    }
+    walkDown(model);
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
     model.position.copy(new THREE.Vector3(params.position.x, params.position.y, params.position.z))
     model.rotation.copy(params.rotation)
@@ -81,7 +103,8 @@ function format(obj, params, dynamic) {
         mixer: mixer,
         type: params.type,
         dynamic: dynamic,
-        path: params.path
+        path: params.path,
+        meshes: meshes
     }
 
     return o;

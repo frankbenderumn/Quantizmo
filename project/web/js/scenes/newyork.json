@@ -1,5 +1,17 @@
 [
 {
+    "command": "scene",
+    "params": {
+        "name": "newyork",
+        "author": "Frank Bender",
+        "path": "newyork",
+        "type": "scene",
+        "ext": "json",
+        "createdAt": "null",
+        "updatedAt": "null"
+    }
+},
+{
 "command": "createEntity",
 "params": {
     "entityId": 0,

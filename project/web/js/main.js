@@ -34,9 +34,10 @@ let stateCommand = {
 
 async function main() {
     world = new Scene(container, "scene.json", false);
-    await world.init();
+    await world.init().then(function(){
+        raycast = new Raycast(world, world.camera, world.clickables);
+    });
     world.start();
-    raycast = new Raycast(world.scene, world.camera);
 }
 
 // https://cdn.glitch.com/c308c431-814f-4930-8098-89fb892cc473%2Fjellyfish2_animated.glb?v=1574277583974
@@ -90,9 +91,9 @@ let press = function(e) {
                 } else if (stateCommand.rotate) {
                     focus.rotation.x -= 0.1;
                 } else if (stateCommand.scale) {
-                    focus.scale.x -= 0.1;
-                    focus.scale.y -= 0.1;
-                    focus.scale.z -= 0.1;
+                    focus.scale.x -= 0.5;
+                    focus.scale.y -= 0.5;
+                    focus.scale.z -= 0.5;
                 } else if (modifier.shift && stateCommand.translate) {
                     focus.position.y -= 1;
                 }
@@ -225,12 +226,12 @@ let press = function(e) {
         // frame += 1;
         pointer.x = ( e.clientX / window.innerWidth );
         pointer.y = ( e.clientY / window.innerHeight );
-        let newPoint = new THREE.Vector2(pointer.x, pointer.y);
+        // let newPoint = new THREE.Vector2(pointer.x, pointer.y);
         // let newDist = lastPoint.distanceTo(newPoint);
     
         if (mouseState.left) {
-            xMove = 0;
-            yMove = 0;
+            // xMove = 0;
+            // yMove = 0;
             // xMove = (pointer.x - lastPoint.x) / lastPoint.x;
             // yMove = (pointer.y - lastPoint.y) / lastPoint.y;
             // drag = true;
@@ -245,16 +246,16 @@ let press = function(e) {
             // } else {
             //     scaleFactor = 0;
             // }
-            console.log("scale factor is: "+scaleFactor);
-            controls.turnDragSpeed = controls.turnDragSpeed + scaleFactor;
+            // console.log("scale factor is: "+scaleFactor);
+            // controls.turnDragSpeed = controls.turnDragSpeed + scaleFactor;
     
-            if (newPoint.x < lastPoint.x) {
+            // if (newPoint.x < lastPoint.x) {
                 // controls.turn(0, -1);
                 // controls.clearTurn(0, 1);
-            } else {
+            // } else {
                 // controls.turn(0, -1);
                 // controls.clearTurn(0, -1);
-            }
+            // }
     
             if (newPoint.y < lastPoint.y) {
                 // controls.turn(1, -1);
@@ -463,6 +464,10 @@ recognition.onresult = function (event) {
         if (event.results[i][0].transcript.includes("Jarvis")) {
             world.launchJarvis();
             console.log("calling jarvis < --------");
+        }
+        if (event.results[i][0].transcript.includes("suit up")) {
+            console.warn("suitting up");
+            world.debug("suitting up");
         }
         interim += event.results[i][0].transcript;
     }

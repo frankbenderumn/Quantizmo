@@ -17,7 +17,7 @@ class Rig {
     }
 
     update(dt) {
-        if (this._track && this._strategy == "automate") {
+        if (this._track && this._strategy == "automatic") {
             let idx = this._track.idx;
             if (this._track.isColliding(idx)) {
                 this._track.increment();

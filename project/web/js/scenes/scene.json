@@ -1,5 +1,17 @@
 [
 	{
+		"command": "scene",
+		"params": {
+			"name": "scene",
+			"ext": "json",
+			"type": "scene",
+			"path": "scene",
+			"author": "Frank Bender",
+			"created_at": "12122021_063303",
+			"updated_at": "12122021_063303"
+		}
+	},
+	{
 		"command": "createEntity",
 		"params": {
 			"entityId": 0,
@@ -33,7 +45,7 @@
 			"type": "actee",
 			"path": "cortex.glb",
 			"dynamic": true,
-			"position": {"x":-13,"y":-1,"z":-15},
+			"position": {"x":0,"y":0,"z":-39},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":0.5,"y":0.5,"z":0.5}
 		}
@@ -46,9 +58,9 @@
 			"type": "actee",
 			"path": "aku.glb",
 			"dynamic": true,
-			"position": {"x":0,"y":0,"z":-27},
-			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":2.9000000000000008,"y":2.9000000000000008,"z":2.9000000000000008}
+			"position": {"x":-5,"y":0,"z":-10},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0.48999999999999999,"_z":0},
+			"scale": {"x":1.1999999999999993,"y":1.1999999999999993,"z":1.1999999999999993}
 		}
 	},
 	{
@@ -59,9 +71,9 @@
 			"type": "actee",
 			"path": "wumpa.glb",
 			"dynamic": true,
-			"position": {"x":11,"y":0,"z":-28},
-			"rotation": {"_order":"XYZ","_x":-2.1000000000000005,"_y":158459.66320007073,"_z":0},
-			"scale": {"x":4.4000000000000004,"y":4.4000000000000004,"z":4.4000000000000004}
+			"position": {"x":-7,"y":2,"z":-4},
+			"rotation": {"_order":"XYZ","_x":-6.2999999999999936,"_y":160027.39260003041,"_z":0},
+			"scale": {"x":0.39999999999999936,"y":0.39999999999999936,"z":0.39999999999999936}
 		}
 	},
 	{
@@ -72,8 +84,8 @@
 			"type": "actee",
 			"path": "wumpa.glb",
 			"dynamic": true,
-			"position": {"x":0,"y":-4,"z":-27},
-			"rotation": {"_order":"XYZ","_x":0,"_y":158457.4632000706,"_z":0},
+			"position": {"x":8,"y":0,"z":-15},
+			"rotation": {"_order":"XYZ","_x":0,"_y":160025.19260003028,"_z":0},
 			"scale": {"x":0.5,"y":0.5,"z":0.5}
 		}
 	},
@@ -82,25 +94,25 @@
 		"params": {
 			"entityId": 6,
 			"name": "miami",
-			"type": "terrain",
+			"type": "actee",
 			"path": "observatorium.glb",
 			"dynamic": true,
 			"position": {"x":0,"y":-4,"z":-2},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":7.4999999999999911,"y":7.4999999999999911,"z":7.4999999999999911}
+			"scale": {"x":2.4000000000000021,"y":2.4000000000000021,"z":2.4000000000000021}
 		}
 	},
 	{
 		"command": "createEntity",
 		"params": {
-			"entityId": 6,
+			"entityId": 7,
 			"name": "arch",
 			"type": "actee",
 			"path": "greek-arch.glb",
 			"dynamic": true,
-			"position": {"x":-2,"y":-2,"z":-44},
+			"position": {"x":-1,"y":-3,"z":-17},
 			"rotation": {"_order":"XYZ","_x":0,"_y":3.2000000000000015,"_z":0},
-			"scale": {"x":5.6999999999999957,"y":5.6999999999999957,"z":5.6999999999999957}
+			"scale": {"x":2.7000000000000006,"y":2.7000000000000006,"z":2.7000000000000006}
 		}
 	},
 	{
@@ -111,7 +123,7 @@
 			"type": "actee",
 			"path": "sun.glb",
 			"dynamic": true,
-			"position": {"x":25,"y":25,"z":-719},
+			"position": {"x":25,"y":26,"z":-1255},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":500,"y":500,"z":500}
 		}
@@ -124,7 +136,7 @@
 			"type": "actee",
 			"path": "mercury.glb",
 			"dynamic": true,
-			"position": {"x":-192,"y":25,"z":25},
+			"position": {"x":-192,"y":25,"z":-10},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":25,"y":25,"z":25}
 		}
@@ -171,7 +183,7 @@
 	{
 		"command": "createEntity",
 		"params": {
-			"entityId": 13,
+			"entityId": 18,
 			"name": "sun",
 			"type": "actee",
 			"path": "mars.glb",
@@ -189,7 +201,7 @@
 			"type": "actee",
 			"path": "asteroid-step.glb",
 			"dynamic": true,
-			"position": {"x":-2,"y":-1,"z":-63},
+			"position": {"x":-1,"y":-2,"z":-39},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":3.9000000000000026,"y":3.9000000000000026,"z":3.9000000000000026}
 		}
@@ -221,16 +233,26 @@
 		}
 	},
 	{
-		"command": "createEntity",
+		"command": "skybox",
 		"params": {
 			"entityId": 16,
 			"name": "undefined",
 			"type": "skybox",
-			"path": "nebula_periwinkle.jpeg",
-			"dynamic": false,
-			"position": {"x":0,"y":0,"z":0},
-			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":1,"y":1,"z":1}
+			"path": "nebula_periwinkle.jpeg"
 		}
+	},
+	{
+	"command": "createEntity",
+	"params": {
+		"entityId": 17,
+		"name": "vr-menu",
+		"type": "actor",
+		"path": "icon-menu.glb",
+		"vr": true,
+		"dynamic": true,
+		"position": {"x":0,"y":0,"z":0},
+		"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+		"scale": {"x":0.90000000000000269,"y":0.90000000000000269,"z":0.90000000000000269}
 	}
+}
 ]

@@ -2,13 +2,17 @@ import * as Feature from './feature.js'
 import * as Script from './script.js'
 import * as THREE from 'https://cdn.skypack.dev/three@0.134.0'
 import { Entity } from './entity.js'
-import * as XRController from './xr/controller.js'
-import { XRControls } from './xr/controls.js'
+import * as XRController from './xr/xrcontroller.js'
+import { XRHandler } from './xr/xrhandler.js'
 import * as Analyser from './audio/analyser.js'
 import * as Scaffolding from './scaffolding.js'
 import * as System from './system.js'
 import { Rig } from './rig.js'
 import { Hand } from "./xr/hand.js";
+import * as Component from "./component.js"
+import { Matrix4, Raycaster } from '../three.module.js'
+import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/webxr/XRControllerModelFactory.js';
+
 
 // import { WSApi } from './system/socket.js'
 
@@ -36,6 +40,19 @@ let _jarvis;
 let _jarvisActive = false;
 let _skybox;
 let _clickables = [];
+let _collidables = [];
+let _sceneInfo;
+let _mode = "development";
+let _menuController;
+let _vr = false;
+let _raycaster;
+let _workingMatrix;
+let _controllers;
+let _intersected = [];
+let _clean;
+let _intersect;
+let _selected = false;
+let _collections = [];
 
 // scene modes
 // production, development
@@ -46,6 +63,37 @@ const setSize = (container, camera, renderer) => {
   
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
+};
+
+class Cache {
+    constructor() {
+        this._session = undefined;
+        this._cache;
+    }
+
+    store(target, scene) {
+        let models = [];
+        for (let e of scene.children) {
+            models.push(e);
+        }
+        this._cache[target] = models;
+    }
+
+    isCached(target) {
+        return (this._cache[target] != undefined);
+    }
+
+    getCache(target) {
+        if(this.isCached(target)) {
+            return this._cache[target];
+        }
+    }
+
+    loadCache(target, scene) {
+        for (let e in this._cache[target]) {
+            scene.add(e);
+        }
+    }
 };
 
 class Resizer {
@@ -65,9 +113,11 @@ class Scene {
     constructor(container, target, test = false, isVr = true) {
         _camera = Feature.createCamera();
         _scene = Feature.createScene();
+        _raycaster = new Raycaster();
+        _workingMatrix = new Matrix4();
         _container = container;
         // _scene.test = test;
-        _scene.system = "development";
+        _mode = "development";
         // _socket = new WSApi();
         lights = Feature.createLights();
         _renderer = Feature.createRenderer(container, isVr);
@@ -81,22 +131,225 @@ class Scene {
         //   _scene.background = texture;  
         // });
 
+
         Analyser.analyze(_song, _renderer);
         // scene.add(song[0]);
         // _uniforms = song[1];
 
-        this._vr = false;
+        _vr = true;
         if (isVr) {
-            let controllers = XRController.create(_renderer, _scene);
-            _controller = controllers[0];
-            // _controllerGrip = controllers[1];
-            let geometr = new THREE.CylinderGeometry( 1, 1, 2, 32 );
+            // comment out to enbable selection
+            _mode = "production";
+
+
+            function onSelectStart( event ) {
+                // this.userData.isSelecting = true;
+                const controller = event.target;
+            
+                const intersections = getIntersections( controller );
+            
+                if ( intersections.length > 0 ) {
+            
+                    const intersection = intersections[ 0 ];
+                    // if (intersection.obect.name == "line") {
+                    //     intersection = intersections[1];
+                    // }
+                    const object = intersection.object;
+                    object.material.wireframe = true;
+                    // console.log(object);
+                    let id = object.entityId;
+                    console.warn(`entityId id ${id}`);
+                    console.warn(object);
+                    if (object.ancestor != "vr-menu") {
+                        for (let mesh in _collections[id]) {
+                            controller.attach( _collections[id][mesh] );
+                        }
+                        controller.attach(object);                        
+                    } else {
+                        // object.lastPos = object.position;
+                        // object.lastParent = controller;
+                        controller.attach(object);
+                    }
+            
+                    controller.userData.selected = object;
+                    _selected = object;
+            
+                }
+            }
+            
+            function onSelectEnd( event ) {
+                // this.userData.isSelecting = false;
+                const controller = event.target;
+                console.warn("releasing object");
+            
+                // const intersections = getIntersections( controller );
+            
+				if ( controller.userData.selected !== undefined ) {
+
+					const object = controller.userData.selected;
+					object.material.wireframe = false;
+                    let id = object.entityId;
+                    if (object.ancestor != "vr-menu") {
+                        for (let mesh in _collections[id]) {
+                            _scene.attach( _collections[id][mesh] );
+                        }
+                        _scene.attach( object );
+                    } else {
+                        // let lastParent = object.lastParent;
+
+                        _scene.attach(object);
+                        // lastParent.attach( object );
+                    }
+
+					controller.userData.selected = undefined;
+                    _selected = undefined;
+
+				}
+            
+            }
+            
+            function getIntersections( controller ) {
+                            // this._raycaster.setupXR(this._workingMatrix, this._controller);
+                            // this._raycaster.castXR();
+                            _workingMatrix.identity().extractRotation( controller.matrixWorld );
+                            // this._raycaster.near = 0;
+                            // this._raycaster.far = 20;
+                            // this._dummyC
+                            // console.log(this._dummyCam.quaternion);
+                            // this._raycaster.ray.origin = this._dolly.position;
+                            // _xScene.raycaster.ray.direction.set(0, 0, -1).applyMatrix4( controller.matrixWorld );
+            
+                            _raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+                            _raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( _workingMatrix );
+            
+                            // raycaster.intersectObjects( group.children, false );
+            
+                            console.warn("raycaster direction");
+                            // console.log
+                            console.log(_raycaster.ray.origin);
+                            console.log(_raycaster.ray.direction);
+                            console.log(_collidables);
+            
+                            // let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+            
+                            // // create a default (white) Basic material
+                            // const material = new THREE.MeshBasicMaterial();
+                          
+                            // // create a Mesh containing the geometry and material
+                            // const cube = new THREE.Mesh(geometry, material);
+                          
+                            // cube.position.x = 0;
+                          
+                            // // cube.update = (dt) => {
+                            // //   cube.rotation.x += 2 * dt;
+                            // // }
+                            // this._scene.add(cube);
+            
+                const intersects = _raycaster.intersectObjects( _clickables, true );
+            
+                // return cube;
+            
+                // if ( intersects.length > 0) {
+                //     console.log(intersects);
+                //     console.log(intersects.length);
+                //     console.log(intersects[0]);
+                //     intersects[ 0 ].object.material.wireframe = true;
+                //     console.warn("intersecting");
+                // }
+
+                return intersects;
+            }
+
+
+            // _clean = cleanIntersected();
+            // _intersect = intersectObjects();
+            
+            function buildController( data ) {
+            
+                let geometry, material;
+            
+                switch ( data.targetRayMode ) {
+            
+                    case 'tracked-pointer':
+            
+                        geometry = new THREE.BufferGeometry();
+                        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 10 ], 3 ) );
+                        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.0, 0.0, 0.5, 0, 0, 0 ], 3 ) );
+            
+                        material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending, lineWidth: 5 } );
+            
+                        return new THREE.Line( geometry, material );
+            
+                    case 'gaze':
+            
+                        geometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
+                        material = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: true } );
+                        return new THREE.Mesh( geometry, material );
+            
+                }
+            
+            }
+            
+            // create(renderer, scene) {
+                // _xScene = scene;
+                let _leftController = _renderer.xr.getController( 0 );
+                let _rightController = _renderer.xr.getController( 1 );
+                _leftController.userData.selected = false;
+                _leftController.userData.selected = false;
+                _leftController.addEventListener( 'selectstart', onSelectStart );
+                _leftController.addEventListener( 'selectend', onSelectEnd );
+                _leftController.addEventListener( 'connected', function ( e ) {
+                    this.add( buildController( e.data ) );
+                    this.gamepad = e.data.gamepad;
+                } );
+            
+                _leftController.addEventListener( 'disconnected', function () {
+                    this.remove( this.children[ 0 ] );
+                } );
+            
+                _rightController.addEventListener( 'selectstart', onSelectStart );
+                _rightController.addEventListener( 'selectend', onSelectEnd );
+                _rightController.addEventListener( 'connected', function ( e ) {
+                    this.add( buildController( e.data ) );
+                    this.gamepad = e.data.gamepad;
+                } );
+            
+                _rightController.addEventListener( 'disconnected', function () {
+                    this.remove( this.children[ 0 ] );
+                } );
+            
+                _scene.add( _leftController, _rightController );
+                
+                const controllerModelFactory = new XRControllerModelFactory();
+                
+                let _leftControllerGrip = _renderer.xr.getControllerGrip( 0 );
+                _leftControllerGrip.add( controllerModelFactory.createControllerModel( _leftControllerGrip ) );
+            
+                let _rightControllerGrip = _renderer.xr.getControllerGrip( 1 );
+                _rightControllerGrip.add( controllerModelFactory.createControllerModel( _rightControllerGrip ) );
+            
+                _scene.add( _leftControllerGrip, _rightControllerGrip );
+            
+                let left = {
+                    controller: _leftController,
+                    grip: _leftControllerGrip
+                };
+            
+                let right = {
+                    controller: _rightController,
+                    grip: _rightControllerGrip
+                };
+            // }
+
+            _controller = left.controller;
+            let _controllerGrip = left.grip;
+
+            let geometr = new THREE.CylinderGeometry( 0.1, 0.1, 0.1, 32 );
             let materia = new THREE.MeshBasicMaterial( {color: 0xffff00} );
             let cylinder = new THREE.Mesh( geometr, materia );
-            cylinder.position.copy(controllers[0].position);
-            controllers[0].add(cylinder);
-
-
+            _menuController = right;
+            // _scene.add(cylinder);
+            // _menuController.controller.add(cylinder);
 
             _dolly = new THREE.Object3D();
             _dolly.position.z = 5;
@@ -104,27 +357,58 @@ class Scene {
             _scene.add(_dolly);
             _dummyCam = new THREE.Object3D();
             _camera.add(_dummyCam);
-            _controls = new XRControls(_controller, _dolly, _dummyCam);
+            _controls = new XRHandler(_controller, _dolly, _dummyCam, _raycaster, _scene);
             // let hand = new Hand(controllers[0], controllers[1]);
-            _dolly.add(controllers[0]);
-            _dolly.add(controllers[1]);
+            _dolly.add(left.controller);
+            _dolly.add(left.grip);
+            _dolly.add(right.controller);
+            _dolly.add(right.grip);
 
+            // let geometry = new THREE.BoxBufferGeometry(4, 4, 4);
+
+            // // create a default (white) Basic material
+            // const material = new THREE.MeshBasicMaterial();
+          
+            // // create a Mesh containing the geometry and material
+            // const cube = new THREE.Mesh(geometry, material);
+          
+            // cube.position.x = 0;
+          
+            // cube.update = (dt) => {
+            //   cube.rotation.x += 2 * dt;
+            // }
+            // _scene.add(cube);
+
+            _controllers = [left, right];
             // this._menu = cylinder;        
 
             // _scene.add(cylinder);
-            _rig = new Rig(_camera, _dolly, controllers);
+            _rig = new Rig(_camera, _dolly, _controllers);
+
+            // _rig.automate([
+            //     [2, 2, 2],
+            //     [13, 13, 13],
+            //     [2, 0, 2],
+            //     [2, 0, 3],
+            // ]);
+
+
 
             // const btn = new VRButton( this.renderer, { onSessionStart, onSessionEnd } );
             // this.renderer.setAnimationLoop( this.render.bind(this) );
+
             function onSessionStart(){
-                _ui.mesh.position.set( 0, 0, 10 );
+                _mode = "production";
+                _ui.mesh.position.set( 0, 0, -3 );
                 _camera.attach( _ui.mesh );
                 _ui.scene = _scene;
+                _vr = true;
             }
             
-            // function onSessionEnd(){
-                // camera.remove( _ui.mesh );
-            // }
+            function onSessionEnd(){
+                _camera.remove( _ui.mesh );
+                _vr = false;
+            }
         }
 
         // _ui.mesh.position.set( 0, 0, -10 );
@@ -155,26 +439,76 @@ class Scene {
         await Script.run(`${_scriptsDir}${_target}`, _assetsDir).then(function(data) {  
             Promise.all(data).then(function(entities) {
                 console.log("###########################");
-                for (let e of entities) {
+                _entities = [];
+                for (let e of entities[0]) {
                     let d = new Entity(e);
-                    console.log(d);
+                    console.log(d.type);
                     _entities.push(d);
+                    if (d.type !== "skybox" && d.type != "undefined") {
+                        // _clickables.push(d.model);
+                        let id = 0;
+                        for (let mesh of d.meshes) {
+                            _clickables.push(mesh);
+                            id = mesh.entityId;
+                        }
+                        _collections[id] = d.meshes;
+                        console.warn(_collections);
+                        // walkDown(d.model);
+                    }
+                    console.log(d.name);
                     _scene.add(d.model);
+                    if(d.name == "vr-menu") {
+                        _menuController.controller.add(d.model);
+                        // d.model.position.copy(_menuController.grip.position);
+                        console.log("%%%%%%%%%%%%%%%");
+                        console.warn(d.model);
+                        d.update = function() {
+                            // let c = _menuController.grip.position;
+                            // d.model.position.set(0, 0, 0);
+                        };
+                    }
                 }
-                _updateReady = true;
+                _sceneInfo = entities[1];
+                // if (_vr == true) {
+                //    this.initXR(_menuController);
+                // } else {
+                    _controls.scene = _scene;
+                    _updateReady = true;
+                    _controls.collidables = _clickables;
+                    _collidables = _clickables;
+                // }
                 Scaffolding.dag(_entities);
                 console.warn("scene is: ");
                 console.log(_scene);
+                console.log(_clickables);
+                console.log(_clickables.length);
             });
         });
+    }
+
+    debug(string) {
+        let content = {
+            header: "Debugger",
+            main: string,
+            footer: "Footer"
+        }
+        let ui = Feature.createShell(content);
+        ui.mesh.position.set( 0, 0, 0 );
+        _camera.attach( ui.mesh );
+        ui.scene = _scene;
     }
 
     graph(data) {
         console.log("data making it to the scene!");
         _shell = Feature.createD3(data);
-        _shell.mesh.position.set( 0, 0, 104 );
+        _shell.mesh.position.set( 0, 0, -3 );
         _camera.attach( _shell.mesh );
         _shell.scene = _scene;
+
+        // _ui.mesh.position.set( 0, 0, -10 );
+        // _camera.attach( _ui.mesh );
+        // _ui.scene = _scene;
+
         let circ = document.createElement("svg");
         let circC = document.createElement("circle");
         circC.className = "target";
@@ -245,6 +579,7 @@ class Scene {
 
     save() {
         let items = [];
+        items.push(_sceneInfo);
         for (const e of _entities) {
             items.push(e.serialize());
         }
@@ -277,6 +612,12 @@ class Scene {
 
     get UI() { return _ui; }
     set UI(val) { _ui = val; }
+    get clickables() { 
+        
+        console.warn("CLICKAKKAKAKAKAKKABLES");
+        console.log(_clickables);
+
+        return _clickables; }
 
     stock() {
         let o = {
@@ -303,6 +644,10 @@ class Scene {
     stop() {
         _renderer.setAnimationLoop(null);
     }
+
+    cleanUp() {
+        Scaffolding.cleanDag();
+    }
       
     tick() {
         const delta = clock.getDelta();
@@ -318,10 +663,14 @@ class Scene {
             // _uniforms.tAudioData.value.needsUpdate = true;
         }
 
-        if (this._vr) {
+        if (_vr) {
             if (_controls) {
-                // console.log(_controls);
+                // console.log("&&&&&&&&&&&&&");
+                // console.log(_menuController);
                 _controls.update(delta);
+                cleanIntersected();
+                intersectObjects();
+                intersectObjects();
                 // _ui.update();
             }
 
@@ -331,6 +680,7 @@ class Scene {
     }
 
     changeScript(target) {
+        this.cleanUp();
         _target = target;
         for (let e of _entities) {
             _scene.remove(e.model);
@@ -346,5 +696,103 @@ class Scene {
     // getters and setters
     get scene() { return _scene; }
     get camera() { return _camera; }
+    get mode() { return _mode; }
+    get workingMatrix() { return _workingMatrix; }
+    get raycaster() { return _raycaster; }
+    get collidables() { return _collidables; }
 
 } export { Scene }
+
+function intersectObjects( controlle ) {
+
+    // Do not highlight when already selected
+
+    if ( _selected !== undefined ) return;
+
+    console.warn("******************");
+    console.warn(_controllers[0]);
+
+    const line = _controllers[0].controller.getObjectByName( 'line' );
+    const intersections = getIntersectionsx( _controllers[0].controller );
+
+    if ( intersections.length > 0 ) {
+
+        const intersection = intersections[ 0 ];
+
+        const object = intersection.object;
+        object.material.emissive.r = 1;
+        _intersected.push( object );
+
+        // line.scale.z = intersection.distance;
+
+    } else {
+
+        // line.scale.z = 5;
+
+    }
+
+}
+
+function cleanIntersected() {
+
+    while ( _intersected.length ) {
+
+        const object = _intersected.pop();
+        object.material.emissive.r = 0;
+
+    }
+
+}
+
+
+function getIntersectionsx( controller ) {
+    // this._raycaster.setupXR(this._workingMatrix, this._controller);
+    // this._raycaster.castXR();
+    _workingMatrix.identity().extractRotation( controller.matrixWorld );
+    // this._raycaster.near = 0;
+    // this._raycaster.far = 20;
+    // this._dummyC
+    // console.log(this._dummyCam.quaternion);
+    // this._raycaster.ray.origin = this._dolly.position;
+    // _xScene.raycaster.ray.direction.set(0, 0, -1).applyMatrix4( controller.matrixWorld );
+
+    _raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+    _raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( _workingMatrix );
+
+    // raycaster.intersectObjects( group.children, false );
+
+    console.warn("raycaster direction");
+    // console.log
+    console.log(_raycaster.ray.origin);
+    console.log(_raycaster.ray.direction);
+    console.log(_collidables);
+
+    // let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+
+    // // create a default (white) Basic material
+    // const material = new THREE.MeshBasicMaterial();
+  
+    // // create a Mesh containing the geometry and material
+    // const cube = new THREE.Mesh(geometry, material);
+  
+    // cube.position.x = 0;
+  
+    // // cube.update = (dt) => {
+    // //   cube.rotation.x += 2 * dt;
+    // // }
+    // this._scene.add(cube);
+
+const intersects = _raycaster.intersectObjects( _clickables, true );
+
+// return cube;
+
+// if ( intersects.length > 0) {
+//     console.log(intersects);
+//     console.log(intersects.length);
+//     console.log(intersects[0]);
+//     intersects[ 0 ].object.material.wireframe = true;
+//     console.warn("intersecting");
+// }
+
+return intersects;
+}

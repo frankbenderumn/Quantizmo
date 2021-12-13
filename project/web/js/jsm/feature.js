@@ -38,7 +38,7 @@ export function createCamera() {
     35, // fov = Field Of View
     1, // aspect ratio (dummy value)
     0.1, // near clipping plane
-    5000, // far clipping plane
+    8000, // far clipping plane
   );
 
   // move the camera back so we can view the scene
@@ -56,8 +56,8 @@ export function createModel(path) {
   return m;
 }
 
-export function createUI() {
-  const config = {
+export function createUI(content = "") {
+    const config = {
       header:{
           type: "text",
           position:{ top:0 },
@@ -79,12 +79,47 @@ export function createUI() {
       },
       panelSize: { width: 3, height: 3 } 
   }
-  const content = {
+  if (content == "") {
+    content = {
+        header: "Uncharted Territory Research Project",
+        main: "Welcome to stocket!",
+        footer: "Footer"
+    }
+  }
+  return new CanvasUI( content, config );
+}
+
+export function createShell(content = "") {
+  const config = {
+    header:{
+        type: "text",
+        position:{ top:0 },
+        paddingTop: 30,
+        height: 70
+    },
+    main:{
+        type: "text",
+        position:{ top:70 },
+        height: 372, // default height is 512 so this is 512 - header height:70 - footer height:70
+        backgroundColor: "#bbb",
+        fontColor: "#000"
+    },
+    footer:{
+        type: "text",
+        position:{ bottom:0 },
+        paddingTop: 30,
+        height: 70
+    },
+    panelSize: { width: 3, height: 3 } 
+}
+if (content == "") {
+  content = {
       header: "Uncharted Territory Research Project",
       main: "Welcome to stocket!",
       footer: "Footer"
   }
-  return new CanvasUI( content, config );
+}
+return new CanvasUI( content, config );
 }
 
 export function createD3(data) {
@@ -339,7 +374,7 @@ export function createSkybox(params) {
 
 
 
-  const geometry = new SphereGeometry( 2000, 60, 40 );
+  const geometry = new SphereGeometry( 6000, 60, 40 );
   geometry.scale( - 1, 1, 1 );
 
   const texture = new TextureLoader().load( `../assets/texture/hdr/${params.path}` );

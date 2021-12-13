@@ -1,37 +1,62 @@
 [
-    {
-    "command": "createEntity",
-    "params": {
-        "entityId": 0,
-        "name": "drone",
-        "type": "actor",
-        "path": "vox_miami.glb",
-        "dynamic": true,
-        "position": {"x":0,"y":0,"z":0},
-        "rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-        "scale": {"x":5.5000000000000004,"y":5.5000000000000004,"z":5.5000000000000004}
-    }
-    },
-    {
-    "command": "createEntity",
-    "params": {
-        "entityId": 2,
-        "name": "hospital",
-        "type": "destination",
-        "path": "pony.glb",
-        "dynamic": true,
-        "position": {"x":20,"y":0,"z":2},
-        "rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-        "scale": {"x":1,"y":1,"z":1}
-    }
-    },
-    {
-        "command": "skybox",
-        "params": {
-            "entityId": 3,
-            "path": "exosphere.jpeg",
-            "type": "skybox",
-            "name": "undefined"
-        }
-    }
-    ]
+	{
+		"command": "scene",
+		"params": {
+			"name": "flight",
+			"ext": "json",
+			"type": "scene",
+			"path": "flight",
+			"author": "Frank Bender",
+			"created_at": "12122021_231531",
+			"updated_at": "12122021_231531"
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 0,
+			"name": "drone",
+			"type": "actor",
+			"path": "helicarrier.glb",
+			"dynamic": true,
+			"position": {"x":0,"y":0,"z":0},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":0.90000000000000269,"y":0.90000000000000269,"z":0.90000000000000269}
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 0,
+			"name": "drone",
+			"type": "actor",
+			"path": "iron-man.glb",
+			"dynamic": true,
+			"position": {"x":0,"y":100,"z":0},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1.9000000000000035,"y":1.9000000000000035,"z":1.9000000000000035}
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 1,
+			"name": "hospital",
+			"type": "actee",
+			"path": "pony.glb",
+			"dynamic": true,
+			"position": {"x":20,"y":101,"z":2},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1,"y":1,"z":1}
+		}
+	},
+	{
+		"command": "skybox",
+		"params": {
+			"entityId": 2,
+			"name": "undefined",
+			"type": "skybox",
+			"path": "exosphere.jpeg"
+		}
+	}
+]

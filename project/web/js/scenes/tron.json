@@ -1,5 +1,17 @@
 [
     {
+        "command": "scene",
+        "params": {
+            "name": "tron",
+            "author": "Frank Bender",
+            "path": "tron",
+            "type": "scene",
+            "ext": "json",
+            "createdAt": "null",
+            "updatedAt": "null"
+        }
+    },
+    {
     "command": "createEntity",
     "params": {
         "entityId": 0,
@@ -15,7 +27,7 @@
     {
     "command": "createEntity",
     "params": {
-        "entityId": 2,
+        "entityId": 1,
         "name": "hospital",
         "type": "destination",
         "path": "tron_board.glb",
@@ -28,7 +40,7 @@
     {
         "command": "skybox",
         "params": {
-            "entityId": 3,
+            "entityId": 2,
             "path": "nebula_dark.jpeg",
             "type": "skybox",
             "name": "undefined"

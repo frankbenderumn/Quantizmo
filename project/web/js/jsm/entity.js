@@ -10,6 +10,7 @@ class Entity {
             (params.model) ? this._model = params.model : this._model = "undefined";
             (params.dynamic) ? this._dynamic = params.dynamic : this._dynamic = false;
             (params.type) ? this._type = params.type : this._type = "undefined";
+            (params.meshes) ? this._meshes = params.meshes : this._meshes = undefined;
         } else {
             console.log("not asynchronously loading");
         }
@@ -23,6 +24,8 @@ class Entity {
     get rotation() { return this._rotation; }
     get model() { return this._model; }
     set name(val) { this._name = val; }
+    get type() { return this._type; }
+    get meshes() { return this._meshes; }
 
     addComponent(component) {
         if (component.updatable) {

@@ -209,8 +209,11 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
     } else if (cmd == "save") {
         std::cout << picojson::value(data).serialize() << std::endl;
         auto arr = data["scene"].get<picojson::array>();
+        picojson::object sceneInfo = arr[0].get<picojson::object>();
+        std::string path = sceneInfo.find("path")->second.get<std::string>();
+        std::string ext = sceneInfo.find("ext")->second.get<std::string>();
         Builder* b = new Builder(arr);
-        b->build();
+        b->build(path, ext);
         delete b;
     } else if (cmd == "stock") {
         std::cout << picojson::value(data).serialize() << std::endl;
