@@ -27,7 +27,7 @@
 {
 "command": "createEntity",
 "params": {
-    "entityId": 2,
+    "entityId": 1,
     "name": "hospital",
     "type": "destination",
     "path": "pony.glb",
@@ -40,7 +40,7 @@
 {
     "command": "skybox",
     "params": {
-        "entityId": 3,
+        "entityId": 2,
         "path": "clouds.jpeg",
         "type": "skybox",
         "name": "undefined"

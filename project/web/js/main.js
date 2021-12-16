@@ -72,6 +72,9 @@ function changeManipulation(type) {
     console.log(stateCommand);
 }
 
+let posScale = 20;
+let sizeScale = 20;
+
 let press = function(e) {
     // api.sendCommand(e.type, {key: e.key, keyCode: e.keyCode});
     let keyCode = e.keyCode;
@@ -80,42 +83,42 @@ let press = function(e) {
         switch(keyCode) {
             case 37: // left
                 if (stateCommand.translate == true) {
-                    focus.position.x -= 1;
+                    focus.position.x -= posScale;
                 } else if (stateCommand.rotate == true) {
                     focus.rotation.y -= 0.11;
                 }
                 break;
             case 40: // back
                 if (stateCommand.translate && !modifier.shift) {
-                    focus.position.z += 1;
+                    focus.position.z += posScale;
                 } else if (stateCommand.rotate) {
                     focus.rotation.x -= 0.1;
                 } else if (stateCommand.scale) {
-                    focus.scale.x -= 0.5;
-                    focus.scale.y -= 0.5;
-                    focus.scale.z -= 0.5;
+                    focus.scale.x -= sizeScale;
+                    focus.scale.y -= sizeScale;
+                    focus.scale.z -= sizeScale;
                 } else if (modifier.shift && stateCommand.translate) {
-                    focus.position.y -= 1;
+                    focus.position.y -= 0.1;
                 }
                 break;
             case 39: // right
                 if (stateCommand.translate) {
-                    focus.position.x += 1;
+                    focus.position.x += posScale;
                 } else if (stateCommand.rotate) {
                     focus.rotation.y += 0.1;
                 }
                 break;
             case 38: // forward
                 if (stateCommand.translate && !modifier.shift) {
-                    focus.position.z -= 1;
+                    focus.position.z -= posScale;
                 } else if (stateCommand.rotate) {
                     focus.rotation.x += 0.11;
                 } else if (stateCommand.scale) {
-                    focus.scale.x += 0.1;
-                    focus.scale.y += 0.1;
-                    focus.scale.z += 0.1;
+                    focus.scale.x += sizeScale;
+                    focus.scale.y += sizeScale;
+                    focus.scale.z += sizeScale;
                 } else if (modifier.shift == true && stateCommand.translate == true) {
-                    focus.position.y += 1;
+                    focus.position.y += 0.1;
                 }
                 break;
             case 71: // g
@@ -470,6 +473,7 @@ recognition.onresult = function (event) {
             world.debug("suitting up");
         }
         interim += event.results[i][0].transcript;
+        analyzeSpeech(event.results[i][0].transcript);
     }
     }
     let final_span = document.getElementById("final_span");
@@ -479,7 +483,26 @@ recognition.onresult = function (event) {
 
     clearTimeout(timeout);
 
-    timeout = setTimeout(function(){sendSpeech(final)}, 1000);
+    timeout = setTimeout(function(){sendSpeech(final)}, 3500);
+}
+
+function analyzeSpeech(speech) {
+    console.warn(speech);
+    speech = speech.toLowerCase();
+    // switch (speech) {
+        if (speech.includes("new york")) {
+            world.changeScript(`newyork.json`);
+            // break;
+        } else if (speech.includes("matrix")) {
+            world.changeScript(`tron.json`);
+        } else if (speech.includes("hq")) {
+            world.changeScript(`flight.json`);
+        } else if (speech.includes("space")) {
+            world.changeScript(`scene.json`);
+        } else if (speech.includes("title sequence")) {
+            console.log("title sequence");
+        }
+    // }
 }
 
 function reset() {

@@ -64,15 +64,17 @@ export async function loadFbx(params, dynamic = true) {
 function format(obj, params, dynamic) {
     let model = obj.scene;
     let meshes = [];
+    // required for VR as it only detects meshes and not groups
     function walkDown(element){
         if (element.hasOwnProperty('children')) {
             if (element.children.length > 0) {
                 console.log(element.children);
                     for(let e of element.children) {
                         if (e.type == "Mesh") {
-                            console.warn("mesh");
+                            // console.warn("mesh");
                             e.entityId = params.entityId;
                             e.ancestor = params.name;
+                            e.interact = params.interact;
                             meshes.push(e);
                         } else {
                             if (e.type == "Group") {
@@ -84,7 +86,7 @@ function format(obj, params, dynamic) {
         }
     }
     walkDown(model);
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
     model.position.copy(new THREE.Vector3(params.position.x, params.position.y, params.position.z))
     model.rotation.copy(params.rotation)
@@ -104,7 +106,13 @@ function format(obj, params, dynamic) {
         type: params.type,
         dynamic: dynamic,
         path: params.path,
-        meshes: meshes
+        meshes: meshes,
+        interact: params.interact
+    }
+
+    if (o.type == "controller") {
+        o.hand = params.hand;
+        o.node = params.node;
     }
 
     return o;

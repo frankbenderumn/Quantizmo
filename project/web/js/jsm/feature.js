@@ -23,7 +23,10 @@ import { Scene,
     Vector3,
     EdgesGeometry,
     LineSegments,
-    LineBasicMaterial
+    LineBasicMaterial,
+    Line,
+    AdditiveBlending,
+    GridHelper
         } from 'https://cdn.skypack.dev/three@0.134.0';
 import * as Loader from './loader.js';
 import { Controls } from './controls.js';
@@ -38,7 +41,7 @@ export function createCamera() {
     35, // fov = Field Of View
     1, // aspect ratio (dummy value)
     0.1, // near clipping plane
-    8000, // far clipping plane
+    50000, // far clipping plane
   );
 
   // move the camera back so we can view the scene
@@ -122,7 +125,7 @@ if (content == "") {
 return new CanvasUI( content, config );
 }
 
-export function createD3(data) {
+export function createD3(data, renderer) {
     const config = {
       header:{
           type: "text",
@@ -159,8 +162,10 @@ export function createD3(data) {
   //     // or is null if the feature is not supported.
   //   }
   // }
+  let ui = new CanvasUI( content, config );
+  ui.initControllers(renderer);
 
-  return new CanvasUI( content, config );
+  return ui;
 }
 
 export function createSocket() {
@@ -191,7 +196,7 @@ export function createScene() {
 
 export function createCube() {
   // create a geometry
-  const geometry = new BoxBufferGeometry(2, 2, 2);
+  const geometry = new BoxBufferGeometry(1, 1, 1);
 
   // create a default (white) Basic material
   const material = new MeshBasicMaterial();
@@ -199,13 +204,43 @@ export function createCube() {
   // create a Mesh containing the geometry and material
   const cube = new Mesh(geometry, material);
 
-  cube.position.x = 10;
+  cube.position.x = 0;
 
   cube.update = (dt) => {
     cube.rotation.x += 2 * dt;
   }
 
   return cube;
+}
+
+export function createDevGrid() {
+  let elements = [];
+  const size = 50000;
+  const divisions = 50000;
+
+  const gridHelper = new GridHelper( size, divisions );
+  // scene.add( gridHelper );
+  elements.push(gridHelper);
+
+  const xGeo = new BufferGeometry();
+  xGeo.setAttribute( 'position', new Float32BufferAttribute( [ 50000, 0, 0, -50000, 0, 0 ], 3 ) );
+  let xMat = new LineBasicMaterial( { color: 0xff0000, blending: AdditiveBlending, lineWidth: 5 } );
+  const xAxis = new Line( xGeo, xMat );
+  elements.push(xAxis);
+
+  const yGeo = new BufferGeometry();
+  yGeo.setAttribute( 'position', new Float32BufferAttribute( [ 0, 50000, 0, 0, -500000, 0 ], 3 ) );
+  let yMat = new LineBasicMaterial( { color: 0x0000ff, blending: AdditiveBlending, lineWidth: 5 } );
+  const yAxis = new Line( yGeo, yMat );
+  elements.push(yAxis);
+
+  const zGeo = new BufferGeometry();
+  zGeo.setAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 50000, 0, 0, -50000 ], 3 ) );
+  let zMat = new LineBasicMaterial( { color: 0x00ff00, blending: AdditiveBlending, lineWidth: 5 } );
+  const zAxis = new Line( zGeo, zMat );
+  elements.push(zAxis);
+
+  return elements;
 }
 
 export function createJarvis() {
@@ -237,8 +272,8 @@ export function createJarvis() {
       e.rotation.z += group.rotation.x * (ct / nums) * dt;
       e.rotation.y += 1 * (ct / nums) * dt;
       ct++;
-      e.position.x += 0.1 * Math.cos(0.5 * counter);
-      e.position.z += 0.1 * Math.sin(0.5 * counter);
+      e.position.x += 0.05 * Math.cos(0.5 * counter);
+      e.position.z += 0.05 * Math.sin(0.5 * counter);
       counter++;
     }
   }
@@ -374,7 +409,7 @@ export function createSkybox(params) {
 
 
 
-  const geometry = new SphereGeometry( 6000, 60, 40 );
+  const geometry = new SphereGeometry( 35000, 60, 40 );
   geometry.scale( - 1, 1, 1 );
 
   const texture = new TextureLoader().load( `../assets/texture/hdr/${params.path}` );
@@ -395,7 +430,7 @@ export function createSkybox(params) {
   return o;
 }
 
-export function createRenderer(container, vr = false) {
+export function createRenderer(container, vr, start, end) {
   if (!vr) {
     // const renderer = new WebGLRenderer( {container, alpha: true});
     // return renderer;

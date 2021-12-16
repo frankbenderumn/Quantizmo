@@ -160,7 +160,7 @@ getIntersectY( index ){
     return (1 - intersect.uv.y) * height;
 }
 
-initControllers(){
+initControllers(renderer){
     this.vec3 = new Vector3();
     this.mat4 = new Matrix4();
     this.raycaster = new Raycaster();
@@ -216,11 +216,11 @@ initControllers(){
         }
     }
     
-    this.controller = this.renderer.xr.getController( 0 );
+    this.controller = renderer.xr.getController( 0 );
     this.controller.addEventListener( 'select', onSelect );
     this.controller.addEventListener( 'selectstart', onSelectStart );
     this.controller.addEventListener( 'selectend', onSelectEnd );
-    this.controller1 = this.renderer.xr.getController( 1 );
+    this.controller1 = renderer.xr.getController( 1 );
     this.controller1.addEventListener( 'select', onSelect );
     this.controller1.addEventListener( 'selectstart', onSelectStart );
     this.controller1.addEventListener( 'selectend', onSelectEnd );

@@ -96,6 +96,8 @@ void WebApp::receiveJSON(picojson::value& val) {
         std::cout << picojson::value(data).serialize() << std::endl;
     } else if (val.is<picojson::array>()) {
         picojson::array arr = val.get<picojson::array>();
+        std::cout << "in array" << std::endl;
+        std::cout << picojson::value(arr).serialize() << std::endl;
         picojson::object o;
         cmd = "save";
         o["scene"] = picojson::value(arr);
@@ -208,6 +210,7 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         }
     } else if (cmd == "save") {
         std::cout << picojson::value(data).serialize() << std::endl;
+        std::cout << "building" << std::endl;
         auto arr = data["scene"].get<picojson::array>();
         picojson::object sceneInfo = arr[0].get<picojson::object>();
         std::string path = sceneInfo.find("path")->second.get<std::string>();
@@ -255,6 +258,8 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
             SendFin(s);
             s = "";
         }
+    } else if (cmd == "skybox") {
+        std::cout << "skybox received" << std::endl;
     }
     else {
         std::cout << "Unknown command: " << cmd << " - " << picojson::value(data).serialize() << std::endl;

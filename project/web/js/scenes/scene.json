@@ -7,18 +7,19 @@
 			"type": "scene",
 			"path": "scene",
 			"author": "Frank Bender",
-			"created_at": "12122021_063303",
-			"updated_at": "12122021_063303"
+			"created_at": "12152021_062451",
+			"updated_at": "12152021_062451"
 		}
 	},
 	{
 		"command": "createEntity",
 		"params": {
 			"entityId": 0,
-			"name": "drone",
+			"name": "wumpa",
 			"type": "actor",
-			"path": "drone.glb",
+			"path": "wumpa.glb",
 			"dynamic": true,
+			"interact": 3,
 			"position": {"x":13,"y":0,"z":0},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":0.55000000000000004,"y":0.55000000000000004,"z":0.55000000000000004}
@@ -28,10 +29,11 @@
 		"command": "createEntity",
 		"params": {
 			"entityId": 2,
-			"name": "hospital",
-			"type": "destination",
-			"path": "hospital.glb",
+			"name": "wumpa",
+			"type": "actee",
+			"path": "wumpa.glb",
 			"dynamic": true,
+			"interact": 3,
 			"position": {"x":20,"y":0,"z":2},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":1,"y":1,"z":1}
@@ -45,7 +47,8 @@
 			"type": "actee",
 			"path": "cortex.glb",
 			"dynamic": true,
-			"position": {"x":0,"y":0,"z":-39},
+			"interact": 0,
+			"position": {"x":0,"y":0,"z":-15},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":0.5,"y":0.5,"z":0.5}
 		}
@@ -57,9 +60,10 @@
 			"name": "aku",
 			"type": "actee",
 			"path": "aku.glb",
+			"interact": 0,
 			"dynamic": true,
 			"position": {"x":-5,"y":0,"z":-10},
-			"rotation": {"_order":"XYZ","_x":0,"_y":0.48999999999999999,"_z":0},
+			"rotation": {"_order":"XYZ","_x":0,"_y":1.48999999999999999,"_z":0},
 			"scale": {"x":1.1999999999999993,"y":1.1999999999999993,"z":1.1999999999999993}
 		}
 	},
@@ -70,10 +74,11 @@
 			"name": "wumpa",
 			"type": "actee",
 			"path": "wumpa.glb",
+			"interact": 3,
 			"dynamic": true,
 			"position": {"x":-7,"y":2,"z":-4},
-			"rotation": {"_order":"XYZ","_x":-6.2999999999999936,"_y":160027.39260003041,"_z":0},
-			"scale": {"x":0.39999999999999936,"y":0.39999999999999936,"z":0.39999999999999936}
+			"rotation": {"_order":"XYZ","_x":-6.2999999999999936,"_y":162750.13959999508,"_z":0},
+			"scale": {"x":0.39999999999999947,"y":0.39999999999999947,"z":0.39999999999999947}
 		}
 	},
 	{
@@ -83,9 +88,10 @@
 			"name": "wumpa",
 			"type": "actee",
 			"path": "wumpa.glb",
+			"interact": "3",
 			"dynamic": true,
 			"position": {"x":8,"y":0,"z":-15},
-			"rotation": {"_order":"XYZ","_x":0,"_y":160025.19260003028,"_z":0},
+			"rotation": {"_order":"XYZ","_x":0,"_y":162747.93959999495,"_z":0},
 			"scale": {"x":0.5,"y":0.5,"z":0.5}
 		}
 	},
@@ -96,8 +102,9 @@
 			"name": "miami",
 			"type": "actee",
 			"path": "observatorium.glb",
+			"interact": 0,
 			"dynamic": true,
-			"position": {"x":0,"y":-4,"z":-2},
+			"position": {"x":0,"y":-0.49999999999999933,"z":-2},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":2.4000000000000021,"y":2.4000000000000021,"z":2.4000000000000021}
 		}
@@ -109,10 +116,11 @@
 			"name": "arch",
 			"type": "actee",
 			"path": "greek-arch.glb",
+			"interact": 0,
 			"dynamic": true,
-			"position": {"x":-1,"y":-3,"z":-17},
-			"rotation": {"_order":"XYZ","_x":0,"_y":3.2000000000000015,"_z":0},
-			"scale": {"x":2.7000000000000006,"y":2.7000000000000006,"z":2.7000000000000006}
+			"position": {"x":27,"y":-3,"z":-7},
+			"rotation": {"_order":"XYZ","_x":0,"_y":1.7200000000000029,"_z":0},
+			"scale": {"x":2.7000000000000006,"y":5.7000000000000006,"z":2.7000000000000006}
 		}
 	},
 	{
@@ -122,10 +130,11 @@
 			"name": "sun",
 			"type": "actee",
 			"path": "sun.glb",
+			"interact": 1,
 			"dynamic": true,
-			"position": {"x":25,"y":26,"z":-1255},
+			"position": {"x":25,"y":-11036,"z":-25211},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":500,"y":500,"z":500}
+			"scale": {"x":8342.5,"y":8342.5,"z":8342.5}
 		}
 	},
 	{
@@ -135,10 +144,11 @@
 			"name": "sun",
 			"type": "actee",
 			"path": "mercury.glb",
+			"interact": 1,
 			"dynamic": true,
-			"position": {"x":-192,"y":25,"z":-10},
+			"position": {"x":-4648,"y":25,"z":-8710},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":25,"y":25,"z":25}
+			"scale": {"x":345,"y":345,"z":345}
 		}
 	},
 	{
@@ -148,10 +158,11 @@
 			"name": "sun",
 			"type": "actee",
 			"path": "venus.glb",
+			"interact": 1,
 			"dynamic": true,
-			"position": {"x":134,"y":38,"z":-50},
+			"position": {"x":2160,"y":1052,"z":-1730},
 			"rotation": {"_order":"XYZ","_x":-0.040000000000000022,"_y":0,"_z":0},
-			"scale": {"x":31.500000000000092,"y":31.500000000000092,"z":31.500000000000092}
+			"scale": {"x":543.80000000000018,"y":543.80000000000018,"z":543.80000000000018}
 		}
 	},
 	{
@@ -161,10 +172,11 @@
 			"name": "sun",
 			"type": "actee",
 			"path": "earth.glb",
+			"interact": 1,
 			"dynamic": true,
-			"position": {"x":259,"y":-25,"z":25},
+			"position": {"x":2636,"y":-70,"z":1266},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":25,"y":25,"z":25}
+			"scale": {"x":1391,"y":1391,"z":1391}
 		}
 	},
 	{
@@ -174,23 +186,25 @@
 			"name": "sun",
 			"type": "actee",
 			"path": "moon.glb",
+			"interact": 1,
 			"dynamic": true,
-			"position": {"x":25,"y":25,"z":25},
+			"position": {"x":3323,"y":25,"z":377},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":25,"y":25,"z":25}
+			"scale": {"x":75,"y":75,"z":75}
 		}
 	},
 	{
 		"command": "createEntity",
 		"params": {
-			"entityId": 18,
+			"entityId": 19,
 			"name": "sun",
 			"type": "actee",
 			"path": "mars.glb",
+			"interact": 1,
 			"dynamic": true,
-			"position": {"x":-113,"y":0,"z":-25},
+			"position": {"x":-1413,"y":-800,"z":13915},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":25,"y":25,"z":25}
+			"scale": {"x":559.10000000000048,"y":559.10000000000048,"z":559.10000000000048}
 		}
 	},
 	{
@@ -200,10 +214,11 @@
 			"name": "sun",
 			"type": "actee",
 			"path": "asteroid-step.glb",
+			"interact": 1,
 			"dynamic": true,
 			"position": {"x":-1,"y":-2,"z":-39},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":3.9000000000000026,"y":3.9000000000000026,"z":3.9000000000000026}
+			"scale": {"x":3.8999999999999999,"y":3.8999999999999999,"z":3.8999999999999999}
 		}
 	},
 	{
@@ -213,10 +228,11 @@
 			"name": "sun",
 			"type": "actee",
 			"path": "jupiter.glb",
+			"interact": 1,
 			"dynamic": true,
-			"position": {"x":-25,"y":0,"z":-54},
+			"position": {"x":-11345,"y":-2450,"z":28120},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":25,"y":25,"z":25}
+			"scale": {"x":1652,"y":1652,"z":1652}
 		}
 	},
 	{
@@ -226,33 +242,48 @@
 			"name": "sun",
 			"type": "actee",
 			"path": "saturn.glb",
+			"interact": 1,
 			"dynamic": true,
-			"position": {"x":-145,"y":0,"z":-25},
+			"position": {"x":-26001,"y":5064,"z":191},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-			"scale": {"x":25,"y":25,"z":25}
+			"scale": {"x":1925,"y":1925,"z":1925}
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 16,
+			"name": "sun",
+			"type": "actee",
+			"path": "time_station.glb",
+			"interact": 0,
+			"dynamic": true,
+			"position": {"x":919,"y":0,"z":2929},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":3.0000000000000009,"y":3.0000000000000009,"z":3.0000000000000009}
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 17,
+			"name": "vr-menu",
+			"type": "actor",
+			"path": "icon-menu.glb",
+			"interact": 2,
+			"dynamic": true,
+			"position": {"x":0,"y":0,"z":0},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":0.90000000000000002,"y":0.90000000000000002,"z":0.90000000000000002}
 		}
 	},
 	{
 		"command": "skybox",
 		"params": {
-			"entityId": 16,
+			"entityId": 18,
 			"name": "undefined",
 			"type": "skybox",
 			"path": "nebula_periwinkle.jpeg"
 		}
-	},
-	{
-	"command": "createEntity",
-	"params": {
-		"entityId": 17,
-		"name": "vr-menu",
-		"type": "actor",
-		"path": "icon-menu.glb",
-		"vr": true,
-		"dynamic": true,
-		"position": {"x":0,"y":0,"z":0},
-		"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-		"scale": {"x":0.90000000000000269,"y":0.90000000000000269,"z":0.90000000000000269}
 	}
-}
 ]

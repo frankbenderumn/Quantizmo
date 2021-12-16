@@ -75,7 +75,7 @@ WSApi.prototype.sendCommand = function(cmd, data, calcVal, isPost = false) {
             url: "/post/"+self.id,
             //data: JSON.stringify({command: "mouseClicked", output: output}),
             data: JSON.stringify(data),
-            success: function(res) { console.log(res); },
+            success: function(res) { console.log(res); console.warn("POST SUCCESSFUL!")},
             //error: function(res) { console.log(res); },
             dataType: "json"
             });

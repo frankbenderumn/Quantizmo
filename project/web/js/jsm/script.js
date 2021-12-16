@@ -49,6 +49,13 @@ export async function run(file, modelsDir) {
             // _api.sendCommand("createEntity", command.params);
         }
 
+        if (command.command == "createController") {
+            let o = await Loader.load(command.params);
+            _entities.push(o);
+    
+            // _api.sendCommand("createEntity", command.params);
+        }
+
         if (command.command == "terrain") {
             let o = await Loader.load(command.params, false);
             _entities.push(o);
@@ -61,12 +68,17 @@ export async function run(file, modelsDir) {
         }
 
         if (command.command == "skybox") {
-            let o = await Feature.createSkybox(command.params);
+            let o = Feature.createSkybox(command.params);
             _entities.push(o);
         }
 
         if (command.command == "scene") {
             _sceneInfo = command.params; 
+        }
+
+        let controllers = loadControllers();
+        for (let e in controllers) {
+            _entities.push(controllers[e]);
         }
 
     }
@@ -75,8 +87,42 @@ export async function run(file, modelsDir) {
 
 }
 
+// may create seperate package module for controller specifics
+async function loadControllers() {
+    let ironLeft = {
+        name: "ironLeft",
+        path: "iron-man-left.glb"
+    };
+    let ironRight = {
+        name: "ironRight",
+        path: "iron-man-right.glb"
+    };
+    // removed since specific to tron scene
+    // let tronLeft = {
+    //     name: "tronLeft",
+    //     path: "tron-disc-blue.glb"
+    // };
+    // let tronRight = {
+    //     name: "tronRight",
+    //     path: "tron-disc-purple.glb"
+    // };
+    // let shield = {
+    //     name: "shield",
+    //     path: "shield.glb"
+    // };
+    let controllers = [];
+    controllers.push(await Loader.load(ironLeft, false));
+    controllers.push(await Loader.load(ironRight, false));
+    // controllers.push(await Loader.load(tronLeft, false));
+    // controllers.push(await Loader.load(tronRight, false));
+    // controllers.push(await Loader.load(shield, false));
+    return controllers;
+}
+
 export function send(command, params) {
-    _api.sendCommand(command, params).then(function(data){
+    console.log("%%%%%%");
+    console.log(params);
+    _api.sendPostCommand(command, params).then(function(data){
         console.log("$$$$");
         console.log(data);
     });

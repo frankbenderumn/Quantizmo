@@ -41,6 +41,7 @@ class Builder {
 
                     std::cout << picojson::value(el).serialize() << std::endl;
                     picojson::object e = el.get<picojson::object>();
+                    std::cout << "GOD DAMNIT" << std::endl;
 
                     std::string type = e.find("type")->second.get<std::string>();
                     if (type == "actor" || type == "actee" || type == "destination" || type == "charger") {

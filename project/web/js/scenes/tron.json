@@ -1,49 +1,121 @@
 [
-    {
-        "command": "scene",
-        "params": {
-            "name": "tron",
-            "author": "Frank Bender",
-            "path": "tron",
-            "type": "scene",
-            "ext": "json",
-            "createdAt": "null",
-            "updatedAt": "null"
-        }
-    },
-    {
-    "command": "createEntity",
-    "params": {
-        "entityId": 0,
-        "name": "drone",
-        "type": "actor",
-        "path": "tron_city.glb",
-        "dynamic": true,
-        "position": {"x":13,"y":0,"z":0},
-        "rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-        "scale": {"x":10.5000000000000004,"y":10.5000000000000004,"z":10.5000000000000004}
-    }
-    },
-    {
-    "command": "createEntity",
-    "params": {
-        "entityId": 1,
-        "name": "hospital",
-        "type": "destination",
-        "path": "tron_board.glb",
-        "dynamic": true,
-        "position": {"x":20,"y":0,"z":2},
-        "rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
-        "scale": {"x":1,"y":1,"z":1}
-    }
-    },
-    {
-        "command": "skybox",
-        "params": {
-            "entityId": 2,
-            "path": "nebula_dark.jpeg",
-            "type": "skybox",
-            "name": "undefined"
-        }
-    }
-    ]
+	{
+		"command": "scene",
+		"params": {
+			"name": "tron",
+			"ext": "json",
+			"type": "scene",
+			"path": "tron",
+			"author": "Frank Bender",
+			"created_at": "12152021_063244",
+			"updated_at": "12152021_063244"
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 0,
+			"name": "drone",
+			"type": "actor",
+			"path": "tron_city.glb",
+			"dynamic": true,
+			"position": {"x":-3625,"y":-4,"z":3860},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":316.5,"y":316.5,"z":316.5}
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 1,
+			"name": "hospital",
+			"type": "destination",
+			"path": "tron_board.glb",
+			"dynamic": true,
+			"position": {"x":20,"y":0,"z":2},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1,"y":1,"z":1}
+		}
+	},
+	{
+		"command": "skybox",
+		"params": {
+			"entityId": 2,
+			"name": "undefined",
+			"type": "skybox",
+			"path": "nebula_dark.jpeg"
+		}
+	},
+	{
+		"command": "createController",
+		"params": {
+			"entityId": 1,
+			"name": "tronDiscBlue",
+			"type": "controller",
+			"hand": "left",
+			"node": "root",
+			"path": "tron-disc-blue.glb",
+			"dynamic": true,
+			"position": {"x":20,"y":0,"z":2},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1,"y":1,"z":1}
+		}
+	},
+	{
+		"command": "createController",
+		"params": {
+			"entityId": 1,
+			"name": "shieldLeft",
+			"type": "controller",
+			"path": "shield.glb",
+			"node": "tronDiscBlue",
+			"dynamic": true,
+			"position": {"x":20,"y":0,"z":2},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1,"y":1,"z":1}
+		}
+	},
+	{
+		"command": "createController",
+		"params": {
+			"entityId": 1,
+			"name": "tronDiscPurple",
+			"type": "controller",
+			"hand": "right",
+			"node": "root",
+			"path": "tron-disc-purple.glb",
+			"dynamic": true,
+			"position": {"x":20,"y":0,"z":2},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1,"y":1,"z":1}
+		}
+	},
+	{
+		"command": "createController",
+		"params": {
+			"entityId": 1,
+			"name": "shieldRight",
+			"type": "controller",
+			"hand": "right",
+			"node": "tronDiscPurple",
+			"path": "shield.glb",
+			"dynamic": true,
+			"position": {"x":20,"y":0,"z":2},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1,"y":1,"z":1}
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 1,
+			"name": "mob",
+			"type": "mob",
+			"path": "tesseract.glb",
+			"dynamic": true,
+			"position": {"x":20,"y":0,"z":2},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1,"y":1,"z":1}
+		}
+	}
+]
