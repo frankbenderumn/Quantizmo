@@ -44,13 +44,14 @@ class Builder {
                     std::cout << "GOD DAMNIT" << std::endl;
 
                     std::string type = e.find("type")->second.get<std::string>();
-                    if (type == "actor" || type == "actee" || type == "destination" || type == "charger") {
+                    if (type == "actor" || type == "actee" || type == "destination" || type == "charger" || type == "collider") {
                         f << "\t\t\"command\": \"createEntity\"," << std::endl;
                         f << "\t\t\"params\": {" << std::endl;
                         f << "\t\t\t" << "\"entityId\": " << picojson::value(e.find("entityId")->second.get<double>()).serialize() << "," << std::endl;
                         f << "\t\t\t" << "\"name\": " << picojson::value(e.find("name")->second.get<std::string>()).serialize() << "," << std::endl;
                         f << "\t\t\t" << "\"type\": " << picojson::value(e.find("type")->second.get<std::string>()).serialize() << "," << std::endl;
                         f << "\t\t\t" << "\"path\": " << picojson::value(e.find("path")->second.get<std::string>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"interact\": " << picojson::value(e.find("interact")->second.get<double>()).serialize() << "," << std::endl;
                         f << "\t\t\t" << "\"dynamic\": " << picojson::value(e.find("dynamic")->second.get<bool>()).serialize() << "," << std::endl;
                         f << "\t\t\t" << "\"position\": " << picojson::value(e.find("position")->second.get<picojson::object>()).serialize() << "," << std::endl;
                         f << "\t\t\t" << "\"rotation\": " << picojson::value(e.find("rotation")->second.get<picojson::object>()).serialize() << "," << std::endl;
@@ -72,6 +73,19 @@ class Builder {
                         f << "\t\t\t" << "\"author\": " << picojson::value(e.find("author")->second.get<std::string>()).serialize() << "," << std::endl;
                         f << "\t\t\t" << "\"created_at\": " << picojson::value(s).serialize() << "," << std::endl;
                         f << "\t\t\t" << "\"updated_at\": " << picojson::value(s).serialize() << "" << std::endl;
+                    } else if (type == "controller") {
+                        f << "\t\t\"command\": \"createEntity\"," << std::endl;
+                        f << "\t\t\"params\": {" << std::endl;
+                        f << "\t\t\t" << "\"entityId\": " << picojson::value(e.find("entityId")->second.get<double>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"name\": " << picojson::value(e.find("name")->second.get<std::string>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"type\": " << picojson::value(e.find("type")->second.get<std::string>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"hand\": " << picojson::value(e.find("type")->second.get<std::string>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"node\": " << picojson::value(e.find("type")->second.get<std::string>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"path\": " << picojson::value(e.find("path")->second.get<std::string>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"dynamic\": " << picojson::value(e.find("dynamic")->second.get<bool>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"position\": " << picojson::value(e.find("position")->second.get<picojson::object>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"rotation\": " << picojson::value(e.find("rotation")->second.get<picojson::object>()).serialize() << "," << std::endl;
+                        f << "\t\t\t" << "\"scale\": " << picojson::value(e.find("scale")->second.get<picojson::object>()).serialize() << std::endl;
                     }
 
                 }

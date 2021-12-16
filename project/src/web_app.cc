@@ -343,7 +343,7 @@ void WebApp::UpdateTimeMap(const std::string& drone_model, float distance){
 }
 
 void WebApp::SendFin(std::string ticker) {
-    std::string token = "Tpk_64ae4b7c2dca48c7bb11970baaf64f1c";
+    std::string token = "Tpk_ee94fb44b94b49fd844dcc681b009783";
     Iex* client = new Iex(token);
     picojson::value iex = client->Quote(ticker);
     // std::cout << iex.serialize() << std::endl;

@@ -82,6 +82,8 @@ function format(obj, params, dynamic) {
                             }
                         }
                     }
+            } else {
+                element.ancestor = params.name;
             }
         }
     }

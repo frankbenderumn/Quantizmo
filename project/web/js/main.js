@@ -72,8 +72,8 @@ function changeManipulation(type) {
     console.log(stateCommand);
 }
 
-let posScale = 20;
-let sizeScale = 20;
+let posScale = 0.2;
+let sizeScale = 0.1;
 
 let press = function(e) {
     // api.sendCommand(e.type, {key: e.key, keyCode: e.keyCode});
@@ -471,6 +471,7 @@ recognition.onresult = function (event) {
         if (event.results[i][0].transcript.includes("suit up")) {
             console.warn("suitting up");
             world.debug("suitting up");
+            world.suitUp();
         }
         interim += event.results[i][0].transcript;
         analyzeSpeech(event.results[i][0].transcript);
@@ -495,6 +496,9 @@ function analyzeSpeech(speech) {
             // break;
         } else if (speech.includes("matrix")) {
             world.changeScript(`tron.json`);
+        } else if (speech.includes("shut down")) {
+            console.error("SHUTTING DOWN");
+            world.shutDown();
         } else if (speech.includes("hq")) {
             world.changeScript(`flight.json`);
         } else if (speech.includes("space")) {
@@ -586,4 +590,16 @@ $("li[data-role=scene-trigger]").click(function(){
     console.log(`target clicked is ${target}`);
     $("#current-scene").attr('data-value', target);
     world.changeScript(`${target}.json`);
+});
+
+$("#environment-select li").click(function() {
+    // console.log("clicickdofksf");
+    let attr = $(this).attr('href');
+    // console.warn(attr);
+    world.mode = attr;
+    if (attr == "development") {
+        raycast = new Raycast(world, world.camera, world.scene.children);
+    } else {
+        raycast = [];
+    }
 });

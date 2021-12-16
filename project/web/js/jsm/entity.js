@@ -49,6 +49,7 @@ class Entity {
             scale: this._model.scale,
             rotation: this._model.rotation,
             dynamic: this._dynamic,
+            interact: this._interact,
             type: this._type,
             path: this._path
         };

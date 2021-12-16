@@ -18,6 +18,7 @@
 			"name": "drone",
 			"type": "actor",
 			"path": "tron_city.glb",
+			"interact": 0,
 			"dynamic": true,
 			"position": {"x":-3625,"y":-4,"z":3860},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
@@ -31,6 +32,7 @@
 			"name": "hospital",
 			"type": "destination",
 			"path": "tron_board.glb",
+			"interact": 10,
 			"dynamic": true,
 			"position": {"x":20,"y":0,"z":2},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
@@ -56,7 +58,7 @@
 			"node": "root",
 			"path": "tron-disc-blue.glb",
 			"dynamic": true,
-			"position": {"x":20,"y":0,"z":2},
+			"position": {"x":20,"y":-10,"z":2},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":1,"y":1,"z":1}
 		}
@@ -70,7 +72,7 @@
 			"path": "shield.glb",
 			"node": "tronDiscBlue",
 			"dynamic": true,
-			"position": {"x":20,"y":0,"z":2},
+			"position": {"x":20,"y":-10,"z":2},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":1,"y":1,"z":1}
 		}
@@ -85,7 +87,7 @@
 			"node": "root",
 			"path": "tron-disc-purple.glb",
 			"dynamic": true,
-			"position": {"x":20,"y":0,"z":2},
+			"position": {"x":20,"y":-10,"z":2},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":1,"y":1,"z":1}
 		}
@@ -100,7 +102,7 @@
 			"node": "tronDiscPurple",
 			"path": "shield.glb",
 			"dynamic": true,
-			"position": {"x":20,"y":0,"z":2},
+			"position": {"x":20,"y":-10,"z":2},
 			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
 			"scale": {"x":1,"y":1,"z":1}
 		}

@@ -163,7 +163,7 @@ export function createD3(data, renderer) {
   //   }
   // }
   let ui = new CanvasUI( content, config );
-  ui.initControllers(renderer);
+  // ui.initControllers(renderer);
 
   return ui;
 }
@@ -405,11 +405,11 @@ export function createStars() {
   // scene.add( mesh );
 }
 
-export function createSkybox(params) {
+export function createSkybox(params, entity = true, radius = 35000) {
 
 
 
-  const geometry = new SphereGeometry( 35000, 60, 40 );
+  const geometry = new SphereGeometry( radius, 60, 40 );
   geometry.scale( - 1, 1, 1 );
 
   const texture = new TextureLoader().load( `../assets/texture/hdr/${params.path}` );
@@ -417,15 +417,19 @@ export function createSkybox(params) {
 
   const mesh = new Mesh( geometry, material );
   // scene.add( mesh );
-
-  let o = {
-    entityId: params.entityId,
-    name: params.name,
-    model: mesh,
-    type: params.type,
-    dynamic: false,
-    path: params.path
-  };
+  let o;
+  if (entity) {
+    o = {
+      entityId: params.entityId,
+      name: params.name,
+      model: mesh,
+      type: params.type,
+      dynamic: false,
+      path: params.path
+    };
+  } else {
+    o = mesh;
+  }
 
   return o;
 }

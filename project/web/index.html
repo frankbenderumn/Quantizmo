@@ -80,8 +80,8 @@
 		</script>
 
 		<div id="loading-background" class="hide center loading-background">
-			<div class="tY-40">
-			  <H1 id="loading-text" class="loading-text">Project <b>Iris</b></H1>
+			<div class="tY-60">
+			  <H1 id="loading-text" class="loading-text">Project <b>NEBULA</b></H1>
 			  <!-- <%# <img src="https://starzoku.s3.amazonaws.com/images/alpha_logo.png" class="responsive loader-logo" /> %> -->
 			  <div id="loader">
 				<div class="m-a w-50">
@@ -130,6 +130,7 @@
 					$(`#${target}`).hide();	
 					$("#command-bar").show();				
 				});
+				$("#loading-background").show();
 			});
 		</script>
 		  <header>
@@ -140,7 +141,7 @@
 				  <ul id="navbar" class="header-navbar right white">
 					<li id="fullscreen-menu-trigger" data-role="toggle" data-target="fullscreen-menu" class="trigger"><i class="fas fa-globe"></i> Menu</li>
 					<li id="camera-trigger" data-role="hover-dropdown-trigger" class="trigger"><i class="fas fa-camera"></i> Camera</li>
-					<li data-role="hover-dropdown-trigger" class="trigger" href="#environments"><i class="fas fa-globe"></i> Environment</li>
+					<li data-role="hover-dropdown-trigger" class="trigger" href="#environments"><i class="fas fa-globe"></i> Scene</li>
 					<li id="current-scene" style="display:none;" data-value="scene"></li>
 					<div id="environments" class="hover-dropdown">
 						<ol>
@@ -460,6 +461,17 @@
 			<div class="slim modal-box" style="background-color:var(--black);opacity:0.9;color:white;">
 			</div>
 		</div>
+
+		<div id="rando" style="position:absolute;top:200px;left:500px;background-color:var(--black);padding:10px 10px;border-radius:10px;">
+			<li data-role="hover-dropdown-trigger" style="color:white;list-style-type:none;" class="trigger" href="#environment-select"><i class="fas fa-globe"></i> Environment</li>
+			<div id="environment-select" class="hover-dropdown">
+				<li href="production">production</li>
+				<li href="development">development</li>
+				<li href="development">staging</li>
+				<li href="development">testing</li>
+				<li href="development">hybrid</li>
+			</div>
+		</div> 
 
 		<div id="settings-modal" class="slim modal" data-unique="editor" data-role='modal'>
 			<div class="slim modal-box">

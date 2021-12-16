@@ -45,22 +45,41 @@ import * as THREE from '../../three.module.js';
 // 	sound.play();
 // });
 
-export function analyze(_file, renderer) {
-    const fftSize = 128;
-    const listener = new THREE.AudioListener();
+export function analyze(_file, camera) {
 
-    const audio = new THREE.Audio( listener );
-    const file = _file;
+const listener = new THREE.AudioListener();
+camera.add( listener );
 
-    // if ( /(iPad|iPhone|iPod)/g.test( navigator.userAgent ) ) {
+// create a global audio source
+const sound = new THREE.Audio( listener );
 
-        const loader = new THREE.AudioLoader();
-        loader.load( file, function ( buffer ) {
-            audio.setBuffer( buffer );
-            audio.setLoop( true );
-            audio.setVolume( 0.5 );
-            audio.play();
-        } );
+// load a sound and set it as the Audio object's buffer
+const audioLoader = new THREE.AudioLoader();
+audioLoader.load( _file, function( buffer ) {
+	sound.setBuffer( buffer );
+	sound.setLoop( true );
+	sound.setVolume( 0.5 );
+	sound.play();
+});
+
+}
+
+// export function analyze(_file, renderer) {
+//     const fftSize = 128;
+//     const listener = new THREE.AudioListener();
+
+//     const audio = new THREE.Audio( listener );
+//     const file = _file;
+
+//     // if ( /(iPad|iPhone|iPod)/g.test( navigator.userAgent ) ) {
+
+//         const loader = new THREE.AudioLoader();
+//         loader.load( file, function ( buffer ) {
+//             audio.setBuffer( buffer );
+//             audio.setLoop( true );
+//             audio.setVolume( 0.5 );
+//             audio.play();
+//         } );
 
     // } else {
 
@@ -88,4 +107,4 @@ export function analyze(_file, renderer) {
     // const geometry = new THREE.PlaneGeometry( 1, 1 );
     // const mesh = new THREE.Mesh( geometry, material );
     // return [mesh, uniforms];
-}
+// }

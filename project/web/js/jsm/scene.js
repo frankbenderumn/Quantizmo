@@ -57,6 +57,12 @@ let _tronDiscs = [];
 let _shield;
 let _ironManHands = [];
 let _grabbables = [];
+let _devObjs = [];
+let _regModelLeft;
+let _regModelRight;
+let _loaders = [];
+let _ports = [];
+let _dofMenu;
 
 // scene modes
 // production, development
@@ -101,7 +107,7 @@ class Cache {
 };
 
 function onSessionStart(){
-    _mode = "production";
+    // _mode = "production";
     _ui.mesh.position.set( 0, 0, -3 );
     _camera.attach( _ui.mesh );
     _ui.scene = _scene;
@@ -144,7 +150,7 @@ class Scene {
         //   _scene.background = texture;  
         // });
 
-        Analyser.analyze(_song, _renderer);
+        Analyser.analyze(_song, _camera);
         // scene.add(song[0]);
         // _uniforms = song[1];
 
@@ -158,30 +164,39 @@ class Scene {
                 const intersections = getIntersections( controller );
             
                 if ( intersections.length > 0 ) {
-            
+                    
                     const intersection = intersections[ 0 ];
-                    // if (intersection.obect.name == "line") {
-                    //     intersection = intersections[1];
-                    // }
-                    const object = intersection.object;
-                    object.material.wireframe = true;
-                    // console.log(object);
-                    let id = object.entityId;
-                    console.warn(`entityId id ${id}`);
-                    console.warn(object);
-                    if (object.ancestor != "vr-menu") {
-                        for (let mesh in _collections[id]) {
-                            controller.attach( _collections[id][mesh] );
+                    if (!_controls.isTeleporting) {
+                        // if (intersection.obect.name == "line") {
+                        //     intersection = intersections[1];
+                        // }
+                        const object = intersection.object;
+                        object.material.wireframe = true;
+                        // console.log(object);
+                        let id = object.entityId;
+                        console.warn(`entityId id ${id}`);
+                        console.warn(object);
+                        if (object.ancestor != "vr-menu") {
+                            for (let mesh in _collections[id]) {
+                                controller.attach( _collections[id][mesh] );
+                            }
+                            controller.attach(object);                        
+                        } else if (object.ancestor == "earth") {
+                            // object.lastPos = object.position;
+                            // object.lastParent = controller;
+                            _target = "flight.json";
+                            this.changeScript();
+                        } else {
+                            controller.attach(object);
                         }
-                        controller.attach(object);                        
+                
+                        controller.userData.selected = object;
+                        _selected = object;
                     } else {
-                        // object.lastPos = object.position;
-                        // object.lastParent = controller;
-                        controller.attach(object);
+                        console.error("attempting teleport");
+                        console.error(intersection);
+                        _dolly.position.copy(intersection.point);
                     }
-            
-                    controller.userData.selected = object;
-                    _selected = object;
             
                 }
             }
@@ -192,9 +207,10 @@ class Scene {
                 console.warn("releasing object");
             
                 // const intersections = getIntersections( controller );
-            
+
 				if ( controller.userData.selected !== undefined ) {
 
+                if (!_controls.isTeleporting) {
 					const object = controller.userData.selected;
 					object.material.wireframe = false;
                     let id = object.entityId;
@@ -209,12 +225,10 @@ class Scene {
                         _scene.attach(object);
                         // lastParent.attach( object );
                     }
-
+                }
 					controller.userData.selected = undefined;
                     _selected = undefined;
-
-				}
-            
+				}            
             }
             
             function getIntersections( controller ) {
@@ -253,8 +267,12 @@ class Scene {
                 // //   cube.rotation.x += 2 * dt;
                 // // }
                 // this._scene.add(cube);
-            
-                const intersects = _raycaster.intersectObjects( _clickables, true );
+                let intersects;
+                if (_controls.isTeleporting) {
+                    intersects = _raycaster.intersectObjects( _ports, true );
+                } else {
+                    intersects = _raycaster.intersectObjects( _clickables, true );
+                }
             
                 // return cube;
             
@@ -412,13 +430,7 @@ class Scene {
         container.appendChild(_renderer.domElement);
 
         if (_mode != "production") {
-        // dev environment additions
-        let els = Feature.createDevGrid();
-        for (let e in els) {
-            _scene.add(els[e]);
-        }
-
-        }
+            this.devMode();
 
         const cube = Feature.createCube();
         // controls.controls.target.copy(cube.position);
@@ -426,6 +438,7 @@ class Scene {
         updatables.push(controls);
         _grabbables.push(cube);
         _scene.add(cube);
+        }
 
         const resizer = new Resizer(container, _camera, _renderer);
         resizer.onResize = () => {
@@ -433,26 +446,33 @@ class Scene {
         };
     }
 
-    async init() {
-        await Script.run(`${_scriptsDir}${_target}`, _assetsDir).then(function(data) {  
+    async init(cache = false, target = _target) {
+        await Script.run(`${_scriptsDir}${target}`, _assetsDir).then(function(data) {  
             Promise.all(data).then(function(entities) {
                 console.log("###########################");
                 _entities = [];
+                let arr = target.split(".");
                 for (let e of entities[0]) {
                     let d = new Entity(e);
                     console.log(d);
                     _entities.push(d);
+                    // _cache.push(d);
                     if (d.type !== "skybox" && d.type != "undefined") {
                         // _clickables.push(d.model);
                         let id = 0;
                         for (let mesh of d.meshes) {
-                            if (d.interact == 1 || d.interact == 3) {
+                            if (d.interact === 1 || d.interact === 3) {
                                 _clickables.push(mesh);
                             }
 
-                            if (d.interact == 2 || d.interact == 3) {
+                            if (d.interact === 2 || d.interact === 3) {
                                 _grabbables.push(mesh);
                             }
+
+                            if (d.interact === 0) {
+                                _ports.push(mesh);
+                            }
+
                             id = mesh.entityId;
                         }
                         _collections[id] = d.meshes;
@@ -468,6 +488,7 @@ class Scene {
                     }
 
                     if (d.name.includes("iron")) {
+                        let i = 0;
                         (d.hand != "left") ? i = 0 : i = 1;
                         _ironManHands.push(d.model);
                     }
@@ -476,9 +497,15 @@ class Scene {
                         _shield = d.model;
                     }
 
+                    if (d.type == "collider") {
+                        d.model.visible = false;
+                    }
+
                     // console.log(d.name);
                     _scene.add(d.model);
                     if(d.name == "vr-menu") {
+                        _dofMenu = d.model;
+                        d.model.visible = false;
                         _menuController.controller.add(d.model);
                         // d.model.position.copy(_menuController.grip.position);
                         console.log("DOF-MENU");
@@ -495,6 +522,13 @@ class Scene {
                 // } else {
                 _controls.scene = _scene;
                 _updateReady = true;
+                while (_loaders.length > 0) {
+                    let el = _loaders.pop();
+                    _scene.remove(el);
+                    el.geometry.dispose();
+                    el.material.dispose();
+                }
+                $("#loading-background").hide();
                 console.error(_grabbables);
                 _controls.collidables = _clickables;
                 _controls.grabbables = _grabbables;
@@ -508,30 +542,104 @@ class Scene {
             });
         });
     }
-s
-    swapControllerModels(name) {
 
+    suitUp() {
+        _regModelLeft = _controllers[0].grip.children.pop();
+        _regModelRight = _controllers[1].grip.children.pop();
+        // _regModelRight = _controllers[1].grip.children.pop();
+        // _scene.remove(_dofMenu);
+        // _lineLeft = _controllers[0].controller.line.
+        _ironManHands[0].position.set(0, 0, 0);
+        _ironManHands[1].position.set(0, 0, 0);
+        _ironManHands[0].quaternion.copy(_controllers[0].controller.quaternion);
+        _ironManHands[1].quaternion.copy(_controllers[1].controller.quaternion);
+        _controllers[0].controller.add(_ironManHands[0]);
+        _controllers[1].controller.add(_ironManHands[1]);
+        _controls.mode = "iron-man";
+    }
+
+    shutDown() {
+        _scene.add(_dofMenu);
+        _regModelLeft.position.set(0, 0, 0);
+        _regModelRight.position.set(0, 0, 0);
+        for (let e in _controllers[0].grip.children) {
+            _controllers[0].grip.children[e].remove();
+        }
+        for (let e in _controllers[1].grip.children) {
+            _controllers[1].grip.children[e].remove();
+        }
+        _ironManHands[0] = _controllers[0].grip.remove(_ironManHands[0]);
+        _ironManHands[1] = _controllers[1].grip.remove(_ironManHands[1]);
+        _regModelLeft.quaternion.copy(_controllers[0].controller.quaternion);
+        _regModelRight.quaternion.copy(_controllers[1].controller.quaternion);
+        _controllers[0].controller.add(_regModelLeft);
+        _controllers[1].controller.add(_regModelRight);
+        _controls.mode = "standard";
+    }
+
+    tron() {
+        _tronDiscs[0].position.set(0, 0, 0);
+        _tronDiscs[1].position.set(0, 0, 0);
+        _tronDiscs[0].quaternion.copy(_controllers[0].controller.quaternion);
+        _tronDiscs[1].quaternion.copy(_controllers[1].controller.quaternion);
+        let _leftShield = _shield.clone();
+        _shield.position.set(0, 0, 0);
+        _leftShield.position.set(0, 0, 0);
+        _shield.quaternion.copy(_controllers[0].controller.quaternion);
+        _leftShield.quaternion.copy(_controllers[1].controller.quaternion);
+        _controllers[0].controller.add(_leftShield);
+        _controllers[1].controller.add(_shield);
+        _controllers[0].controller.add(_regModelLeft);
+        _controllers[1].controller.add(_regModelRight);
+        _controls.mode = "tron";
     }
 
     debug(string) {
-        let content = {
-            header: "Debugger",
-            main: string,
-            footer: "Footer"
+        // let content = {
+        //     header: "Debugger",
+        //     main: string,
+        //     footer: "Footer"
+        // }
+        // let ui = Feature.createShell(content);
+        // ui.mesh.position.set( 0, 0, -2 );
+        // _camera.attach( ui.mesh );
+        // ui.scene = _scene;
+    }
+
+    devMode() {
+        if (_devObjs.length == 0) {
+            let els = Feature.createDevGrid();
+            for (let e in els) {
+                _devObjs.push(els[e]);
+                _scene.add(els[e]);
+            }
         }
-        let ui = Feature.createShell(content);
-        ui.mesh.position.set( 0, 0, 0 );
-        _camera.attach( ui.mesh );
-        ui.scene = _scene;
+    }
+
+    prodMode() {
+        if (_devObjs.length > 0) {
+            let els = Feature.createDevGrid();
+            for (let e in els) {
+                let toRemove = _devObjs.pop();
+                toRemove.geometry.dispose();
+                toRemove.material.dispose();
+                _scene.remove(toRemove);
+            }
+        }
+    }
+
+    buffer() {
+
     }
 
     graph(data) {
         console.log("data making it to the scene!");
         _shell = Feature.createD3(data);
-        _shell.mesh.position.copy(_dolly.position);
-        _scene.add( _shell.mesh );
-        _collections["stock-chart"] = _shell.mesh;
+        _shell.mesh.position.set(0, 0, -5);
+        _camera.add( _shell.mesh );
+        // _collections["stock-chart"] = _shell.mesh;
         _shell.scene = _scene;
+        setTimeout(() => {_camera.remove(_shell.mesh);}, 3000);
 
         // _ui.mesh.position.set( 0, 0, -10 );
         // _camera.attach( _ui.mesh );
@@ -563,44 +671,44 @@ s
         //         bevelSegments: 5
         //     } );
         // } );
-        let set = [];
-        let createGeometry = function()
-        {
-            set.push(new THREE.Vector3(5,5) );
-            set.push(new THREE.Vector3(10,1));
-            set.push(new THREE.Vector3(15,2));
-            set.push(new THREE.Vector3(20,1));
-            set.push(new THREE.Vector3(17,9));
-            set.push(new THREE.Vector3(23,2));
+        // let set = [];
+        // let createGeometry = function()
+        // {
+        //     set.push(new THREE.Vector3(5,5) );
+        //     set.push(new THREE.Vector3(10,1));
+        //     set.push(new THREE.Vector3(15,2));
+        //     set.push(new THREE.Vector3(20,1));
+        //     set.push(new THREE.Vector3(17,9));
+        //     set.push(new THREE.Vector3(23,2));
 
-            let setgeometry = new THREE.BufferGeometry().setFromPoints(set);
-            let setmaterial = new THREE.PointsMaterial({ color : 0xff0000 , size : 10 ,sizeAttenuation : false});
-            let plot = new THREE.Line( setgeometry , setmaterial );
+        //     let setgeometry = new THREE.BufferGeometry().setFromPoints(set);
+        //     let setmaterial = new THREE.PointsMaterial({ color : 0xff0000 , size : 10 ,sizeAttenuation : false});
+        //     let plot = new THREE.Line( setgeometry , setmaterial );
 
-            _scene.add(plot);
+        //     _scene.add(plot);
 
-        }   
-        createGeometry();
+        // }   
+        // createGeometry();
 
-        var canvas1 = document.createElement('canvas');
-        var context1 = canvas1.getContext('2d');
-        context1.font = "10px Arial";
-        context1.fillStyle = "rgba(255,0,0,1)";
-        context1.fillText('Hello, world!', 10, 10, 50);
+        // var canvas1 = document.createElement('canvas');
+        // var context1 = canvas1.getContext('2d');
+        // context1.font = "10px Arial";
+        // context1.fillStyle = "rgba(255,0,0,1)";
+        // context1.fillText('Hello, world!', 10, 10, 50);
 
-        // canvas contents will be used for a texture
-        var texture1 = new THREE.Texture(canvas1)
-        texture1.needsUpdate = true;
+        // // canvas contents will be used for a texture
+        // var texture1 = new THREE.Texture(canvas1)
+        // texture1.needsUpdate = true;
 
-        var material1 = new THREE.MeshBasicMaterial({ map: texture1, side: THREE.DoubleSide, color: 0x000 });
+        // var material1 = new THREE.MeshBasicMaterial({ map: texture1, side: THREE.DoubleSide, color: 0x000 });
 
-        var mesh1 = new THREE.Mesh(
-            new THREE.PlaneGeometry(10, 10),
-            material1
-          );
-        mesh1.position.set(0, 5, 10);
-        // mesh1.rotation.x = -0.9;
-        _scene.add(mesh1);
+        // var mesh1 = new THREE.Mesh(
+        //     new THREE.PlaneGeometry(10, 10),
+        //     material1
+        //   );
+        // mesh1.position.set(0, 5, 10);
+        // // mesh1.rotation.x = -0.9;
+        // _scene.add(mesh1);
         // Note that mesh1 gets added to the shape and not to the scene
 
     }
@@ -619,8 +727,8 @@ s
     launchJarvis() {
         if (!_jarvisActive) {
             if (this._vr) {
-                _jarvis.position.set(0, 1, -10);
-                _dolly.add(_jarvis);
+                _jarvis.position.set(0, 1, -7);
+                _camera.add(_jarvis);
             } else {
                 _scene.add(_jarvis);
             }
@@ -632,20 +740,28 @@ s
     killJarvis() {
         updatables = updatables.filter(item => item !== _jarvis);
         if (this._vr) {
-            _dolly.remove(_jarvis);
+            _camera.remove(_jarvis);
         } else {
             _scene.remove(_jarvis);
         }
         _jarvisActive = false;
     }
 
+    // getters and setters
     get UI() { return _ui; }
     set UI(val) { _ui = val; }
     get clickables() { return _clickables; }
-    // getters and setters
     get scene() { return _scene; }
     get camera() { return _camera; }
     get mode() { return _mode; }
+    set mode(val) { 
+        _mode = val; 
+        if (_mode == "development") {
+            this.devMode();
+        } else if (_mode == "production") {
+            this.prodMode();
+        }
+    }
     get workingMatrix() { return _workingMatrix; }
     get raycaster() { return _raycaster; }
     get collidables() { return _collidables; }
@@ -685,7 +801,11 @@ s
             _grabbables[e].material.dispose();
         }
         _grabbables = [];
-
+        for (let e in _ports) {
+            _ports[e].geometry.dispose();
+            _ports[e].material.dispose();
+        }
+        _grabbables = [];
     }
       
     tick() {
@@ -702,8 +822,8 @@ s
 
         if (_vr) {
             if (_controls) {
-                console.log("&&&&&&&&&&&&&");
-                console.log(_controllers[0]);
+                // console.log("&&&&&&&&&&&&&");
+                // console.log(_controllers[0]);
                 _controls.update(delta);
                 cleanIntersected();
                 intersectObjects(_controllers[0]);
@@ -722,6 +842,16 @@ s
         for (let e of _entities) {
             _scene.remove(e.model);
         }
+        let params = {path: "glitch.jpeg"};
+        let loader = Feature.createSkybox(params, false, 1000);
+        loader.position.copy(_dolly.position);
+        loader.update = (dt) => {
+            console.log(this);
+            loader.rotation.y += 0.1 * dt;
+        }
+        _loaders.push(loader);
+        _scene.add(loader);
+        updatables.push(loader);
 
         this.init();
     }
@@ -749,9 +879,18 @@ function intersectObjects( controller ) {
         const intersection = intersections[ 0 ];
         let pos = intersection.point;
         // console.log(pos);
-        let sphere = new THREE.SphereBufferGeometry(0.05, 32, 32);
-        let mat = new THREE.MeshBasicMaterial({color: 0x0000ff, opacity: 0.5});
-        let mesh = new THREE.Mesh(sphere, mat);
+        let mesh;
+        if (_controls.isTeleporting) {
+            // line.material.color.set(0x00ff00);
+            const geometry = new THREE.CylinderGeometry( 0.5, 0.5, 0.1, 48 );
+            let mat = new THREE.MeshStandardMaterial({color: 0x00ff00, metalness: 0.5, roughness: 0.1, wireframe: true});
+            mesh = new THREE.Mesh(geometry, mat);
+        } else {
+            // line.material.color.set(0x0000ff);
+            let sphere = new THREE.SphereBufferGeometry(0.05, 32, 32);
+            let mat = new THREE.MeshBasicMaterial({color: 0x0000ff, opacity: 0.5});
+            mesh = new THREE.Mesh(sphere, mat);
+        }
         mesh.position.copy(pos);
         _scene.add(mesh);
         // console.log("here 2");
@@ -792,8 +931,12 @@ function getIntersectionsx( controller ) {
     // console.log(_raycaster.ray.origin);
     // console.log(_raycaster.ray.direction);
     // console.log(_collidables);
-
-    const intersects = _raycaster.intersectObjects( _clickables, true );
+    let intersects;
+    if (_controls.isTeleporting) {
+        intersects = _raycaster.intersectObjects( _ports, false );
+    } else {
+        intersects = _raycaster.intersectObjects( _clickables, true );
+    }
 
     return intersects;
 }

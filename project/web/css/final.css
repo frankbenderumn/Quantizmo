@@ -45,7 +45,7 @@
     --mention: #34bdeb;
     --shout: #c17feb;
     --starzoku: #41004d; /*#460e58;*/
-    --starzokugl: rgba(65, 0, 77, 0.8);
+    --starzokugl: #1a0024;
     --starzoku2: #fff793;
     --starzoku3: #51c4e1; /*#26b5d9;*/
     --starzokul: #f8e6ff; /*#d791ee;*/
@@ -874,10 +874,11 @@ div.mobile-menu-bevel { border-radius:0px 0px 0px 15%; } /* name differently */
     width:100%;
     z-index:999;
     margin:0px auto;
-    background-image:radial-gradient(var(--starzokubg), #20b0bd);
+    background-image:radial-gradient(var(--starzoku), var(--starzokugl));
 }
 .tY-40 { transform:translateY(40%); }
 .tY-50 { transform:translateY(50%); }
+.tY-60 { transform:translateY(100%); }
 .loading-text {
     font-size:6rem;
     font-weight:bold;

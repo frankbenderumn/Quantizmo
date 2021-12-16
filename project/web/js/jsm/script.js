@@ -76,27 +76,27 @@ export async function run(file, modelsDir) {
             _sceneInfo = command.params; 
         }
 
-        let controllers = loadControllers();
-        for (let e in controllers) {
-            _entities.push(controllers[e]);
-        }
-
     }
 
+    // loadControllers().then(function(data){
+    //     console.error(data);
+    //     for (let e in data) {
+    //         _entities.push(data[e]);
+    //         console.warn("pushing");
+    //         console.warn(data[e]);
+    //     }     
+    // });
+
+
     return [_entities, _sceneInfo];
+
+
 
 }
 
 // may create seperate package module for controller specifics
 async function loadControllers() {
-    let ironLeft = {
-        name: "ironLeft",
-        path: "iron-man-left.glb"
-    };
-    let ironRight = {
-        name: "ironRight",
-        path: "iron-man-right.glb"
-    };
+
     // removed since specific to tron scene
     // let tronLeft = {
     //     name: "tronLeft",
