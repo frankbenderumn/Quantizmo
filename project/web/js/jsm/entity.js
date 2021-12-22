@@ -10,12 +10,13 @@ class Entity {
             (params.model) ? this._model = params.model : this._model = "undefined";
             (params.dynamic) ? this._dynamic = params.dynamic : this._dynamic = false;
             (params.type) ? this._type = params.type : this._type = "undefined";
-            (params.meshes) ? this._meshes = params.meshes : this._meshes = undefined;
+            (params.meshes) ? this._meshes = params.meshes : this._meshes = [];
             (params.interact) ? this._interact = params.interact : this._interact = 0;
             if (params.type == "controller") {
                 (params.hand) ? this._hand = params.hand : this._hand = undefined;
                 (params.node) ? this._node = params.node : this._node = undefined;    
             }
+            (params.children) ? this._children = params.children : this._children = [];
         } else {
             console.log("not asynchronously loading");
         }
@@ -32,6 +33,7 @@ class Entity {
     get type() { return this._type; }
     get meshes() { return this._meshes; }
     get interact() { return this._interact; }
+    get children() { return this._children; }
 
     addComponent(component) {
         if (component.updatable) {

@@ -874,7 +874,10 @@ div.mobile-menu-bevel { border-radius:0px 0px 0px 15%; } /* name differently */
     width:100%;
     z-index:999;
     margin:0px auto;
-    background-image:radial-gradient(var(--starzoku), var(--starzokugl));
+    /* background-image:radial-gradient(var(--starzoku), var(--starzokugl)); */
+    background-image:url("../assets/images/magic_door.jpeg");
+    background-size:cover;
+  }
 }
 .tY-40 { transform:translateY(40%); }
 .tY-50 { transform:translateY(50%); }

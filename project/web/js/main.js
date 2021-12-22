@@ -205,9 +205,29 @@ let press = function(e) {
     // }
   }
 
-  $("#command-save").click(function(){
-    world.save();
-  });
+//   $("[data-role=command][data-type=save]").click(function(){
+//     world.save();
+//   });
+
+  $("[data-role=command]").click(function(){
+    let type = $(this).attr('data-type');
+    switch(type) {
+        case "save":
+            world.save();
+            break;
+        case "run":
+            world.run();
+            break;
+        case "debug":
+            $("#debug").is(":visible") ? $("#debug").hide() : $("#debug").show();
+            break;
+        case "voice":
+            toggleVoice();
+            break;
+        default:
+            break;
+    }
+});
 
 
 
@@ -302,7 +322,7 @@ let press = function(e) {
         // drag = false;
         mouseState.left = false;
     }
-    document.onmousedown = function(e) {
+    document.getElementById("scene-container").addEventListener("mousedown", function(e) {
         // if (e.which === 3 && !lClick) { // right mouse (l = 1, c = 2, r = 3)
         raycast.clear();
         console.log("mouse pressed");
@@ -345,11 +365,24 @@ let press = function(e) {
         //     frame = 0;
         // }
 
-    }
+    });
 
     $("#VRButton").click(function(){
         world.vr(true);
     });
+
+    $("div.hover-dropdown li").click(function() {
+        console.log("clicickdofksf");
+        console.log($(this));
+        let attr = $(this).attr('href');
+        console.warn(attr);
+        world.mode = attr;
+        if (attr == "development") {
+            raycast = new Raycast(world, world.camera, world.scene.children);
+        } else {
+            raycast = [];
+        }
+});
 
 // });
 
@@ -428,20 +461,27 @@ let press = function(e) {
 // VOICE FUNCTIONALITY --------------------------------------------------------------------------
 
 let api = new WSApi();
-// if (!('webkitSpeechRecognition' in window)) {
-// 	upgrade();
-// }
+if (!('webkitSpeechRecognition' in window)) {
+	upgrade();
+}
 var recognizing;
 var recognition = new webkitSpeechRecognition();
 recognition.continuous = true;
 recognition.interimResults = true;
 let timeout = null;
 
-document.addEventListener("DOMContentLoaded", function(){
+// document.addEventListener("DOMContentLoaded", function(){
 
+function resetVoice() {
+    recognizing = false;
+    let buttonv = document.getElementById("voice-button");
+    console.log("refactoring pains --");
+    console.log(buttonv);
+    buttonv.innerHTML = "Click to Speak";
+}
 
-reset();
-recognition.onend = reset;
+resetVoice();
+recognition.onend = resetVoice;
 
 function sendSpeech(final) {
     console.log("====> sending speech: "+final);
@@ -509,24 +549,14 @@ function analyzeSpeech(speech) {
     // }
 }
 
-function reset() {
-    recognizing = false;
-    let buttonv = document.getElementById("voice-button");
-    console.log("refactoring pains --");
-    console.log(buttonv);
-    buttonv.innerHTML = "Click to Speak";
-}
-
 $("#voice-button").click(function(){
     toggleVoice();
-});
-
 });
 
 function toggleVoice() {
     if (recognizing) {
         recognition.stop();
-        reset();
+        resetVoice();
     } else {
         recognition.start();
         console.log("listening");
@@ -539,6 +569,8 @@ function toggleVoice() {
         interim_span.innerHTML = "";
     }
 }
+
+// });
 
 $.fn.display = (msg) => {
     // console.log(msg);
@@ -592,14 +624,11 @@ $("li[data-role=scene-trigger]").click(function(){
     world.changeScript(`${target}.json`);
 });
 
-$("#environment-select li").click(function() {
-    // console.log("clicickdofksf");
-    let attr = $(this).attr('href');
-    // console.warn(attr);
-    world.mode = attr;
-    if (attr == "development") {
-        raycast = new Raycast(world, world.camera, world.scene.children);
-    } else {
-        raycast = [];
-    }
-});
+// $(document).ready(function(){ 
+
+
+
+
+
+// });
+

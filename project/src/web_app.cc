@@ -208,6 +208,14 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         } else {
             Rescue((Actee*)entities.at(acteeIdx), (Destination*)entities.at(destIdx));
         }
+    } else if (cmd == "setup") {
+        picojson::object o;
+        o["files"] = picojson::value(files);
+        picojson::value toSend(o);
+        Console::Log(INFO, "SENDING FILE INFO");
+        std::cout << toSend.serialize() << std::endl;
+        returnValue["response"] = toSend;
+        // this->Send(toSend);
     } else if (cmd == "save") {
         std::cout << picojson::value(data).serialize() << std::endl;
         std::cout << "building" << std::endl;

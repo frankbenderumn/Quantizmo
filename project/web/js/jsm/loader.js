@@ -61,9 +61,26 @@ export async function loadFbx(params, dynamic = true) {
 }
 
 
-function format(obj, params, dynamic) {
+export function format(obj, params=undefined, dynamic=false) {
+
+    // params check
+    if (params === undefined) {
+        params = {
+            name: "undefined",
+            entityId: 0,
+            interact: 0,
+            type: "actor",
+            path: "undefined",
+			position: {"x":0,"y":0,"z":0},
+		    rotation: {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			scale: {"x":1,"y":1,"z":1}
+        };
+    }
+
+
     let model = obj.scene;
     let meshes = [];
+    let children = [];
     // required for VR as it only detects meshes and not groups
     function walkDown(element){
         if (element.hasOwnProperty('children')) {
@@ -81,6 +98,7 @@ function format(obj, params, dynamic) {
                                 walkDown(e);
                             }
                         }
+                        children.push(e);
                     }
             } else {
                 element.ancestor = params.name;
@@ -109,7 +127,8 @@ function format(obj, params, dynamic) {
         dynamic: dynamic,
         path: params.path,
         meshes: meshes,
-        interact: params.interact
+        interact: params.interact,
+        children: children
     }
 
     if (o.type == "controller") {

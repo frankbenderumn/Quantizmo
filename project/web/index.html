@@ -22,6 +22,50 @@
 		<script type="module" src="js/OBJLoader.js"></script> -->
 	</head>
 	<body>
+		<header>
+			<div class="container">
+			  <nav id="navbar" class="nav-header">
+				<span class="left">
+					<b class="brand" style="color:white;padding:0px 10px;">
+						Nebula <i class="fas fa-meteor"></i>
+					</b>
+					<ul class="right white command-menu">
+						<li class="pl-5 pr-5" style="line-height:40px;" data-role="command" data-type="save">Save</li> 
+						<li class="pl-5 pr-5" style="line-height:40px;" data-role="trigger" data-type="modal" href="#scene-tree">Open</li> 
+						<!-- <li class="pl-5 pr-5" style="line-height:40px;">Select</li>  -->
+						<li class="pl-5 pr-5" style="line-height:40px;" data-role="command" data-type="run">Run</li> 
+						<li class="pl-5 pr-5" style="line-height:40px;" data-role="command" data-type="debug">Debug</li> 
+						<li class="pl-5 pr-5" style="line-height:40px;" data-role="command" data-type="voice">Voice</li> 
+						<li class="pl-5 pr-5" style="line-height:40px;" data-role="hover-dropdown-trigger" href="#environment-select">Environment</li> 
+						<div id="environment-select" class="hover-dropdown">
+							<!-- <ol> -->
+								<li href="production">production</li>
+								<li href="development">development</li>
+								<li href="development">staging</li>
+								<li href="development">testing</li>
+								<li href="development">hybrid</li>					
+							<!-- </ol> -->
+						</div>
+					</ul>
+				</span>
+				<span><img id="starzoku-logo starzoku-logo-mobile" class="logo" src="https://starzoku.s3.amazonaws.com/favicon-32x32.png"/></span>
+				  <ul id="navbar" class="header-navbar right white">
+					<li id="fullscreen-menu-trigger" data-role="toggle" href="#fullscreen-menu" class="trigger"><i class="fas fa-globe"></i> Menu</li>
+					<li id="camera-trigger" data-role="hover-dropdown-trigger" class="trigger"><i class="fas fa-camera"></i> Camera</li>
+					<li data-role="hover-dropdown-trigger" class="trigger" href="#environments"><i class="fas fa-globe"></i> Scene</li>
+					<li id="current-scene" style="display:none;" data-value="scene"></li>
+
+					<li><a class="modal-button" href="#settings-modal"><i class="fas fa-cogs"></i> Settings</a></li> 
+					<li><a data-role="sidenav-trigger"><i class="fa fa-bars sidenav-trig"></i></a></li>
+				  </ul>
+			  </nav>
+			</div>
+		</header>
+		  <!-- <subheader style="position:absolute;top:40px;height:20px;background-color:var(--grey);width:100%;z-index:999999999;">
+			<div class="container">
+				Something something something
+			</div>
+		  </subheader> -->
 		<script id="vertexShader" type="x-shader/x-vertex">
 			out vec4 localPos;
 			void main() {
@@ -79,6 +123,605 @@
 
 		</script>
 
+		<style>
+			.command-menu li {
+
+			}
+			.command-menu li:hover {
+				background-color:var(--white);
+				color:var(--black);
+			}
+			.component {
+				background-color:rgb(50, 50, 50);
+				padding-top:10px;
+				overflow:none;
+				width:auto;
+				max-width:100%;
+				display:block;
+				float:right;
+				grid-column:2;
+				height:100%;
+				/* word-wrap:break-word;
+				text-overflow:ellipsis; */
+			}
+
+			.component .header {
+				background-color:rgb(50, 50, 50);
+				color:white;
+			}
+
+			.component .header {
+				text-align:center;
+				padding:5px;
+			}
+
+			.component .content {
+				display:inline-block;
+				padding:10px;
+				background-color:rgb(50, 50, 50);
+				color:white;
+			}
+
+			.component-li {
+				background-color:rgb(80, 80, 80);
+				margin:3px;
+			}
+
+			.page {
+				display:none;
+				width:0px;
+				height:100%;
+				z-index:100;
+				background-color:white;
+				right:0px;
+				top:40px;
+				padding:40px;
+			}
+
+			#features {
+				display:none;
+			}
+			.hover-dropdown li:hover {
+				color:white;
+				background-color:var(--black);
+			}
+		</style>
+
+		<script type="module">
+			window.onload = function(){
+				$("#loading-background").show();
+			}
+			$(document).ready(function(){
+				$("#features").show();
+				$("[data-role=tab]").each(function(){
+						$(this).hide();
+				});
+				$("#features").on('mouseover', function(){
+					let el = document.getElementById("features");
+					if (el.style.width == "50px") {
+						el.style.width = "20%";
+					}
+				});
+				$("[data-role=sidenav-trigger]").click(function(){
+					let el = document.getElementById("features");
+					if (el.style.width == "50px") {
+						el.style.width = "20%";
+					} else {
+						// el.style.width = "50px";
+						// el.animate({width: "50px"}, 300);
+						el.style.width = "50px";
+					}
+				});
+				$("[data-role=tab-trigger]").click(function(){
+					let target = $(this).attr("href");
+					$("[data-role=tab]").each(function(){
+						$(this).hide();
+					});
+					$(target).show();
+				});
+				$("[data-role=trigger]").click(function(){
+					let type = $(this).attr('data-type');
+					if (type === "modal") {
+						let target = $(this).attr('href');
+						$(target).show();
+					}
+				});
+				$("li[data-role='hover-dropdown-trigger']").on("mouseover", function(){
+					$(".hover-dropdown").each(function(){
+						$(this).hide();
+					});
+					let target = $(this).attr("href");
+					console.log("TARGET IS: "+target);
+					$(`${target}`).show();
+				});
+				$(".hover-dropdown li").click(function(){
+					console.log("GET CLICKED MF");
+				});
+				$(".hover-dropdown").on("mouseleave", function(){
+					$(this).hide();
+				});
+				$("li[data-role=toggle]").click(function(){
+					let target = $(this).attr('href');
+					console.log(target);
+					$(target).show();
+					// temp work-around -- need to switch to relative positioning on system controls
+					// $("#command-bar").hide();
+				});
+				$("[data-role=close]").click(function(){
+					let target = $(this).attr('href');
+					let id = $(this).attr('id');
+					if($(this).attr('data-animate')) {
+						console.warn(target);
+						$(target).animate({width: "0%"}, 300, function(){
+							$(this).hide();
+						});
+						$("#features").animate({width: "20%"}, 300);
+					}
+					// shits being buggy af
+					// $(target).hide();
+					// $("#command-bar").show();				
+					$(".system-control").each(function(){
+						$(this).show();
+					});
+				});
+				$("[data-role=page-trigger]").click(function(){
+					let target = $(this).attr('href');
+					$(target).css('display', 'block');
+					$(target).animate({width:'100%'},300);
+					$("#features").animate({width:'50px'},300);
+					$(".system-control").each(function(){
+						$(this).hide();
+					});
+				});
+
+				// let el = document.querySelectorAll(".dag");
+				// el.forEach((e) =>{
+				// 	el.addEventListener("mouseover", function(){
+				// 		if ()
+				// 	});
+				// });
+
+				function initColorPicker() {
+					var canvas = document.getElementById('colorCanvas');
+					var canvasContext = canvas.getContext('2d');
+					
+					let gradient = canvas.getContext('2d').createLinearGradient(0, 0, canvas.width, 0)
+					gradient.addColorStop(0, '#ff0000')
+					gradient.addColorStop(1 / 6, '#ffff00')
+					gradient.addColorStop((1 / 6) * 2, '#00ff00')
+					gradient.addColorStop((1 / 6) * 3, '#00ffff')
+					gradient.addColorStop((1 / 6) * 4, '#0000ff')
+					gradient.addColorStop((1 / 6) * 5, '#ff00ff')
+					gradient.addColorStop(1, '#ff0000')
+					canvas.getContext('2d').fillStyle = gradient
+					canvas.getContext('2d').fillRect(0, 0, canvas.width, canvas.height)
+					
+					gradient = canvas.getContext('2d').createLinearGradient(0, 0, 0, canvas.height)
+					gradient.addColorStop(0, 'rgba(255, 255, 255, 1)')
+					gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)')
+					gradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
+					canvas.getContext('2d').fillStyle = gradient
+					canvas.getContext('2d').fillRect(0, 0, canvas.width, canvas.height)
+					
+					gradient = canvas.getContext('2d').createLinearGradient(0, 0, 0, canvas.height)
+					gradient.addColorStop(0, 'rgba(0, 0, 0, 0)')
+					gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0)')
+					gradient.addColorStop(1, 'rgba(0, 0, 0, 1)')
+					canvas.getContext('2d').fillStyle = gradient
+					canvas.getContext('2d').fillRect(0, 0, canvas.width, canvas.height)
+					
+					
+					canvas.onclick = function(e) {
+						console.log()
+						var imgData = canvasContext.getImageData((e.offsetX / canvas.clientWidth) * canvas.width, (e.offsetY / canvas.clientHeight) * canvas.height, 1, 1)
+						var rgba = imgData.data;
+						var color = "rgba(" + rgba[0] + ", " + rgba[1] + ", " + rgba[2] + ", " + rgba[3] + ")";
+						console.log("%c" + color, "color:" + color);
+						document.getElementById("color-result").innerHTML = color;
+					}
+				}
+						  
+				initColorPicker();
+
+			});
+		</script>
+
+		<div id="wrapper">
+
+		<div class="slim modal">
+			<div class="slim modal-box">
+				<h1>Scenes will go here</h1>
+				<div id="component-scenes">
+
+				</div>
+			</div>
+		</div>
+
+		<div id="feature-data" class="page">
+			<h1>Database</h1>
+		</div>
+
+		<div id="page-analytics" class="page">
+			<div class="container">
+				<span class="fullscreen-menu-close" data-role="close" data-animate="true" href="#page-analytics" style="color:black;">&times;</span>
+				<h1>Analytics</h1> 
+			</div>
+		</div>
+
+		<style>
+			.folder-tree {
+				box-shadow:var(--shadow);
+				border-radius:5px;
+				max-width:200px;
+				display:block;
+				padding:5px;
+			}
+
+			.folder-tree li.leaf {
+				padding:5px;
+				list-style-type:none;
+				border-left: 2px solid rgb(119, 119, 119);
+			}
+
+			/* for zebra table */
+			/* .folder-tree li:first-child {
+				border-radius:5px 5px 0px 0px;
+			}
+
+			.folder-tree li:last-child {
+				border-radius:0px 0px 5px 5px;
+			}
+
+			.folder-tree li:nth-child(even) {
+				/* background-color:rgb(230, 249, 255); *
+			}
+
+			.folder-tree li:nth-child(odd) {
+				border-left: 2px solid rgb(119, 119, 119);
+			} */
+
+			/* *{margin:0;padding:0;} */
+			/* body{padding:100px;background:#929292;font-size:100%;font-family:"Arial";} */
+			/* input{font-size:1em;} */
+			.folder-tree {padding-left:30px;}
+			.folder-tree li {
+				list-style-type:none;
+				color:#fff;
+				position:relative;
+				margin-left:-15px;
+			}
+			/* .folder-tree li label {
+				padding:37px 5px 0px 5px;
+				cursor:pointer;
+				/* background:url("https://www.thecssninja.com/demo/css_tree/folder-horizontal.png") no-repeat 15px 2px; *
+				display:block;
+			} */
+			.folder-tree li input {
+				width:1em;
+				height:1em;
+				position:absolute;
+				left:-0.5em;
+				top:0;
+				opacity:0;
+				cursor:pointer;
+			}
+			.folder-tree li input + ol {
+				height:1em;
+				margin:-16px 0 0 -44px;
+				background:url("https://www.thecssninja.com/demo/css_tree/toggle-small-expand.png") no-repeat 40px 0;
+			}
+			.folder-tree li input + ol > li {
+				display:none;
+				margin-left:-14px !important;
+				padding-left:1px
+			}
+			.folder-tree li.leaf {margin-left:-1px !important;}
+			.folder-tree li.leaf {
+				display:block;
+				padding-left:21px;
+				color:white;
+				text-decoration:none;
+				/* background:url("https://www.thecssninja.com/demo/css_tree/document.png") no-repeat 0 0; */
+			}
+			.folder-tree li.leaf:hover {
+				background-color:var(--grey);
+				color:var(--black);
+				transition:0.2s;
+			}
+			.folder-tree input:checked + ol {
+				height:auto;
+				margin:-21px 0 0 -44px;
+				padding:25px 0 0 80px;
+				background:url("https://www.thecssninja.com/demo/css_tree/toggle-small.png") no-repeat 40px 5px;
+			}
+			.folder-tree input:checked + ol > li {
+				display:block;
+				margin:0 0 0.063em;
+			}
+			.folder-tree input:checked + ol > li:first-child {margin:0 0 0.125em;}
+			.folder-tree input:not(:checked) ~ li.leaf { display:none; }
+
+		</style>
+
+		<script type="module">
+			$(document).ready(function(){
+
+			});
+		</script>
+
+		<section id="page-account" class="page">
+			<span class="fullscreen-menu-close" data-role="close" data-animate="true" href="#page-account" style="color:black;">&times;</span>
+			<div class="container">
+				<h1>Account <i class="fas fa-user"></i></h1>
+				<div id="component-filetree" class="folder-tree">
+
+				</div>
+			</div>
+		</section>
+
+		<section id="page-animation" class="page">
+			<h1>Animation Studio</h1>
+		</section>
+
+		<div id="features" class="dag" style="top:40px;right:0px;width:20%;z-index:9;position:absolute;opacity:1;padding:0px;border-radius:0px;color:white;">
+			<div style="
+						display:grid;
+						grid-template-columns:50px auto;
+						height:100%;				
+			">
+				<div style="height:100%;float:left;grid-column:1;background-color:var(--darkgrey);box-shadow:var(--shadow);">
+					<div class="component-navigation" style="width:2%;">
+						<div data-role="tab-trigger" href="#feature-entities" class="right-col"><i class="fas fa-cube"></i></div>
+						<div data-role="tab-trigger" href="#feature-lighting" class="right-col"><i class="fas fa-sun"></i></div>
+						<div data-role="tab-trigger" href="#feature-components" class="right-col"><i class="fas fa-wrench"></i></div>
+						<div data-role="tab-trigger" href="#feature-materials" class="right-col"><i class="fas fa-palette"></i></div>
+						<div data-role="tab-trigger" href="#feature-comets" class="right-col"><i class="fas fas fa-meteor"></i></div>
+						<div data-role="tab-trigger" href="#feature-images" class="right-col"><i class="far fa-images"></i></div>
+						<div data-role="tab-trigger" href="#feature-data" class="right-col"><i class="fas fa-database"></i></div>
+						<div data-role="tab-trigger" href="#feature-analytics" class="right-col"><i class="fas fa-chart-pie"></i></div>
+						<div data-role="tab-trigger" href="#feature-ai" class="right-col"><i class="fas fa-atom"></i></div>
+						<div data-role="tab-trigger" href="#feature-physics" class="right-col"><i class="fas fa-apple-alt"></i></div>
+						<div data-role="tab-trigger" href="#feature-navigation" class="right-col"><i class="fas fa-map-marked"></i></div>
+						<div data-role="tab-trigger" href="#feature-networking" class="right-col"><i class="fas fa-network-wired"></i></div>
+						<div data-role="tab-trigger" href="#feature-vr" class="right-col"><i class="fas fa-vr-cardboard"></i></div>
+						<div data-role="tab-trigger" href="#feature-animation" class="right-col"><i class="fas fa-walking"></i></div>
+						<div data-role="tab-trigger" href="#feature-interface" class="right-col"><i class="fas fa-th"></i></div>
+						<div data-role="tab-trigger" href="#feature-debug" class="right-col"><i class="fas fa-bug"></i></div>
+						<div data-role="tab-trigger" href="#feature-scenes" class="right-col"><i class="fas fa-globe-americas"></i></div>
+						<div data-role="page-trigger" href="#page-account" class="right-col"><i class="fas fa-user"></i></div>
+						<div data-role="page-trigger" href="#page-about" class="right-col"><i class="fas fa-info-circle"></i></div>
+						<div data-role="page-trigger" href="#page-documentation" class="right-col"><i class="fas fa-feather-alt"></i></div>
+					</div>
+				</div>
+
+				<div id="feature-entities" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Entities <i class="fas fa-cube"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of entities and their meshes</span>
+						<div id="component-dropzone" style="background-color:white;width:100%;height:200px;border-radius:
+													5px;box-shadow:var(--shadow);line-height:200px;text-align:center;color:var(--black);font-size:1.2rem;">
+							Drag File Here
+						</div>
+						<a><i class="fas fa-upload"></i> Import Model</a>
+					</div>
+				</div>
+
+				<div id="feature-lighting" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Lighting <i class="fas fa-sun"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Includes skyboxes and light elements</span>
+						<div id="components-skybox"></div>
+						<div id="components-light"></div>
+						<div id="create-light">
+							<a class="modal-button" href="#lighting-modal">
+								<i class="far fa-plus-square"></i> Create Light
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div id="feature-tints" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Palette <i class="fas fa-palette"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of tints</span>
+
+					</div>
+				</div>
+
+				<div id="feature-components" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Components <i class="fas fa-wrench"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span>
+					</div>
+				</div>
+
+				<style>
+					.thumbnail {
+						width:100px;
+						height:100px;
+						border-radius:50%;
+						box-shadow:var(--shadow);
+						flex:1;
+					}
+				</style>
+
+				<div id="feature-materials" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Materials <i class="fas fas fa-palette"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span>
+
+						<i class="fas fa-tint"></i> Color Picker <input type="color" />
+						<canvas id="colorCanvas"></canvas>
+						<div id="color-result"></div>
+
+						<div style="display:flex;float:left;flex-wrap:wrap;width:200px;">
+							<img src="assets/texture/hdr/aquatic.jpg" class="thumbnail">
+							<img src="assets/texture/hdr/clouds.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/darkstorm.jpg" class="thumbnail">
+							<img src="assets/texture/hdr/nebula_red.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/nebula_dark.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/nebula_green.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/neon_room.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/space.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/galaxy.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/glitch.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/grey_clouds.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/stars.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/exosphere.jpeg" class="thumbnail">
+							<img src="assets/texture/hdr/evening.jpeg" class="thumbnail">
+						</div>
+					</div>
+				</div>
+
+				<div id="feature-comets" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Comets <i class="fas fa-meteor"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Comets are nebulas form of packages</span>
+
+					</div>
+				</div>
+
+				<div id="feature-images" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Textures <i class="fas fa-images"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span>
+					</div>
+				</div>
+
+				<div id="feature-ai" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">AI <i class="fas fa-atom"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span>
+					</div>
+				</div>
+
+				<div id="feature-physics" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Physics <i class="fas fa-apple-alt"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span>
+						<form>
+							<input type="checkbox" value="Gravity" checked=false /> Gravity 
+							<input type="checkbox" value="Kinematics" checked=false /> Gravity 
+							Add Collider
+						</form> 
+					</div>
+				</div>
+
+				<div id="feature-analytics" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Analytics <i class="fas fa-chart-pie"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span>
+						<div id="component-statistics">
+						</div>
+						<a data-role="page-trigger" href="#page-analytics">Full Analytics</a>
+					</div>
+				</div>
+
+				<div id="feature-vr" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">VR <i class="fas fa-vr-cardboard"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span>
+						<li>Rig</li>
+						<li>HMD</li>
+						<li>Left Controller</li>
+						<li>Observables</li>
+						<li>Right Controller</li>
+						<li>Observables</li>
+					</div>
+				</div>
+
+				<div id="feature-navigation" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Navigation <i class="fas fa-map-marked"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Add a naviation mesh</span>
+					</div>
+				</div>
+
+				<div id="feature-networking" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Networking <i class="fas fa-network-wired"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Create a server</span>
+					</div>
+				</div>
+
+				<div id="feature-animation" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Animation <i class="fas fa-walking"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span><br>
+						<div id="component-mixers"></div>
+						<a data-role="page-trigger" href="#page-animation"></a>
+					</div> 
+				</div>
+
+				<div id="feature-interface" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Interface <i class="fas fa-canvas"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span>
+						<li>HUD editor</li>
+						<li>Create text block</li>
+					</div>
+				</div>
+
+				<div id="feature-scenes" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Scenes <i class="fas fa-globe"></i></H2></div>
+					<div class="content">
+						<h3>Scenes</h3>
+						<div id="component-scenes"></div>
+						<hr>
+						<div id="component-gates"></div>
+					</div>
+				</div>
+
+				<div id="feature-account" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Account <i class="fas fa-user"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Lists of addable entity components</span>
+						<a data-role="page-trigger" href="#page-account">Account</a>
+					</div>
+				</div>
+
+				<div id="feature-documentation" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Specification</H2> <i class="fas fa-feather-alt"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Specification and Documentation</span>
+						<li>About</li>
+						<li>Portfolio</li>
+					</div>
+				</div>
+
+				<div id="feature-debug" class="component" data-role="tab">
+					<div class="header"><H2 class="m-0">Specification</H2> <i class="fas fa-feather-alt"></i></H2></div>
+					<div class="content">
+						<span class="p-5">Debug Settings</span>
+						<li>VR</li>
+						<li>Entities</li>
+						<li>Warning Type</li> 
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="lighting-modal" class="slim modal">
+			<div class="slim modal-box">
+				<div>
+					<li>Create Skybox</li> 
+					<li>Create Light</li> 
+
+					<form>
+						<input type="text" placeholder="name" />
+						<input type="text" placeholder="name" />
+						<select>
+							<option value="light-ambient">Ambient</option> 
+							<option value="light-directional">Directional</option> 
+							<option value="light-point">Point</option> 
+							<option value="light-diffuse">Diffuse</option> 
+							<option value="light-hemispheric">Diffuse</option> 
+						</select>
+					</form>
+				</div>
+			</div>
+		</div>
+
 		<div id="loading-background" class="hide center loading-background">
 			<div class="tY-60">
 			  <H1 id="loading-text" class="loading-text">Project <b>NEBULA</b></H1>
@@ -102,75 +745,13 @@
 		</div>
 
 		<style>
-			body, html { overflow: hidden; }
+			body, html { overflow: hidden; overflow-y:hidden; }
 		</style>
 
-		<script type="module">
-			$(document).ready(function(){
-				$("li[data-role='hover-dropdown-trigger']").on("mouseover", function(){
-					$(".hover-dropdown").each(function(){
-						$(this).hide();
-					});
-					let target = $(this).attr("href");
-					console.log("TARGET IS: "+target);
-					$(`${target}`).show();
-				});
-				$(".hover-dropdown").on("mouseleave", function(){
-					$(this).hide();
-				});
-				$("li[data-role=toggle]").click(function(){
-					let target = $(this).attr('data-target');
-					console.log(target);
-					$(`#${target}`).show();
-					$("#command-bar").hide();
-				});
-				$("[data-role=close]").click(function(){
-					let target = $(this).attr('data-target');
-					console.log(target);
-					$(`#${target}`).hide();	
-					$("#command-bar").show();				
-				});
-				$("#loading-background").show();
-			});
-		</script>
-		  <header>
-			<div class="container">
-			  <nav id="navbar" class="nav-header">
-				<span class="left"><b class="brand" style="color:white;">CSCI5619 Project</b></span>
-				<span><img id="starzoku-logo starzoku-logo-mobile" class="logo" src="https://starzoku.s3.amazonaws.com/favicon-32x32.png"/></span>
-				  <ul id="navbar" class="header-navbar right white">
-					<li id="fullscreen-menu-trigger" data-role="toggle" data-target="fullscreen-menu" class="trigger"><i class="fas fa-globe"></i> Menu</li>
-					<li id="camera-trigger" data-role="hover-dropdown-trigger" class="trigger"><i class="fas fa-camera"></i> Camera</li>
-					<li data-role="hover-dropdown-trigger" class="trigger" href="#environments"><i class="fas fa-globe"></i> Scene</li>
-					<li id="current-scene" style="display:none;" data-value="scene"></li>
-					<div id="environments" class="hover-dropdown">
-						<ol>
-							<li data-role="scene-trigger" href="newyork">New York</li>
-							<li data-role="scene-trigger" href="scene">Space</li>
-							<li data-role="scene-trigger" href="flight">Flight</li> 
-							<li data-role="scene-trigger" href="tron">Circuit</li> 							
-							<!-- <li><a href="stocket.html"><i class="fas fa-rocket"></i> Stocket</a></li>
-							<li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-							<li><a href="interface.html"><i class="fas fa-home"></i> Interfacing</a></li> -->
-<!--							<li data-role="scene-trigger" href="ikea">Ikea</li> -->
-<!--							<li data-role="scene-trigger" href="retro">Retro</li> -->
-<!--							<li data-role="scene-trigger" href="space">Space</li> -->
-<!--							<li data-role="scene-trigger" href="pompeii">Pompeii</li> -->
-						</ol>
-					</div>
-					<li><a class="modal-button" href="#settings-modal"><i class="fas fa-cogs"></i> Settings</a></li> 
-					<!-- <li>
-					  <a id="sidenav-trigger" href="javascript:void(0);">
-						<i class="fa fa-bars sidenav-trig"></i>
-					  </a>
-					</li> -->
-				  </ul>
-				</div>
-			  </nav>
-		  </header>
+
 
 		  <div class="fullscreen-menu" id="fullscreen-menu">&nbsp;
-			  <span class="fullscreen-menu-close" data-role="close" data-target="fullscreen-menu">&times;</span>
+			  <span class="fullscreen-menu-close" data-role="close" href="#fullscreen-menu">&times;</span>
 			  <div class="content">
 				  <span class="applet red-bg"><i class="fas fa-film"></i></span>
 				  <span class="applet red-bg"><i class="far fa-square"></i></span>
@@ -234,7 +815,7 @@
 				background-color:var(--black);
 				border-radius:5px;
 				box-shadow:var(--shadow);
-				z-index:0;
+				z-index:-1;
 				padding:20px;
 			}
 
@@ -249,6 +830,7 @@
 				border-radius:5px;
 				box-shadow:var(--shadow);
 				padding:20px;
+				z-index:0;
 			}
 
 			#command-bar li {
@@ -275,46 +857,72 @@
 				box-shadow:var(--shadow);
 				z-index:9;
 				padding:100px 30px;
+				overflow-y:auto;
 			}
-			.dag li {
-				border-radius:10px;
-				padding:3px 10px;
+
+			::-webkit-scrollbar {
+				width: 10px;
+			}
+
+			/* Track */
+			::-webkit-scrollbar-track {
+				box-shadow: inset 0 0 5px grey; 
+				border-radius: 10px;
+				display:none;
+			}
+			
+			/* Handle */
+			::-webkit-scrollbar-thumb {
+				background:rgb(63, 63, 63);
+				border-radius: 10px;
+				padding:5px;
+			}
+
+			/* Handle on hover */
+			::-webkit-scrollbar-thumb:hover {
+				background:rgb(123, 123, 123);
 				display:block;
+			}
+
+			.dag li {
+				/* border-radius:10px; */
+				padding:3px 10px;
+				/* display:block; */
 				list-style-type: none;
 			}
 
 			.dag li:hover {
-				transition:0.2s;
+				/* transition:0.2s;
 				background-color:var(--grey);
-				color:var(--black);
+				color:var(--black); */
 			}
 		</style> 
+
+		<div id="body">
 
 		<div id ="alert-wrapper"></div>
 		<div id ="battery-wrapper"></div>
 		<div id="scene-container"></div>
-		<div id="depth-container" style="z-index:900000;position:absolute;"></div>
-		<div id ="logger" style="display:none;">
+		<div id="depth-container" style="z-index:9;position:absolute;"></div>
+		<div id="debug" class="system-control" style="display:none;">
 			Dynamic Logger
 			<div id="logger-content">
 
 			</div>
 		</div>
-		<div id="command-bar">
-			<li id="command-save" data-role="command">Save</li>
-			<li id="command-open" data-role="command">Open</li>
-			<li id="command-select" data-role="command">Select</li> 
-			<li id="command-run" data-role="command">Run</li>
-			<li id="command-stock" data-role="command">Stock</li>		
-		</div>
-
 
 		<!-- VOICE INTERPRETER -->
-		<button id="voice-button" class="voice-button">Start</button>
-		<div class="voice-output">
-			<span id="final_span"></span>
-			<span id="interim_span" style="color:grey"></span>
+		<!-- <button id="voice-button" class="voice-button system-control">Start</button> -->
+		<div id="voice-output" class="slim modal">
+			<div class="slim modal-box black-bg white"> -->
+				<h1>Voice Output</h1> 
+				<div class="voice-output">
+					<span id="final_span" style="color:white;"></span>
+					<span id="interim_span" style="color:grey"></span>
+				</div>
+			</div>
 		</div>
+
 
 		<style>
 			.voice-button {
@@ -326,14 +934,15 @@
 			}
 
 			.voice-output {
-				border:dotted;
+				border:solid;
 				padding:10px;
 				position:absolute;
 				top:50px;
 				left:700px;
 				height:100px;
 				width:250px;
-				background-color:white;
+				background-color:var(--black);
+				color:white;
 			}
 
 			.list {
@@ -362,39 +971,65 @@
 				color:var(--grey);
 				border-radius:5px;
 			}
+			.component-menu {
+				background-color:black;
+				padding:40px;
+				float:right;
+				width:15%;
+				color:white;
+				display:grid;
+				/* height:100%; */
+				z-index:9;
+			}
+			.component-navigation {
+				display:grid;
+				grid-template-columns:50px;
+				height:500px;
+			}
+			.right-col {
+				grid-row: auto;
+				background-color: var(--darkgrey);
+				padding:10px;
+				text-align:center;
+			}
+
+			.right-col:hover {
+				background-color:white;
+				color:black;
+				transition:0.2s;
+			}
 		</style>
 
-		<div id="command-bar" class="kid" style="position:absolute;top:100px;">
+<!---------------- CODE FOR STOCK LIST ---------------->
+		<!-- <script type="module">
+			$(document).ready(function(){
+				// import * as Script from './js/modules/script.js';
+				$("div.search-bar").keyup(function(){
+					let target = $(this).attr('data-target');
+					console.log(`search target is ${target}`);
+					$(`#${target}`).show();
+				});
+
+				$("li#stock").click(function(){
+					// console.log("vvvv"); 
+					// console.log($(this).attr("data-target"));
+					// Script.send("stock", $(this).attr("data-target"));
+				});
+
+			});
+		</script>  -->
+		<!-- <div id="command-bar" class="kid system-control" style="position:absolute;top:100px;">
 			<div id="search-bar" class="search-bar" contenteditable="true" data-role="search" data-target="stocks"></div>
 			<ol id="stocks" class="list">
 				<li>Sample result</li>
 			</ol>
-		</div>
+		</div> -->
 
 		<script>
 
-</script>
+		</script>
 
-		<script type="module">
-		$(document).ready(function(){
-			// import * as Script from './js/modules/script.js';
-			$("div.search-bar").keyup(function(){
-				let target = $(this).attr('data-target');
-				console.log(`search target is ${target}`);
-				$(`#${target}`).show();
-			});
 
-			$("li#stock").click(function(){
-				console.log("vvvv"); 
-				// console.log($(this).attr("data-target"));
-				// Script.send("stock", $(this).attr("data-target"));
-			});
-
-			// $(document).click(function(){
-			// 	console.log("why");
-			// });
-		});
-		</script> 
 
 		<style>
 
@@ -457,21 +1092,12 @@
 
 		</style>
 
+		</div>
+
 		<div id="inspector" class="slim modal" data-unique="editor" data-role='modal'>
 			<div class="slim modal-box" style="background-color:var(--black);opacity:0.9;color:white;">
 			</div>
 		</div>
-
-		<div id="rando" style="position:absolute;top:200px;left:500px;background-color:var(--black);padding:10px 10px;border-radius:10px;">
-			<li data-role="hover-dropdown-trigger" style="color:white;list-style-type:none;" class="trigger" href="#environment-select"><i class="fas fa-globe"></i> Environment</li>
-			<div id="environment-select" class="hover-dropdown">
-				<li href="production">production</li>
-				<li href="development">development</li>
-				<li href="development">staging</li>
-				<li href="development">testing</li>
-				<li href="development">hybrid</li>
-			</div>
-		</div> 
 
 		<div id="settings-modal" class="slim modal" data-unique="editor" data-role='modal'>
 			<div class="slim modal-box">
@@ -489,6 +1115,8 @@
 					</div>
 				</div>
 			</div>
+		</div>
+
 		</div>
 	</body>
 </html>

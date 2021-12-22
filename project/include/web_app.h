@@ -24,6 +24,7 @@
 #include "builder.h"
 #include "financial/iex.h"
 #include "ai/nlp.h"
+// #include <filesystem>
 
 class WebApp : public JSONSession {
   public:
@@ -33,7 +34,32 @@ class WebApp : public JSONSession {
         handler = new Handler;
         analytics = Analytics::instance();
         nlp = new NLP;
-        // drone_runtimes = {};
+
+        // for (const auto& file : directory_iterator("web/assets/texture/hdr")) {
+            // Console::Log(INFO, file.path());
+            // cout << file.path() << endl;
+            // return EXIT_SUCCESS;
+        // }
+        std::cout << "Wow" << std::endl;
+        FILE* stream;
+        const int max_buffer = 256;
+        char buffer[max_buffer];
+        std::string cmd = "ls web/assets/texture/hdr";
+        cmd.append(" 2>&1");
+
+        stream = popen(cmd.c_str(), "r");
+
+        if (stream) {
+          while (!feof(stream))
+            if (fgets(buffer, max_buffer, stream) != NULL) files.append(buffer);
+          pclose(stream);
+        }
+        // return data;
+        Console::Log(SUCCESS, "File directory parsed!");
+        // std::cout << files << std::endl;
+        // picojson::value val = picojson::value(files);
+        // this->sendJSON(val);
+        // system("ls web/assets/texture/hdr");
     }
 
     /* @brief called when the server is shutdown -- ENSURE NO MEMORY LEAKS */
@@ -100,6 +126,7 @@ class WebApp : public JSONSession {
     void UpdateTimeMap(const std::string&, float distance = 0); // Update the drone time map
     Analytics* analytics;
     NLP* nlp;
+    std::string files;
 };
 
 #endif

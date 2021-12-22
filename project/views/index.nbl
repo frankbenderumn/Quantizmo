@@ -1,0 +1,7 @@
+<html>
+<head>
+</head>
+<body>
+{$nbl p(content->"example" comet->rando) }
+</body>
+</html>

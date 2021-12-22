@@ -1,5 +1,9 @@
-import { Vector3 } from "../three.module.js";
+import { LinearEncoding, Vector3 } from "../three.module.js";
 import { WSApi } from "./system/socket.js";
+import * as Loader from "./loader.js";
+import { GLTFLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js";
+import { GLTFExporter } from "https://cdn.skypack.dev/three/examples/jsm/exporters/GLTFExporter.js";
+import { Entity } from "./entity.js";
 
 let _vr = false;
 let _entities;
@@ -30,30 +34,258 @@ export function icon(name) {
     return i;
 }
 
+export function fileTree(files) {
+    let dir = document.getElementById("component-filetree");
+    console.log("%c %s", "color: green", files);
+    let o = JSON.parse(files);
+    for (let e in o) {
+        if (e == "response") {
+            if (o[e].hasOwnProperty("files")) {
+                let arr = o[e].files.split("\n");
+                let label = document.createElement("label");
+                label.setAttribute("for", "directory");
+                let input = document.createElement("input");
+                input.style.display = "none";
+                input.setAttribute("type", "checkbox");
+                label.setAttribute("id", "directory");
+                label.append(icon("folder"));
+                label.append(" assets");
+                label.addEventListener("click", function(){
+                    input.checked = !input.checked;
+                });
+                dir.append(label);
+                dir.append(input);
+                for (let i of arr) {
+                    if (i != "") {
+                        // zerba method
+                        let li = document.createElement("li");
+                        li.setAttribute("data-value", i);
+                        li.className = "leaf";
+                        li.append(icon("file"));
+                        li.append(" "+i);
+                        dir.append(li);
+
+                        // tree method
+                        // let li = document.createElement("li");
+
+                        // <label for="menu-1-1">menu-1-1</label>
+                        // <input type="checkbox" id="menu-1-1" />
+                    }
+                }
+            }
+        }
+    }
+    // dir.append(files);
+}
+
+export function components(param) {
+    let element = document.getElementById("components");
+    // element.setAttribute("id", "component-menu");
+    // element.className = "dag";
+    // element.style.float = "right";
+    // element.style.width = "500px";
+    // element.style.padding = "0px";
+    // let cols = document.createElement("div");
+    // cols.className = "component-navigation";
+    // let colA = document.createElement("div");
+    // colA.append("A");
+    // colA.className = "left-col";
+    // cols.append(colA);
+    // for (let i = 0; i < 12; i++) {
+    //     let col = document.createElement("div");
+    //     col.className = "right-col";
+    //     col.append(`row ${i}`);
+    //     cols.append(col);
+    // }
+    // element.append(cols);
+    // document.body.append(element);
+
+    // <section id="component-menuz" style="display:block;">
+    // <div id="component-navigationz">
+    //     <div class="left-col">A</div>
+    //     <div class="right-col">B</div>
+    // </div>
+// </section>
+}
+
+function leaf(e, parent = undefined) {
+    let li = document.createElement("li");
+    li.className = "leaf";
+    li.setAttribute("data-role","entity");
+    if (parent != undefined) {
+        li.setAttribute("data-entity-id",parent.entityId);
+    } else {
+        li.setAttribute("data-entity-id",e.entityId);
+    }
+    if (e.name == "Light") {
+        li.append(icon("lightbulb"));
+    } else if (e.name == "Camera") {
+        li.append(icon("camera"));
+    } else {
+        li.append(icon("cube"));
+    }
+    li.append(" "+e.name);
+    return li;
+}
+
 export function dag(entities) {
     let shell = document.createElement("section");
-    shell.className = "dag ";
+    shell.className = "dag folder-tree";
     shell.setAttribute("id", "dag");
     _entities = entities;
+    console.log("########");
+    console.log(entities);
     for (let e of entities) {    
-        let li = document.createElement("li");
-        li.className = "fuck";
-        li.style = "display:block;"
-        li.setAttribute("data-role","entity");
-        li.setAttribute("data-entity-id",e.entityId);
-        li.append(icon("stroopwafel"));
-        li.addEventListener('click', function() {
-            $("#inspector").show();
-            $("#inspector div").html('');
-            $("#inspector div").append("<H5>entity inspector for "+e.name+"</H5>");
-            let f = createForm(e);
-            $("#inspector div").append(f);
-        });
-        li.append(" "+e.name+" loaded");
-        shell.append(li);
-        log(e.name+" loaded");
+        if (e.children.length > 0) {
+            console.log("element has children");
+            let li = document.createElement("li");
+            li.className = "directory";
+            let label = document.createElement("label");
+            li.style.display = "block";
+            li.style.padding = "5px 0px";
+            label.setAttribute("for", "directory");
+            let input = document.createElement("input");
+            input.style.display = "none";
+            input.setAttribute("type", "checkbox");
+            input.checked = false;
+            li.append(label);
+            li.append(input);
+            label.setAttribute("id", "directory");
+            label.addEventListener("click", function(){
+                input.checked = !input.checked;
+                (input.checked) ? li.style.color = "rgba(0, 255, 255)" : li.style.color = "white";
+            });
+            li.className = "comet";
+            li.setAttribute("data-role","entity");
+            li.setAttribute("data-entity-id",e.entityId);
+            // if (e.name == "Light") {
+            //     label.append(icon("lightbulb"));
+            // } else if (e.name == "Camera") {
+            //     label.append(icon("camera"));
+            // } else {
+                label.append(icon("meteor"));
+            // }
+            label.append(` ${e.name}`);
+            label.addEventListener('dblclick', function() {
+                $("#inspector").show();
+                $("#inspector div").html('');
+                $("#inspector div").append("<H5>entity inspector for "+e.name+"</H5>");
+                let f = createForm(e);
+                $("#inspector div").append(f);
+            });
+            for (let j of e.children) {
+                li.append(leaf(j, e.entityId));
+                console.warn("HAS CHILD");
+            }
+            shell.append(li);
+            // shell.append(input);
+        } else {
+            shell.append(leaf(e));
+            // let li = document.createElement("li");
+            // li.className = "leaf";
+            // li.style = "display:block;"
+            // li.setAttribute("data-role","entity");
+            // li.setAttribute("data-entity-id",e.entityId);
+            // li.append(icon("cube"));
+            // li.addEventListener('click', function() {
+            //     $("#inspector").show();
+            //     $("#inspector div").html('');
+            //     $("#inspector div").append("<H5>entity inspector for "+e.name+"</H5>");
+            //     let f = createForm(e);
+            //     $("#inspector div").append(f);
+            // });
+            // li.append(" "+e.name+" loaded");
+            // shell.append(li);
+            // log(e.name+" loaded");
+        }
+
     }
-    document.body.append(shell); 
+    document.getElementById("wrapper").append(shell); 
+}
+
+export function entities(scene) {
+    let glbLoader = new GLTFLoader();
+    let exporter = new GLTFExporter();
+
+    const dropzone = document.getElementById('component-dropzone');
+
+    dropzone.ondragover = dropzone.ondragenter = function (e) {
+        e.preventDefault();
+    }
+    dropzone.ondrop = function (e) {
+        e.stopPropagation()
+        e.preventDefault()
+        console.log(e);
+        const files = (e.dataTransfer).files;
+        const reader = new FileReader();
+        console.log(files);
+        reader.onload = function () {
+            console.warn(reader.result);
+            // Loader.load(reader.result).then(function(data) {
+            //     console.warn(data);
+            // });
+            glbLoader.parse(reader.result, "/", (data) => {
+                console.log(data);
+                let formatted = Loader.format(data);
+                console.log(formatted);
+                let entity = new Entity(formatted);
+                console.log(entity);
+                scene.scene.add(entity.model);
+                let ents = scene.entities;
+                ents.push(entity);
+                scene.entities = ents;
+                exporter.parse(data.scene,
+                	function ( gltf ) {
+                        console.log( gltf );
+                        // var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(gltf));
+                        let link = document.createElement("a");
+                        link.style.display = "none";
+                        document.body.append(link);
+
+                        function saveArrayBuffer( buffer, filename ) {
+
+                            save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
+            
+                        }
+
+                        function save( blob, filename ) {
+
+                            link.href = URL.createObjectURL( blob );
+                            link.download = filename;
+                            link.click();
+                        }
+
+                        saveArrayBuffer( gltf, 'scene.glb' );
+
+                        // el.click();
+                        // '<a href="data:' + data + '" download="data.glb">download JSON</a>';
+                        // downloadJSON( gltf );
+                        // console.log(gltfJson);
+                        // const jsonString = JSON.stringify(gltfJson);
+                        // console.log(jsonString);
+                    
+                        // // The following doesn't seem to work due to iframe sandboxing.
+                        // // But please save the gltf json from the Console to obtain the file.
+                        // const blob = new Blob([jsonString], { type: "application/json" });
+                        // saveAs(blob, "colored-square.glb");
+                        console.log("Download requested");
+                
+                    },
+                    // called when there is an error in the generation
+                    function (error) {
+                        console.error("Failed to export glb file");
+                
+                    },
+                    {binary: true}
+                )
+
+            }, 
+            (error) => {
+                console.error(error);
+            });
+        };
+        reader.readAsArrayBuffer(files[0]);
+    }
 }
 
 export function cleanDag() {
@@ -129,6 +361,36 @@ export function createVector(name, vector) {
     group.append(label);
     group.append(x); group.append(y); group.append(z);
     return group;
+}
+
+export function lighting(lights) {
+    let element = document.getElementById("components-light");
+    for(let e of lights) {
+        let li = document.createElement("li");
+        li.setAttribute("data-uuid", e.uuid);
+        li.setAttribute("data-name", e.name);
+        li.setAttribute("id", "component-light");
+        li.className = "component-li";
+        li.append(`Light ${e.name}`);
+        element.append(li);
+    }
+}
+
+export function analytics(entities, collections, collidables, clickables, grabbables) {
+    let el = document.getElementById("component-statistics");
+    let div = document.createElement("div");
+    div.append(createLi("Entities: "+entities.length));
+    div.append(createLi("Collections: "+collections.length));
+    div.append(createLi("Collidables: "+collidables.length));
+    div.append(createLi("Clickables: "+clickables.length));
+    div.append(createLi("Grabbables: "+grabbables.length));
+    el.append(div);
+}
+
+function createLi(content) {
+    let li = document.createElement("li");
+    li.append(content);
+    return li;
 }
 
 export function createInput(type, content, role, data = '', options = '') {

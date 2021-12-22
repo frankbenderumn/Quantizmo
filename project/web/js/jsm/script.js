@@ -1,5 +1,6 @@
 import * as Loader from './loader.js';
 import * as Feature from './feature.js';
+import { Scene } from './scene.js';
 
 let _api = new WSApi();
 let idx = -1;
@@ -119,13 +120,22 @@ async function loadControllers() {
     return controllers;
 }
 
-export function send(command, params) {
-    console.log("%%%%%%");
-    console.log(params);
-    _api.sendPostCommand(command, params).then(function(data){
-        console.log("$$$$");
-        console.log(data);
-    });
+export async function send(command, params, scene=undefined) {
+    // console.log("%%%%%%");
+    // console.log(params);
+    let response = "Async get on filesystem";
+    if (command == "save") {
+        _api.sendPostCommand(command, params).then(function(data){});
+    } else {
+        if (scene instanceof Scene && command == "setup") {
+            await _api.sendCommand(command, params).then(function(data){
+                scene.files = JSON.stringify(data);
+            });
+        } else {
+            console.error("NEBULA::ERROR -- FAILED TO RETRIEVE ASSET FILE SYSTEM");
+        }
+    }
+    return response;
 }
 
 export async function generate(type) {

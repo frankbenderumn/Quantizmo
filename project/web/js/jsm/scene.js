@@ -16,7 +16,7 @@ import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three@0.134.0/
 
 // import { WSApi } from './system/socket.js'
 
-let _scene, _renderer, _camera, lights, mixers, script, controls;
+let _scene, _renderer, _camera, _lights, _mixers, _script, controls;
 let updatables = [];
 let clock = new THREE.Clock();
 let _scriptsDir = "./js/scenes/";
@@ -63,6 +63,8 @@ let _regModelRight;
 let _loaders = [];
 let _ports = [];
 let _dofMenu;
+let _files;
+let _self;
 
 // scene modes
 // production, development
@@ -139,16 +141,17 @@ class Scene {
         _raycaster = new Raycaster();
         _workingMatrix = new Matrix4();
         _container = container;
-        lights = Feature.createLights();
+        _lights = Feature.createLights();
         _renderer = Feature.createRenderer(container, isVr, onSessionStart, onSessionEnd);
         controls = Feature.createControls(_camera, _renderer.domElement);
         _ui = Feature.createUI();
         _jarvis = Feature.createJarvis();
         const texloader = new THREE.TextureLoader();
-        _scene.add(_skybox);
+        // _scene.add(_skybox);
         // texloader.load('https://images.pexels.com/photos/1205301/pexels-photo-1205301.jpeg' , function(texture) {
         //   _scene.background = texture;  
         // });
+        _self = this;
 
         Analyser.analyze(_song, _camera);
         // scene.add(song[0]);
@@ -422,7 +425,7 @@ class Scene {
         // _ui.scene = _scene;
 
         _target = target;
-        for (const e of lights) {
+        for (const e of _lights) {
             _scene.add(e);
         }
         
@@ -533,8 +536,20 @@ class Scene {
                 _controls.collidables = _clickables;
                 _controls.grabbables = _grabbables;
                 _collidables = _clickables;
-                // }
+                console.log("YIKES");
+                let params = {name: "rando"};
+                console.log(JSON.stringify(_self));
+                Script.send("setup", params, _self).then(function(response){
+                    // console.log(_files);
+                    // console.log(response);
+                    Scaffolding.fileTree(_files);
+                });
+                // console.log("%c %s", "color: rgba(0, 200, 200)", response);
                 Scaffolding.dag(_entities);
+                Scaffolding.lighting(_lights);
+                Scaffolding.analytics(_entities, _collections, _collidables, _clickables, _grabbables);
+                Scaffolding.entities(_self);
+                // }
                 // console.warn("scene is: ");
                 // console.log(_scene);
                 // console.log(_clickables);
@@ -748,6 +763,8 @@ class Scene {
     }
 
     // getters and setters
+    get entities() { return _entities; }
+    set entities(val) { _entities = val; }
     get UI() { return _ui; }
     set UI(val) { _ui = val; }
     get clickables() { return _clickables; }
@@ -784,6 +801,9 @@ class Scene {
           this.tick();
         });
     }
+
+    get files() { return _files; }
+    set files(val) { _files = val; }
       
     stop() {
         _renderer.setAnimationLoop(null);

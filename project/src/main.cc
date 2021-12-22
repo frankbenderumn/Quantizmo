@@ -25,7 +25,7 @@ int main(int argc, char**argv) {
 
         // pqxx::connection* C;
         Database* db = new Database();
-        db->GetTable("stocks");
+        // db->GetTable("stocks");
 
 #ifdef DEBUG
     printf("--------------------------------\n");
