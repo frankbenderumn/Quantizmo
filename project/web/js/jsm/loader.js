@@ -112,17 +112,22 @@ export function format(obj, params=undefined, dynamic=false) {
     model.rotation.copy(params.rotation)
     model.scale.copy(new THREE.Vector3(params.scale.x, params.scale.y, params.scale.z)) //*1.41
 
-    let mixer = new THREE.AnimationMixer(model);
-    const animations = obj.animations;
-    animations.forEach( function ( clip ) {
-        mixer.clipAction( clip ).play();
-    } );
+    let mixer = undefined;
+
+    let mixers = [];
+
+    const animation = obj.animations[0];
+    if (!(typeof animation === "undefined")) {
+        mixer = new THREE.AnimationMixer(model);
+        mixer.clipAction( animation ).play();
+        mixers.push( {mixer: mixer, start: params.start, duration: params.duration} );
+    }
 
     let o = {
         entityId: params.entityId,
         name: params.name,
         model: model,
-        mixer: mixer,
+        mixer: mixers,
         type: params.type,
         dynamic: dynamic,
         path: params.path,

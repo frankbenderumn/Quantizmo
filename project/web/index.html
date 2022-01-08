@@ -30,9 +30,11 @@
 						Nebula <i class="fas fa-meteor"></i>
 					</b>
 					<ul class="right white command-menu">
+						<li class="pl-5 pr-5" style="line-height:40px;"><a class="modal-button" href="#new-scene">New</a></li> 
 						<li class="pl-5 pr-5" style="line-height:40px;" data-role="command" data-type="save">Save</li> 
-						<li class="pl-5 pr-5" style="line-height:40px;" data-role="trigger" data-type="modal" href="#scene-tree">Open</li> 
+						<li class="pl-5 pr-5" style="line-height:40px;"><a class="modal-button" href="#scene-modal">Open</a></li> 
 						<!-- <li class="pl-5 pr-5" style="line-height:40px;">Select</li>  -->
+
 						<li class="pl-5 pr-5" style="line-height:40px;" data-role="command" data-type="run">Run</li> 
 						<li class="pl-5 pr-5" style="line-height:40px;" data-role="command" data-type="debug">Debug</li> 
 						<li class="pl-5 pr-5" style="line-height:40px;" data-role="command" data-type="voice">Voice</li> 
@@ -188,9 +190,9 @@
 		</style>
 
 		<script type="module">
-			window.onload = function(){
-				$("#loading-background").show();
-			}
+			// window.onload = function(){
+			// 	$("#loading-background").show();
+			// }
 			$(document).ready(function(){
 				$("#features").show();
 				$("[data-role=tab]").each(function(){
@@ -238,8 +240,10 @@
 					console.log("GET CLICKED MF");
 				});
 				$(".hover-dropdown").on("mouseleave", function(){
-					$(this).hide();
+					setTimeout(()=>{$(this).hide()}, 2000);
+					// $(this).hide();
 				});
+
 				$("li[data-role=toggle]").click(function(){
 					let target = $(this).attr('href');
 					console.log(target);
@@ -273,6 +277,8 @@
 						$(this).hide();
 					});
 				});
+
+
 
 				// let el = document.querySelectorAll(".dag");
 				// el.forEach((e) =>{
@@ -331,9 +337,6 @@
 		<div class="slim modal">
 			<div class="slim modal-box">
 				<h1>Scenes will go here</h1>
-				<div id="component-scenes">
-
-				</div>
 			</div>
 		</div>
 
@@ -515,6 +518,11 @@
 						<div id="create-light">
 							<a class="modal-button" href="#lighting-modal">
 								<i class="far fa-plus-square"></i> Create Light
+							</a>
+						</div>
+						<div id="create-skybox">
+							<a class="modal-button" href="#skybox-modal">
+								<i class="far fa-plus-square"></i> Create Skybox
 							</a>
 						</div>
 					</div>
@@ -1089,13 +1097,35 @@
 				grid-area: z;
 			}
 
+			#component-scenes li {
+				list-style-type: none;
+				padding:3px;
+			}
+
+			#component-scenes li:hover {
+				background-color:var(--black);
+				color:white;
+			}
+
 
 		</style>
 
 		</div>
 
+		<!-- MODALS ######################### -->
+
 		<div id="inspector" class="slim modal" data-unique="editor" data-role='modal'>
 			<div class="slim modal-box" style="background-color:var(--black);opacity:0.9;color:white;">
+			</div>
+		</div>
+
+		<div id="skybox-modal" class="slim modal" data-unique="editor" data-role='modal'>
+			<div class="slim modal-box" style="background-color:var(--black);opacity:0.9;color:white;">
+				<form id="skybox-form">
+					<input id="skybox-form-name" type="text" value="" placeholder="Enter skybox path" />
+					<input id="skybox-form-submit" type="submit" value="Load skybox">
+				</form>
+				<div id="component-skyboxes"></div>
 			</div>
 		</div>
 
@@ -1114,9 +1144,67 @@
 						<input type="range" min="1" max="100" value="10" class="slider" style="width:100%;" id="simSpeed">
 					</div>
 				</div>
+			</div>w
+		</div>
+
+		<div id="new-scene" class="slim modal">
+			<div class="slim modal-box">
+				<form id="new-scene-form">
+					<div contenteditable="true" id="new-scene-name" type="text"></div>
+					<select id="new-scene-template">
+						<option value="Select template"></option>
+						<option value="Shooter"></option>
+						<option value="VR"></option>
+						<option value="Platformer"></option>
+						<option value="2D Game"></option>
+					</select>
+					<input id="new-scene-submit" type="submit" />
+				</form>
+			</div>
+		</div>
+
+		<div id="scene-modal" class="slim modal">
+			<div class="slim modal-box">
+				<div id="component-scenes">
+					<!-- <ol> -->
+						<!-- <li href="production">production</li>
+						<li href="development">development</li>
+						<li href="development">staging</li>
+						<li href="development">testing</li>
+						<li href="development">hybrid</li>					 -->
+					<!-- </ol> -->
+				</div>
 			</div>
 		</div>
 
 		</div>
+
+		<script type="module">
+			$("#new-scene-submit").click(function(e){
+				let api = new WSApi();
+				// e.stopPropagation();
+				e.preventDefault();
+				let val = $("#new-scene-name").html();
+				api.sendCommand("new", {name: val});
+			});
+
+			$("#skybox-form-submit").click(function(e){
+				e.preventDefault();
+				let val = $("#skybox-form-name").val();
+				api.sendCommand("skybox", {path: val});
+			});
+			function serialize(form) {
+				let f = document.getElementById(form);
+				if (f.nodeName == "form") {
+					let object;
+					f.forEach((child) => {
+						if (child.hasAttribute("name")) {
+							object[child.name] = child.value;
+						}
+					});
+				}
+			}
+		</script>
+
 	</body>
 </html>

@@ -4,9 +4,11 @@ import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three/examples
 import { Scene } from './jsm/scene.js'
 import { Raycast } from './jsm/raycast.js'
 import * as Script from './jsm/script.js'
+import { System } from './jsm/system.js'
 
 let container = document.getElementById( 'scene-container' );
 let world;
+let system;
 let selector;
 let focus;
 let raycast;
@@ -33,11 +35,14 @@ let stateCommand = {
 };
 
 async function main() {
-    world = new Scene(container, "scene.json", false);
+    system = new System();
+    world = new Scene(container, "banjo.json", false);
+    system.scene = world;
     await world.init().then(function(){
         raycast = new Raycast(world, world.camera, world.clickables);
     });
     world.start();
+
 }
 
 // https://cdn.glitch.com/c308c431-814f-4930-8098-89fb892cc473%2Fjellyfish2_animated.glb?v=1574277583974
@@ -384,6 +389,19 @@ let press = function(e) {
         }
 });
 
+$("li[data-role=scene-trigger]").click(function(){
+    let target = $(this).attr('href');
+    console.log(`target clicked is ${target}`);
+    $("#current-scene").attr('data-value', target);
+    world.changeScript(`${target}.json`);
+});
+
+$("[data-role=scene-trigger]").click(function(){
+        let data = $(this).attr('href');
+        console.log(data);
+        world.changeScript(data);
+});
+
 // });
 
 // let turnDragSpeed;
@@ -616,13 +634,6 @@ $.fn.display = (msg) => {
     document.body.append(modal);
     modal.style.display = 'block';
   }
-
-$("li[data-role=scene-trigger]").click(function(){
-    let target = $(this).attr('href');
-    console.log(`target clicked is ${target}`);
-    $("#current-scene").attr('data-value', target);
-    world.changeScript(`${target}.json`);
-});
 
 // $(document).ready(function(){ 
 

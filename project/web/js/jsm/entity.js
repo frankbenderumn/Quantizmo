@@ -12,6 +12,7 @@ class Entity {
             (params.type) ? this._type = params.type : this._type = "undefined";
             (params.meshes) ? this._meshes = params.meshes : this._meshes = [];
             (params.interact) ? this._interact = params.interact : this._interact = 0;
+            (params.mixer) ? this._mixer = params.mixer : this._mixer = [];
             if (params.type == "controller") {
                 (params.hand) ? this._hand = params.hand : this._hand = undefined;
                 (params.node) ? this._node = params.node : this._node = undefined;    
@@ -20,6 +21,7 @@ class Entity {
         } else {
             console.log("not asynchronously loading");
         }
+        this._action = false;
     }
 
     get name() { return this._name; }
@@ -34,6 +36,8 @@ class Entity {
     get meshes() { return this._meshes; }
     get interact() { return this._interact; }
     get children() { return this._children; }
+    get action() { return this._action; }
+    set action(val) { this._action = val; }
 
     addComponent(component) {
         if (component.updatable) {
@@ -71,6 +75,20 @@ class Entity {
                 this._model.rotation.y += 2 * dt;
             }
 
+        }
+
+        if (this._mixer && this._action) {
+            for ( const mixer of this._mixer) {
+                if (mixer.start == undefined || mixer.duration == undefined) {
+                    mixer.mixer.update(dt);
+                }
+                else {
+                    var newTime = time - mixer.start;
+                    var iterations = Math.floor(newTime/mixer.duration);
+                    newTime = newTime - iterations*mixer.duration + mixer.start;
+                    mixer.mixer.setTime(newTime);
+                }
+            }
         }
     }
 

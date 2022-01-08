@@ -29,7 +29,7 @@ import { Scene,
     GridHelper
         } from 'https://cdn.skypack.dev/three@0.134.0';
 import * as Loader from './loader.js';
-import { Controls } from './controls.js';
+import { Controls } from './controls/controls.js';
 import { VRButton } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/VRButton.js';
 import { CanvasUI } from './ui/canvas.js';
 import { TetrahedronGeometry } from '../three.module.js';
@@ -434,10 +434,10 @@ export function createSkybox(params, entity = true, radius = 35000) {
   return o;
 }
 
-export function createRenderer(container, vr, start, end) {
+export function createRenderer(container, vr = false, start = undefined, end = undefined) {
   if (!vr) {
-    // const renderer = new WebGLRenderer( {container, alpha: true});
-    // return renderer;
+    const renderer = new WebGLRenderer( {container, alpha: true});
+    return renderer;
   } else {
     const renderer = new WebGLRenderer( { alpha: true, antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );

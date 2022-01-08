@@ -7,11 +7,16 @@ import { XRHandler } from './xr/xrhandler.js'
 import * as Analyser from './audio/analyser.js'
 import * as Scaffolding from './scaffolding.js'
 import * as System from './system.js'
-import { Rig } from './rig.js'
+import { Rig } from './xr/rig.js'
 import { Hand } from "./xr/hand.js";
 import * as Component from "./component.js"
-import { Matrix4, MeshBasicMaterial, Raycaster, SphereBufferGeometry } from '../three.module.js'
+import { Handler } from "./handler/handler.js"
+// import { Gamepad } from "./gamepad.js"
+import { Matrix4, MeshBasicMaterial, Raycaster, SphereBufferGeometry, Vector3 } from '../three.module.js'
 import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/webxr/XRControllerModelFactory.js';
+import { User } from "./user.js"
+import { Debug } from './debug.js'
+// import { XR } from "./xr/xr.js"
 
 
 // import { WSApi } from './system/socket.js'
@@ -22,7 +27,7 @@ let clock = new THREE.Clock();
 let _scriptsDir = "./js/scenes/";
 let _assetsDir = "../assets/models/";
 let _song = "../assets/audio/heist.wav";
-let _target = "umn.json";
+let _target = "newyork.json";
 let _updateReady = false;
 let _entities = [];
 // let _controllerGrip;
@@ -64,7 +69,11 @@ let _loaders = [];
 let _ports = [];
 let _dofMenu;
 let _files;
+let _fileSystem;
 let _self;
+let _gamepad;
+let _user;
+let _handler;
 
 // scene modes
 // production, development
@@ -108,18 +117,18 @@ class Cache {
     }
 };
 
-function onSessionStart(){
-    // _mode = "production";
-    _ui.mesh.position.set( 0, 0, -3 );
-    _camera.attach( _ui.mesh );
-    _ui.scene = _scene;
-    _vr = true;
-}
+// function onSessionStart(){
+//     // _mode = "production";
+//     _ui.mesh.position.set( 0, 0, -3 );
+//     _camera.attach( _ui.mesh );
+//     _ui.scene = _scene;
+//     _vr = true;
+// }
 
-function onSessionEnd(){
-    _camera.remove( _ui.mesh );
-    _vr = false;
-}
+// function onSessionEnd(){
+//     _camera.remove( _ui.mesh );
+//     _vr = false;
+// }
 
 class Resizer {
     constructor(container, camera, renderer) {
@@ -142,289 +151,16 @@ class Scene {
         _workingMatrix = new Matrix4();
         _container = container;
         _lights = Feature.createLights();
-        _renderer = Feature.createRenderer(container, isVr, onSessionStart, onSessionEnd);
-        controls = Feature.createControls(_camera, _renderer.domElement);
+        _renderer = Feature.createRenderer(container);
+        _controls = Feature.createControls(_camera, _renderer.domElement);
         _ui = Feature.createUI();
         _jarvis = Feature.createJarvis();
-        const texloader = new THREE.TextureLoader();
-        // _scene.add(_skybox);
-        // texloader.load('https://images.pexels.com/photos/1205301/pexels-photo-1205301.jpeg' , function(texture) {
-        //   _scene.background = texture;  
-        // });
+        // _gamepad = new Gamepad();
         _self = this;
-
-        Analyser.analyze(_song, _camera);
-        // scene.add(song[0]);
-        // _uniforms = song[1];
-
-        _vr = true;
-        if (isVr) {
-
-            function onSelectStart( event ) {
-                // this.userData.isSelecting = true;
-                const controller = event.target;
-            
-                const intersections = getIntersections( controller );
-            
-                if ( intersections.length > 0 ) {
-                    
-                    const intersection = intersections[ 0 ];
-                    if (!_controls.isTeleporting) {
-                        // if (intersection.obect.name == "line") {
-                        //     intersection = intersections[1];
-                        // }
-                        const object = intersection.object;
-                        object.material.wireframe = true;
-                        // console.log(object);
-                        let id = object.entityId;
-                        console.warn(`entityId id ${id}`);
-                        console.warn(object);
-                        if (object.ancestor != "vr-menu") {
-                            for (let mesh in _collections[id]) {
-                                controller.attach( _collections[id][mesh] );
-                            }
-                            controller.attach(object);                        
-                        } else if (object.ancestor == "earth") {
-                            // object.lastPos = object.position;
-                            // object.lastParent = controller;
-                            _target = "flight.json";
-                            this.changeScript();
-                        } else {
-                            controller.attach(object);
-                        }
-                
-                        controller.userData.selected = object;
-                        _selected = object;
-                    } else {
-                        console.error("attempting teleport");
-                        console.error(intersection);
-                        _dolly.position.copy(intersection.point);
-                    }
-            
-                }
-            }
-            
-            function onSelectEnd( event ) {
-                // this.userData.isSelecting = false;
-                const controller = event.target;
-                console.warn("releasing object");
-            
-                // const intersections = getIntersections( controller );
-
-				if ( controller.userData.selected !== undefined ) {
-
-                if (!_controls.isTeleporting) {
-					const object = controller.userData.selected;
-					object.material.wireframe = false;
-                    let id = object.entityId;
-                    if (object.ancestor != "vr-menu") {
-                        for (let mesh in _collections[id]) {
-                            _scene.attach( _collections[id][mesh] );
-                        }
-                        _scene.attach( object );
-                    } else {
-                        // let lastParent = object.lastParent;
-
-                        _scene.attach(object);
-                        // lastParent.attach( object );
-                    }
-                }
-					controller.userData.selected = undefined;
-                    _selected = undefined;
-				}            
-            }
-            
-            function getIntersections( controller ) {
-                // this._raycaster.setupXR(this._workingMatrix, this._controller);
-                // this._raycaster.castXR();
-                _workingMatrix.identity().extractRotation( controller.matrixWorld );
-                // this._raycaster.near = 0;
-                // this._raycaster.far = 20;
-                // this._dummyC
-                // console.log(this._dummyCam.quaternion);
-                // this._raycaster.ray.origin = this._dolly.position;
-                // _xScene.raycaster.ray.direction.set(0, 0, -1).applyMatrix4( controller.matrixWorld );
-
-                _raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
-                _raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( _workingMatrix );
-
-                // raycaster.intersectObjects( group.children, false );
-
-                console.warn("raycaster direction");
-                // console.log
-                console.log(_raycaster.ray.origin);
-                console.log(_raycaster.ray.direction);
-                console.log(_collidables);
-
-                // let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
-
-                // // create a default (white) Basic material
-                // const material = new THREE.MeshBasicMaterial();
-                
-                // // create a Mesh containing the geometry and material
-                // const cube = new THREE.Mesh(geometry, material);
-                
-                // cube.position.x = 0;
-                
-                // // cube.update = (dt) => {
-                // //   cube.rotation.x += 2 * dt;
-                // // }
-                // this._scene.add(cube);
-                let intersects;
-                if (_controls.isTeleporting) {
-                    intersects = _raycaster.intersectObjects( _ports, true );
-                } else {
-                    intersects = _raycaster.intersectObjects( _clickables, true );
-                }
-            
-                // return cube;
-            
-                // if ( intersects.length > 0) {
-                //     console.log(intersects);
-                //     console.log(intersects.length);
-                //     console.log(intersects[0]);
-                //     intersects[ 0 ].object.material.wireframe = true;
-                //     console.warn("intersecting");
-                // }
-
-                return intersects;
-            }
-            
-            function buildController( data ) {
-                let geometry, material;
-                switch ( data.targetRayMode ) {
-            
-                    case 'tracked-pointer':
-                        geometry = new THREE.BufferGeometry();
-                        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 10 ], 3 ) );
-                        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.0, 0.0, 0.5, 0, 0, 0 ], 3 ) );
-                        material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending, lineWidth: 5 } );
-                        return new THREE.Line( geometry, material );
-            
-                    case 'gaze':
-                        geometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
-                        material = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: true } );
-                        return new THREE.Mesh( geometry, material );
-            
-                }
-            
-            }
-            
-        // create(renderer, scene) {
-            // _xScene = scene;
-            let _leftController = _renderer.xr.getController( 0 );
-            let _rightController = _renderer.xr.getController( 1 );
-            _leftController.userData.selected = false;
-            _leftController.userData.selected = false;
-            _leftController.addEventListener( 'selectstart', onSelectStart );
-            _leftController.addEventListener( 'selectend', onSelectEnd );
-            _leftController.addEventListener( 'connected', function ( e ) {
-                this.add( buildController( e.data ) );
-                this.gamepad = e.data.gamepad;
-            } );
-        
-            _leftController.addEventListener( 'disconnected', function () {
-                this.remove( this.children[ 0 ] );
-            } );
-        
-            _rightController.addEventListener( 'selectstart', onSelectStart );
-            _rightController.addEventListener( 'selectend', onSelectEnd );
-            _rightController.addEventListener( 'connected', function ( e ) {
-                this.add( buildController( e.data ) );
-                this.gamepad = e.data.gamepad;
-            } );
-        
-            _rightController.addEventListener( 'disconnected', function () {
-                this.remove( this.children[ 0 ] );
-            } );
-        
-            _scene.add( _leftController, _rightController );
-            
-            const controllerModelFactory = new XRControllerModelFactory();
-            
-            let _leftControllerGrip = _renderer.xr.getControllerGrip( 0 );
-            _leftControllerGrip.add( controllerModelFactory.createControllerModel( _leftControllerGrip ) );
-        
-            let _rightControllerGrip = _renderer.xr.getControllerGrip( 1 );
-            _rightControllerGrip.add( controllerModelFactory.createControllerModel( _rightControllerGrip ) );
-        
-            _scene.add( _leftControllerGrip, _rightControllerGrip );
-        
-            let left = {
-                controller: _leftController,
-                grip: _leftControllerGrip
-            };
-        
-            let right = {
-                controller: _rightController,
-                grip: _rightControllerGrip
-            };
-        // }
-
-            _controller = left.controller;
-            let _controllerGrip = left.grip;
-
-            // let geometr = new THREE.CylinderGeometry( 0.1, 0.1, 0.1, 32 );
-            // let materia = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-            // let cylinder = new THREE.Mesh( geometr, materia );
-            _menuController = right;
-            // _scene.add(cylinder);
-            // _menuController.controller.add(cylinder);
-
-            _dolly = new THREE.Object3D();
-            _dolly.position.z = 5;
-            _dolly.add(_camera);
-            _scene.add(_dolly);
-            _dummyCam = new THREE.Object3D();
-            _camera.add(_dummyCam);
-            _controllers = [left, right];
-            _controls = new XRHandler(_controllers, _dolly, _dummyCam, _raycaster, _scene, _renderer, _camera);
-            // let hand = new Hand(controllers[0], controllers[1]);
-            _dolly.add(left.controller);
-            _dolly.add(left.grip);
-            _dolly.add(right.controller);
-            _dolly.add(right.grip);
-
-            // let geometry = new THREE.BoxBufferGeometry(4, 4, 4);
-
-            // // create a default (white) Basic material
-            // const material = new THREE.MeshBasicMaterial();
-          
-            // // create a Mesh containing the geometry and material
-            // const cube = new THREE.Mesh(geometry, material);
-          
-            // cube.position.x = 0;
-          
-            // cube.update = (dt) => {
-            //   cube.rotation.x += 2 * dt;
-            // }
-            // _scene.add(cube);
-
-            // this._menu = cylinder;        
-
-            // _scene.add(cylinder);
-            _rig = new Rig(_camera, _dolly, _controllers);
-
-            // _rig.automate([
-            //     [2, 2, 2],
-            //     [13, 13, 13],
-            //     [2, 0, 2],
-            //     [2, 0, 3],
-            // ]);
-
-
-
-            // const btn = new VRButton( this.renderer, { onSessionStart, onSessionEnd } );
-            // this.renderer.setAnimationLoop( this.render.bind(this) );
-
-
-        }
-
-        // _ui.mesh.position.set( 0, 0, -10 );
-        // _camera.attach( _ui.mesh );
-        // _ui.scene = _scene;
-
+        // Analyser.analyze(_song, _camera);
         _target = target;
+        _handler = new Handler();
+
         for (const e of _lights) {
             _scene.add(e);
         }
@@ -452,6 +188,7 @@ class Scene {
     async init(cache = false, target = _target) {
         await Script.run(`${_scriptsDir}${target}`, _assetsDir).then(function(data) {  
             Promise.all(data).then(function(entities) {
+                $("#loading-background").hide();
                 console.log("###########################");
                 _entities = [];
                 let arr = target.split(".");
@@ -479,11 +216,28 @@ class Scene {
                             id = mesh.entityId;
                         }
                         _collections[id] = d.meshes;
+
+                        if (d.type == "user") {
+                            Debug.log("user being added", "success");
+                            console.log(d.model);
+                            console.log(d.model.children);
+                            for (let mesh of d.model.children) {
+                                console.error(mesh);
+                                if (mesh.name != "Camera" && mesh.name != "Light") {
+                                    mesh.position.copy(new Vector3(0, 0, 0));
+                                    _user = new User(mesh, _scene, _renderer, _camera, _controls, _handler, d);
+                                    break;
+                                }
+                            }
+                            _handler.user = _user;
+
+                            // _huser = _user;
+                        }
                         // console.warn(_collections);
                         // walkDown(d.model);
                     }
-                    console.warn("PRE CONTROLLER");
-                    console.log(d);
+                    // console.warn("PRE CONTROLLER");
+                    // console.log(d);
                     if (d.name.includes("tron")) {
                         let i;
                         (d.hand != "left") ? i = 0 : i = 1;
@@ -511,8 +265,8 @@ class Scene {
                         d.model.visible = false;
                         _menuController.controller.add(d.model);
                         // d.model.position.copy(_menuController.grip.position);
-                        console.log("DOF-MENU");
-                        console.warn(d.model);
+                        // console.log("DOF-MENU");
+                        // console.warn(d.model);
                         d.update = function() {
                             // let c = _menuController.grip.position;
                             // d.model.position.set(0, 0, 0);
@@ -531,18 +285,17 @@ class Scene {
                     el.geometry.dispose();
                     el.material.dispose();
                 }
-                $("#loading-background").hide();
-                console.error(_grabbables);
+                // console.error(_grabbables);
                 _controls.collidables = _clickables;
-                _controls.grabbables = _grabbables;
+                // _controls.grabbables = _grabbables;
                 _collidables = _clickables;
-                console.log("YIKES");
+                // console.log("YIKES");
                 let params = {name: "rando"};
-                console.log(JSON.stringify(_self));
+                // console.log(JSON.stringify(_self));
                 Script.send("setup", params, _self).then(function(response){
                     // console.log(_files);
                     // console.log(response);
-                    Scaffolding.fileTree(_files);
+                    Scaffolding.fileTree(_files, _self);
                 });
                 // console.log("%c %s", "color: rgba(0, 200, 200)", response);
                 Scaffolding.dag(_entities);
@@ -629,6 +382,7 @@ class Scene {
                 _scene.add(els[e]);
             }
         }
+        _handler.setType("development");
     }
 
     prodMode() {
@@ -641,6 +395,25 @@ class Scene {
                 _scene.remove(toRemove);
             }
         }
+        _user.third();
+        _handler.user = _user;
+        _handler.controls = _user.controls;
+        _handler.focus();
+        _handler.setType("gamepad");
+    }
+
+    gameMode() {
+        if (_devObjs.length > 0) {
+            let els = Feature.createDevGrid();
+            for (let e in els) {
+                let toRemove = _devObjs.pop();
+                toRemove.geometry.dispose();
+                toRemove.material.dispose();
+                _scene.remove(toRemove);
+            }
+        }
+        _user.third();
+        _handler.setType("gamepad");
     }
 
     buffer() {
@@ -831,6 +604,10 @@ class Scene {
     tick() {
         const delta = clock.getDelta();
         if (_updateReady) {
+
+            _handler.update(delta);
+            _user.update(delta);
+            
             for(let e of _entities) {
                 e.update(delta);
             }
@@ -839,6 +616,7 @@ class Scene {
                 e.update(delta);
             }
         }
+
 
         if (_vr) {
             if (_controls) {
@@ -862,16 +640,19 @@ class Scene {
         for (let e of _entities) {
             _scene.remove(e.model);
         }
-        let params = {path: "glitch.jpeg"};
-        let loader = Feature.createSkybox(params, false, 1000);
-        loader.position.copy(_dolly.position);
-        loader.update = (dt) => {
-            console.log(this);
-            loader.rotation.y += 0.1 * dt;
-        }
-        _loaders.push(loader);
-        _scene.add(loader);
-        updatables.push(loader);
+
+        // loading screen
+        // ------------------------------
+        // let params = {path: "glitch.jpeg"};
+        // let loader = Feature.createSkybox(params, false, 1000);
+        // loader.position.copy(_dolly.position);
+        // loader.update = (dt) => {
+        //     console.log(this);
+        //     loader.rotation.y += 0.1 * dt;
+        // }
+        // _loaders.push(loader);
+        // _scene.add(loader);
+        // updatables.push(loader);
 
         this.init();
     }
@@ -881,6 +662,11 @@ class Scene {
     }
 
 } export { Scene }
+
+
+// ###################### RAYCAST HELPERS TBR
+
+
 
 function intersectObjects( controller ) {
 

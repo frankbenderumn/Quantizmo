@@ -24,6 +24,7 @@
 #include "builder.h"
 #include "financial/iex.h"
 #include "ai/nlp.h"
+#include <unordered_map>
 // #include <filesystem>
 
 class WebApp : public JSONSession {
@@ -40,26 +41,51 @@ class WebApp : public JSONSession {
             // cout << file.path() << endl;
             // return EXIT_SUCCESS;
         // }
-        std::cout << "Wow" << std::endl;
-        FILE* stream;
-        const int max_buffer = 256;
-        char buffer[max_buffer];
-        std::string cmd = "ls web/assets/texture/hdr";
-        cmd.append(" 2>&1");
+        // std::cout << "Wow" << std::endl;
+        // FILE* stream;
+        // const int max_buffer = 256;
+        // char buffer[max_buffer];
+        // std::string cmd = "ls web/assets/texture/hdr";
+        // cmd.append(" 2>&1");
 
-        stream = popen(cmd.c_str(), "r");
+        // stream = popen(cmd.c_str(), "r");
 
-        if (stream) {
-          while (!feof(stream))
-            if (fgets(buffer, max_buffer, stream) != NULL) files.append(buffer);
-          pclose(stream);
-        }
+        // if (stream) {
+        //   while (!feof(stream))
+        //     if (fgets(buffer, max_buffer, stream) != NULL) files.append(buffer);
+        //   pclose(stream);
+        // }
+        dirs["hdr"] = readDir("web/assets/texture/hdr");
+        dirs["models"] = readDir("web/assets/models");
+        dirs["scenes"] = readDir("web/js/scenes");
+        dirs["images"] = readDir("web/assets/images");
+
+
         // return data;
         Console::Log(SUCCESS, "File directory parsed!");
         // std::cout << files << std::endl;
         // picojson::value val = picojson::value(files);
         // this->sendJSON(val);
         // system("ls web/assets/texture/hdr");
+    }
+
+    std::string readDir(std::string name) {
+        FILE* stream;
+        std::string fileBuffer = "";
+        const int max_buffer = 256;
+        char buffer[max_buffer];
+        std::string cmd = "ls " + name;
+        cmd.append(" 2>&1");
+
+        stream = popen(cmd.c_str(), "r");
+
+        if (stream) {
+          while (!feof(stream))
+            if (fgets(buffer, max_buffer, stream) != NULL) fileBuffer.append(buffer);
+          pclose(stream);
+        }
+
+        return fileBuffer;
     }
 
     /* @brief called when the server is shutdown -- ENSURE NO MEMORY LEAKS */
@@ -127,6 +153,7 @@ class WebApp : public JSONSession {
     Analytics* analytics;
     NLP* nlp;
     std::string files;
+    std::unordered_map<std::string, std::string> dirs;
 };
 
 #endif

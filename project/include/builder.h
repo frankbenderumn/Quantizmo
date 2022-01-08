@@ -10,11 +10,42 @@
 #include "util/debug/console.h"
 #include <time.h>
 
+// need file existence check
+
 class Builder {
     public:
         Builder(picojson::array arr) {
             this->scene = arr;
         }
+        Builder() {}
+
+        void create(const std::string& name) {
+            std::array<char, 64> buffer;
+            buffer.fill(0);
+            time_t rawtime;
+            time(&rawtime);
+            const auto timeinfo = localtime(&rawtime);
+            strftime(buffer.data(), sizeof(buffer), "%m%d%Y_%H%M%S", timeinfo);
+            std::string s(buffer.data());
+            std::string fileName = "web/js/scenes/"+name+".json";
+            std::ofstream f(fileName);
+            f << "[" << "\n";
+            f << "\t{" << "\n";
+            f << "\t\t\"command\": \"scene\"," << std::endl;
+            f << "\t\t\"params\": {" << std::endl;
+            f << "\t\t\t" << "\"name\": " << picojson::value(name).serialize() << "," << std::endl;
+            f << "\t\t\t" << "\"ext\": " << picojson::value("json").serialize() << "," << std::endl;
+            f << "\t\t\t" << "\"type\": " << picojson::value("scene").serialize() << "," << std::endl;
+            f << "\t\t\t" << "\"path\": " << picojson::value(name + ".json").serialize() << "," << std::endl;
+            f << "\t\t\t" << "\"author\": " << picojson::value("random author").serialize() << "," << std::endl;
+            f << "\t\t\t" << "\"created_at\": " << picojson::value(s).serialize() << "," << std::endl;
+            f << "\t\t\t" << "\"updated_at\": " << picojson::value(s).serialize() << "" << std::endl;
+            f << "\t\t}" << "\n";
+            f << "\t{" << "\n";
+            f << "]" << "\n";
+            f.close();
+        }
+
         std::string build(std::string fileName, std::string ext) {
             std::array<char, 64> buffer;
             buffer.fill(0);

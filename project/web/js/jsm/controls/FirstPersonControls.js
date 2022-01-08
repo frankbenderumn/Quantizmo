@@ -1,4 +1,5 @@
 import * as THREE from '../../three.module.js';
+import { Debug } from '../debug.js';
 
 class FirstPersonControls {
     constructor(camera, container) {
@@ -30,6 +31,8 @@ class FirstPersonControls {
     set speed(val) { this._speed = val; }
     set dynamic(val) { this._dynamic = val; }
     set drag(val) { this._drag = val; }
+    get focus() { return this._focus; }
+    set focus(val) { this._focus = val; }
 
     move(axis, val) {
         (val > 0) ? this._posMove[axis] = val : this._negMove[axis] = val;
@@ -92,4 +95,4 @@ class FirstPersonControls {
         this._camera.lookAt(this._focus.position);
     }
 
-} export { ThirdPersonControls }
+} export { FirstPersonControls }

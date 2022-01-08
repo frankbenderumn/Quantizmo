@@ -210,7 +210,10 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         }
     } else if (cmd == "setup") {
         picojson::object o;
-        o["files"] = picojson::value(files);
+        // o["files"] = picojson::value(files);
+        for(auto p : dirs) {
+            o[p.first] = picojson::value(p.second);
+        }
         picojson::value toSend(o);
         Console::Log(INFO, "SENDING FILE INFO");
         std::cout << toSend.serialize() << std::endl;
@@ -268,8 +271,12 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         }
     } else if (cmd == "skybox") {
         std::cout << "skybox received" << std::endl;
-    }
-    else {
+        std::string name = data.find("path")->second.get<std::string>();
+    } else if (cmd == "new") {
+        std::string name = data.find("name")->second.get<std::string>();
+        Builder* b = new Builder();
+        b->create(name);
+    } else {
         std::cout << "Unknown command: " << cmd << " - " << picojson::value(data).serialize() << std::endl;
     }
 }

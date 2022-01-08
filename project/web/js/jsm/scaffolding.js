@@ -4,6 +4,7 @@ import * as Loader from "./loader.js";
 import { GLTFLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js";
 import { GLTFExporter } from "https://cdn.skypack.dev/three/examples/jsm/exporters/GLTFExporter.js";
 import { Entity } from "./entity.js";
+import { FileSystem } from "./filesystem.js"
 
 let _vr = false;
 let _entities;
@@ -34,14 +35,20 @@ export function icon(name) {
     return i;
 }
 
-export function fileTree(files) {
+export function fileTree(files, scene) {
     let dir = document.getElementById("component-filetree");
+    dir.style.backgroundColor = "black";
+    dir.style.color = "white";
+    dir.style.overflow = "scroll";
+    dir.style.height = "500px";
+    let meta = [];
     console.log("%c %s", "color: green", files);
     let o = JSON.parse(files);
     for (let e in o) {
         if (e == "response") {
-            if (o[e].hasOwnProperty("files")) {
-                let arr = o[e].files.split("\n");
+            // if (o[e].hasOwnProperty("files")) {
+            for (let i in o[e]) {
+                let arr = o[e][i].split("\n");
                 let label = document.createElement("label");
                 label.setAttribute("for", "directory");
                 let input = document.createElement("input");
@@ -53,17 +60,22 @@ export function fileTree(files) {
                 label.addEventListener("click", function(){
                     input.checked = !input.checked;
                 });
+                // meta.append(label);
+                // meta.append(input);
                 dir.append(label);
                 dir.append(input);
-                for (let i of arr) {
-                    if (i != "") {
+                for (let j of arr) {
+                    if (j != "") {
                         // zerba method
                         let li = document.createElement("li");
-                        li.setAttribute("data-value", i);
+                        li.setAttribute("data-value", j);
                         li.className = "leaf";
                         li.append(icon("file"));
-                        li.append(" "+i);
+                        li.append(" "+j);
                         dir.append(li);
+                        if (i == "scenes") {
+                            meta.push(li);
+                        }
 
                         // tree method
                         // let li = document.createElement("li");
@@ -76,6 +88,20 @@ export function fileTree(files) {
         }
     }
     // dir.append(files);
+    // $("#component-scenes").append(meta);
+    for (let k of meta) {
+        k.setAttribute("data-role", "scene-trigger");
+        k.setAttribute("data-value", k.innerText);
+        k.className = "";
+        console.warn(k);
+        $("div#component-scenes").append(k);
+        k.addEventListener("click", function() {
+            let target = this.getAttribute("data-value");
+            let script = target.split(".")[0];
+            console.warn(target);
+            scene.changeScript(script);
+        });
+    }
 }
 
 export function components(param) {
