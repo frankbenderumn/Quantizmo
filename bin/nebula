@@ -13,14 +13,14 @@ else
         :
     fi
 
-    # if [ $1 == "--help" ]
-    # then
-    #     echo "s : launches server"
-    #     echo "db : launches database"
-    #     echo "db:seed : seeds the database"
-    # else
-    #     :
-    # fi
+    if [ $1 == "--help" ]
+    then
+        echo "s : launches server"
+        echo "db : launches database"
+        echo "db:seed : seeds the database"
+    else
+        :
+    fi
 
     if [ $1 == "start" ]
     then

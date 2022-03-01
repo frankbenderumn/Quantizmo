@@ -1,6 +1,6 @@
-import { OrbitControls } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from 'https://unpkg.com/three@0.137.0/examples/jsm/controls/OrbitControls.js';
 import { ThirdPersonControls } from './ThirdPersonControls.js';
-import { TrackballControls } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/controls/TrackballControls.js';
+import { TrackballControls } from 'https://unpkg.com/three@0.137.0/examples/jsm/controls/TrackballControls.js';
 
 let _camera;
 let _container;

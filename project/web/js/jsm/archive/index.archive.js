@@ -1,5 +1,5 @@
 
-import * as THREE from 'https://cdn.skypack.dev/three@0.119.0';
+import * as THREE from 'https://cdn.skypack.dev/three@0.137.0';
 import { BoxLineGeometry } from 'https://cdn.skypack.dev/three/examples/jsm/geometries/BoxLineGeometry.js';
 import { VRButton } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/VRButton.js';
 import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/XRControllerModelFactory.js';

@@ -1,6 +1,6 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.119.0';
-import { BoxLineGeometry } from 'https://cdn.skypack.dev/three/examples/jsm/geometries/BoxLineGeometry.js';
-import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/XRControllerModelFactory.js';
+// import { BoxLineGeometry } from 'https://cdn.skypack.dev/three/examples/jsm/geometries/BoxLineGeometry.js';
+// import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/XRControllerModelFactory.js';
 import { Scene } from './jsm/scene.js'
 import { Raycast } from './jsm/raycast.js'
 import * as Script from './jsm/script.js'

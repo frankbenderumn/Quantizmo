@@ -1,4 +1,4 @@
-import { Vector3 } from "../three.module.js.js.js.js";
+import { Vector3 } from "../three.module.js";
 
 let _vr = false;
 let _entities;

@@ -1,6 +1,6 @@
 import * as Feature from './feature.js'
 import * as Script from './script.js'
-import * as THREE from 'https://cdn.skypack.dev/three@0.134.0'
+import * as THREE from '../three.module.js'
 import { Entity } from './entity.js'
 import * as XRController from './xr/xrcontroller.js'
 import { XRHandler } from './xr/xrhandler.js'
@@ -13,7 +13,7 @@ import * as Component from "./component.js"
 import { Handler } from "./handler/handler.js"
 // import { Gamepad } from "./gamepad.js"
 import { Matrix4, MeshBasicMaterial, Raycaster, SphereBufferGeometry, Vector3 } from '../three.module.js'
-import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/webxr/XRControllerModelFactory.js';
+import { XRControllerModelFactory } from 'https://unpkg.com/three@0.138.0/examples/jsm/webxr/XRControllerModelFactory.js';
 import { User } from "./user.js"
 import { Debug } from './debug.js'
 // import { XR } from "./xr/xr.js"

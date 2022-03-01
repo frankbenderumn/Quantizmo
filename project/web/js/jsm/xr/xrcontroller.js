@@ -1,5 +1,5 @@
-import { XRControllerModelFactory } from 'https://cdn.skypack.dev/three@0.134.0/examples/jsm/webxr/XRControllerModelFactory.js';
-import * as THREE from 'https://cdn.skypack.dev/three@0.134.0';
+import { XRControllerModelFactory } from 'https://unpkg.com/three@0.138.0/examples/jsm/webxr/XRControllerModelFactory.js';
+import * as THREE from 'https://unpkg.com/three@0.138.0';
 
 let _leftController;
 let _leftControllerGrip;

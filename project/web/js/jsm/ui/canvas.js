@@ -9,7 +9,7 @@ import { Mesh,
     WebGLRenderer, 
     Vector3, 
     IcosahedronBufferGeometry 
-   } from 'https://cdn.skypack.dev/three@0.134.0';
+   } from 'https://cdn.skypack.dev/three@0.137.0';
 import { CanvasKeyboard } from './keyboard.js';
 
 /* credit: https://github.com/NikLever */

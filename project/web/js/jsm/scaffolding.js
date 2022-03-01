@@ -1,8 +1,8 @@
 import { LinearEncoding, Vector3 } from "../three.module.js";
 import { WSApi } from "./system/socket.js";
 import * as Loader from "./loader.js";
-import { GLTFLoader } from "https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js";
-import { GLTFExporter } from "https://cdn.skypack.dev/three/examples/jsm/exporters/GLTFExporter.js";
+import { GLTFLoader } from "https://unpkg.com/three@0.138.0/examples/jsm/loaders/GLTFLoader.js";
+import { GLTFExporter } from "https://unpkg.com/three@0.138.0/examples/jsm/exporters/GLTFExporter.js";
 import { Entity } from "./entity.js";
 import { FileSystem } from "./filesystem.js"
 

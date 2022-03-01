@@ -4,8 +4,16 @@
 		<!-- css stylesheets -->
 		<link rel="stylesheet" type="text/css" href="css/main.css" />
 		<link rel="stylesheet" type="text/css" href="css/final.css" />
-
+		<link rel="stylesheet" type="text/css" href="css/nebula.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "./js/three.module.js"
+				}
+			}
+		</script>
 		<!-- dependencies -->
+		<script type="module" src="js/three.module.js"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<script type="module" src="js/jquery-3.5.1.min.js"></script>
 		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
@@ -16,10 +24,9 @@
 
 		<!-- global modules -->
 		<script type="module" src="js/main.js"></script>
-		<!-- <script type="module" src="js/three.js"></script>
-		<script type="module" src="js/OrbitControls.js"></script>
+		<!-- <script type="module" src="js/OrbitControls.js"></script>
 		<script type="module" src="js/GLTFLoader.js"></script>
-		<script type="module" src="js/OBJLoader.js"></script> -->
+		<script type="module" src="js/OBJLoader.js"></script> --> -->
 	</head>
 	<body>
 		<header>
@@ -27,7 +34,7 @@
 			  <nav id="navbar" class="nav-header">
 				<span class="left">
 					<b class="brand" style="color:white;padding:0px 10px;">
-						Nebula <i class="fas fa-meteor"></i>
+						Quantizmo <i class="fas fa-meteor"></i>
 					</b>
 					<ul class="right white command-menu">
 						<li class="pl-5 pr-5" style="line-height:40px;"><a class="modal-button" href="#new-scene">New</a></li> 
@@ -466,6 +473,17 @@
 			<h1>Animation Studio</h1>
 		</section>
 
+		<section id="page-home" class="page">
+			<h1><i class="fas fa-shield"></i> Admin</h1> 
+			<ol>
+				<li><a href="views/nebula.html">NebulaUI</a></li>
+				<li><a href="views/stocket.html">StocketVR</a></li>
+				<li><a href="views/assetross.html">Assetross</a></li>
+				<li><a href="views/joeybenz.html">JoeyBenz</a></li> 
+				<li><a href="views/starzoku.html">Starzoku</a></li>
+			</ol>
+		</section>
+
 		<div id="features" class="dag" style="top:40px;right:0px;width:20%;z-index:9;position:absolute;opacity:1;padding:0px;border-radius:0px;color:white;">
 			<div style="
 						display:grid;
@@ -494,12 +512,32 @@
 						<div data-role="page-trigger" href="#page-account" class="right-col"><i class="fas fa-user"></i></div>
 						<div data-role="page-trigger" href="#page-about" class="right-col"><i class="fas fa-info-circle"></i></div>
 						<div data-role="page-trigger" href="#page-documentation" class="right-col"><i class="fas fa-feather-alt"></i></div>
+						<div data-role="page-trigger" href="#page-home" class="right-col"><i class="fas fa-home"></i></div>
 					</div>
 				</div>
 
 				<div id="feature-entities" class="component" data-role="tab">
 					<div class="header"><H2 class="m-0">Entities <i class="fas fa-cube"></i></H2></div>
 					<div class="content">
+
+						<label>Name</label>
+						<input type="text" placeholder="Name" />
+						<label>Group</label> 
+						<label>Type</label> 
+						<input type="text" placeholder="Name" />
+						<label>Position</label>
+						<div class="icon-form">
+							<label class="label">X</label>
+							<input type="text" class="field">
+						</div>
+						<label>Rotation</label>
+						<label>Scale</label>
+						<label>Components</label>
+						<ol>
+							<li>List of components</li>
+						</ol>
+						<a class="bttn" data-command="component-add">Add Component</a>
+
 						<span class="p-5">Lists of entities and their meshes</span>
 						<div id="component-dropzone" style="background-color:white;width:100%;height:200px;border-radius:
 													5px;box-shadow:var(--shadow);line-height:200px;text-align:center;color:var(--black);font-size:1.2rem;">
@@ -732,7 +770,7 @@
 
 		<div id="loading-background" class="hide center loading-background">
 			<div class="tY-60">
-			  <H1 id="loading-text" class="loading-text">Project <b>NEBULA</b></H1>
+			  <H1 id="loading-text" class="loading-text">Project <b>Quantizmo</b></H1>
 			  <!-- <%# <img src="https://starzoku.s3.amazonaws.com/images/alpha_logo.png" class="responsive loader-logo" /> %> -->
 			  <div id="loader">
 				<div class="m-a w-50">

@@ -27,10 +27,10 @@ import { Scene,
     Line,
     AdditiveBlending,
     GridHelper
-        } from 'https://cdn.skypack.dev/three@0.134.0';
+        } from '../three.module.js';
 import * as Loader from './loader.js';
 import { Controls } from './controls/controls.js';
-import { VRButton } from 'https://cdn.skypack.dev/three/examples/jsm/webxr/VRButton.js';
+import { VRButton } from 'https://unpkg.com/three@0.138.0/examples/jsm/webxr/VRButton.js';
 import { CanvasUI } from './ui/canvas.js';
 import { TetrahedronGeometry } from '../three.module.js';
 

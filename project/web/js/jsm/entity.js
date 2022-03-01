@@ -21,7 +21,7 @@ class Entity {
         } else {
             console.log("not asynchronously loading");
         }
-        this._action = false;
+        this._action = true;
     }
 
     get name() { return this._name; }

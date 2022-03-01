@@ -1,12 +1,13 @@
-import * as THREE from 'https://cdn.skypack.dev/three@0.134.0'
-import { ColladaLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/ColladaLoader.js';
-import { GLTFLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/GLTFLoader.js';
-import { OBJLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/OBJLoader.js';
-import { FBXLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/FBXLoader.js';
-import { MTLLoader } from 'https://cdn.skypack.dev/three/examples/jsm/loaders/MTLLoader.js';
+
+import * as THREE from '../three.module.js'
+// import { ColladaLoader } from 'https://cdn.skypack.dev/three@0.137.0/examples/jsm/loaders/ColladaLoader.js';
+import { GLTFLoader } from 'https://unpkg.com/three@0.138.0/examples/jsm/loaders/GLTFLoader.js';
+import { OBJLoader } from 'https://unpkg.com/three@0.138.0/examples/jsm/loaders/OBJLoader.js';
+import { FBXLoader } from 'https://unpkg.com/three@0.138.0/examples/jsm/loaders/FBXLoader.js';
+import { MTLLoader } from 'https://unpkg.com/three@0.138.0/examples/jsm/loaders/MTLLoader.js';
 
 // const manager = THREE.LoadingManager();
-const colladaLoader = new ColladaLoader();
+// const colladaLoader = new ColladaLoader();
 const glbLoader = new GLTFLoader();
 const objLoader = new OBJLoader();
 const fbxLoader = new FBXLoader();
@@ -30,7 +31,7 @@ export async function load(params) {
             m = await loadObj(params);
             break;
         case "dae":
-            m = await loadCollada(params);
+            // m = await loadCollada(params);
             break;
         case "fbx":
             m = await loadFbx(params);
@@ -50,10 +51,10 @@ export async function loadGlb(params, dynamic = true) {
     return format(data, params, dynamic);
 }
 
-export async function loadCollada(params, dynamic = true) {
-    let data = await colladaLoader.loadAsync(`${dir}${params.path}`);
-    return format(data, params, dynamic);
-}
+// export async function loadCollada(params, dynamic = true) {
+//     let data = await colladaLoader.loadAsync(`${dir}${params.path}`);
+//     return format(data, params, dynamic);
+// }
 
 export async function loadFbx(params, dynamic = true) {
     let data = await fbxLoader.loadAsync(`${dir}${params.path}`);
