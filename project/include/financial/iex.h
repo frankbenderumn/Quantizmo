@@ -39,7 +39,7 @@ class Iex {
 
     picojson::value Historical(const std::string ticker, const std::string range, const std::string date) {
         if (Validate()) {
-            std::string route = "stock/" + ticker + "/" + range + "/" + date;
+            std::string route = "stock/" + ticker + "/chart/" + range + "/" + date;
             picojson::value result = JsonParser::Parse(Api::Get(_base, route, _token));
             return result;
         }

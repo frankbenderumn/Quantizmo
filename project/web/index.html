@@ -24,6 +24,7 @@
 
 		<!-- global modules -->
 		<script type="module" src="js/main.js"></script>
+		<script type="module" src="js/jsm/stocket/stocket.js"></script>
 		<!-- <script type="module" src="js/OrbitControls.js"></script>
 		<script type="module" src="js/GLTFLoader.js"></script>
 		<script type="module" src="js/OBJLoader.js"></script> --> -->
@@ -62,6 +63,7 @@
 					<li id="fullscreen-menu-trigger" data-role="toggle" href="#fullscreen-menu" class="trigger"><i class="fas fa-globe"></i> Menu</li>
 					<li id="camera-trigger" data-role="hover-dropdown-trigger" class="trigger"><i class="fas fa-camera"></i> Camera</li>
 					<li data-role="hover-dropdown-trigger" class="trigger" href="#environments"><i class="fas fa-globe"></i> Scene</li>
+					<li data-role="trigger" data-type="modal" href="#visualizer"><i class="fas fa-cogs"></i> Visualizer</li>
 					<li id="current-scene" style="display:none;" data-value="scene"></li>
 
 					<li><a class="modal-button" href="#settings-modal"><i class="fas fa-cogs"></i> Settings</a></li> 
@@ -75,6 +77,173 @@
 				Something something something
 			</div>
 		  </subheader> -->
+
+		  <!-- // put visualizer in a new class -->
+
+		<style>
+			.node {
+				width:100px;
+				height:auto;
+				background-color:white;
+				border-radius:5px;
+				float:right;
+			}
+		</style>
+
+		<!-- <div id="visualizer" class="slim modal" style="background-color:rgba(0, 0, 0, 0.9);">
+			<!-- may go for textured grid --
+			<div class="slim modal-box" style="background-color:var(--black);background-image:url('assets/texture/grid.jpg');
+			background-repeat:repeat-y repeat-x;width:80%;height:80%;opacity:1;padding:0px;">
+				<div id="node-menu" style="height:100%;background-color:white;width:100px;float:left;">
+					<button class="bttn" class="bgcolor-green white" id="run-visualizer">Run</button> 
+					Tools
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+				</div>
+					<!-- // start working on drag and drop cells --
+					And this works
+				<div class="node" data-role="node" draggable="true" style="background-color:var(--red);">
+					I am node.
+				</div>
+
+			</div>
+		</div> -->
+
+		<script type="module">
+			import { Graph } from './js/jsm/stocket/graph.js';
+
+			// Graph vars
+			// let labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+			// 'ao', 'bo', 'c', 'do', 'e', 'fr', 'g', 'h', 'in', 'j', 'k', 'l', 'm', 'n',
+			// 'a', 'b', 'c', 'd', 'ek', 'f', 'gl', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+			// 'a', 'b', 'c', 'di', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+			// 'a', 'b', 'c', 'dh', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+			// 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'];
+
+			// let points = ['10', '10', '11', '12', '6', '7', '8', '9', '1', '0', '10', '10', '11', '12', '6', '7', '8', '9', '1', '0', 
+			// '10', '10', '11', '12', '6', '7', '8', '9', '1', '0', '10', '10', '11', '12', '6', '7', '8', '9', '1', '0'];
+
+			let fillGraph = [];
+
+			let tooltip;
+
+			$(document).ready(function(){
+
+
+				let graph = new Graph(800, 600, "grapha");
+
+		$("#bullshit").click(function(){
+			console.log(" Generating grid!");
+			graph.init();
+		});
+
+		let api = new WSApi();
+
+		$(".stockx").each(function() {
+			$(this).click(function() {
+				let o = { ticker: $(this).attr('data-value'),
+						  type: "chart" };
+				console.log(o);
+				console.log("Sending stock!");
+				api.sendCommand("stock", o).then(function(data){
+					console.log(data);
+					graph.seed("historical", data);
+				});
+			});
+		});
+
+			$("[data-role=triggerx]").click(function(){
+				let type = $(this).attr('data-type');
+				let target = $(this).attr('href');
+				$(target).toggle();
+				// console.log('target id is: '+target);
+				// let targEl = document.getElementById(target);
+				// if (targEl.style.display == 'none') {
+				// 	targEl.style.display = 'block'; 
+				// } else if (targEl.style.display == 'block') {
+				// 	targEl.style.display = 'none';
+				// }
+			});
+
+
+		});
+
+		</script>
+
+		<style>
+			ul.subnav li { background-color:#222222; }
+			ul.subnav li:hover { background-color:white; }
+			no-hover { background-color:#222222; }
+			option { color:var(--black); }
+		</style>
+		<div id="visualizer" class="slim modal" style="background-color:rgba(0, 0, 0, 0.9);">
+			<div class="visualization-bar" style="background-color:#222222;color:white;font-weight:bold;height:50px;position:absolute;top:40px;width:100%;">
+				<ul class="subnav">
+					<li>Stock</li>
+					<li>Index</li>
+					<li>News<li>
+					<li data-role="triggerx" data-type="dropdown" href="#vis-stock-list">List</li>
+						<ol id="vis-stock-list" class="dropdown" style="color:var(--black) !important;">
+							<li class="stockx" data-value='rcl'>RCL</li>
+							<li class="stockx" data-value='ccl'>CCL</li>
+							<li class="stockx" data-value='nclh'>NCLH</li>
+							<li class="stockx" data-value='dal'>DAL</li>
+							<li class="stockx" data-value='batch'>BATCH</li>
+							<li class="stockx" data-value='dow'>DOW</li>
+						</ol>
+					</li>
+					<li data-role="trigger" data-type="modal" href="node-editor">Node</li>
+					<li no-hover><div class="bubble" contenteditable="true"></div></li>
+				</ul> 
+			</div> 
+			<div class="slim modal-box" style="background-color:var(--black);background-image:url('assets/texture/grid.jpg');">
+				<canvas id="node-editor"></canvas> 
+				<div id="bullshit" data-role="trigger" data-type="modal" href="#graph" data-generate="grid"><span class="bttn">Graph (1)</span></div>
+			</div>
+			<a id="vis-horizontal" class="bttn">Horizontal</a> 
+			<a id="vis-vertical" class="bttn">Vertical</a> 
+		</div>
+
+		<div id="graph" class="slim modal">
+			<div class="slim modal-box" style="background-color:var(--black);background-image:url('assets/texture/grid.jpg');">
+				<canvas width="800" height="600" id="grapha"></canvas>
+			</div>
+		</div>
+
+		<script type="module">
+			// begin node editor
+
+			// onclick
+			// drag
+			// drop
+			// nodes
+			$(document).ready(function(){
+				// function drag_start(event) {
+				// 	var style = window.getComputedStyle(event.target, null);
+				// 	event.dataTransfer.setData("text/plain",
+				// 	(parseInt(style.getPropertyValue("left"),10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"),10) - event.clientY));
+				// }
+
+				// function drop(event) {
+				// 	var offset = event.dataTransfer.getData("text/plain").split(',');
+				// 	var dm = document.getElementById('dragme');
+				// 	dm.style.left = (event.clientX + parseInt(offset[0],10)) + 'px';
+				// 	dm.style.top = (event.clientY + parseInt(offset[1],10)) + 'px';
+				// 	event.preventDefault();
+				// 	return false;
+				// }
+
+				$("div[data-role='node']").click(function(){
+					var style = window.getComputedStyle(event.target, null);
+					event.dataTransfer.setData("text/plain",
+					(parseInt(style.getPropertyValue("left"),10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"),10) - event.clientY));
+				});
+			});
+
+		</script>
+
 		<script id="vertexShader" type="x-shader/x-vertex">
 			out vec4 localPos;
 			void main() {
@@ -484,7 +653,7 @@
 			</ol>
 		</section>
 
-		<div id="features" class="dag" style="top:40px;right:0px;width:20%;z-index:9;position:absolute;opacity:1;padding:0px;border-radius:0px;color:white;">
+		<div id="features" class="dag" style="top:40px;right:0px;width:50px;z-index:9;position:absolute;opacity:1;padding:0px;border-radius:0px;color:white;">
 			<div style="
 						display:grid;
 						grid-template-columns:50px auto;

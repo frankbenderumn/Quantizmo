@@ -1,0 +1,54 @@
+[
+	{
+		"command": "scene",
+		"params": {
+			"name": "banjo",
+			"ext": "json",
+			"type": "scene",
+			"path": "banjo.json",
+			"author": "random author",
+			"created_at": "03302022_180228",
+			"updated_at": "03302022_180228"
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 0,
+			"name": "wumpa",
+			"type": "actor",
+			"path": "wumpa.glb",
+			"interact": 3,
+			"dynamic": true,
+			"position": {"x":15.199999999999992,"y":-2.7755575615628914e-17,"z":6.6000000000000032},
+			"rotation": {"_order":"XYZ","_x":0,"_y":6027.1366000009102,"_z":0},
+			"scale": {"x":0.15000000000000011,"y":0.15000000000000011,"z":0.15000000000000011}
+		}
+	},
+	{
+		}
+	},
+	{
+		"command": "createEntity",
+		"params": {
+			"entityId": 0,
+			"name": "banjo",
+			"type": "actor",
+			"path": "beach-scene.glb",
+			"interact": 0,
+			"dynamic": true,
+			"position": {"x":0,"y":-0.69999999999999996,"z":0},
+			"rotation": {"_order":"XYZ","_x":0,"_y":0,"_z":0},
+			"scale": {"x":1,"y":1,"z":1}
+		}
+	},
+	{
+		"command": "skybox",
+		"params": {
+			"entityId": 2,
+			"name": "undefined",
+			"type": "skybox",
+			"path": "clouds.jpeg"
+		}
+	}
+]

@@ -231,10 +231,18 @@ void WebApp::ReceiveCommand(const std::string& cmd, picojson::object& data, pico
         delete b;
     } else if (cmd == "stock") {
         std::cout << picojson::value(data).serialize() << std::endl;
-        std::string token = "Tpk_64ae4b7c2dca48c7bb11970baaf64f1c";
+        std::string token = "Tpk_8a7d954eb41e406c83a49d21f55b9429";
         Iex* client = new Iex(token);
         std::string ticker = data["ticker"].get<std::string>();
-        picojson::value iex = client->Quote(ticker);
+        std::string type = data["type"].get<std::string>();
+        picojson::value iex;
+        if (type == "quote") {
+            iex = client->Quote(ticker);
+        } else if (type == "chart") {
+            iex = client->Historical(ticker, "1m", "20220330");
+        } else {
+            Console::Log(FAILURE, "WebApp::ReceiveCommand -- Stock type not provided!");
+        }
         std::cout << iex.serialize() << std::endl;
         picojson::object child;
         child["type"] = picojson::value("stock");

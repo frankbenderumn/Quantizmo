@@ -65,6 +65,8 @@ WSApi.prototype.setScene = function( scene ) {
 WSApi.prototype.sendCommand = function(cmd, data, calcVal, isPost = false) {
     let self = this;
 
+    console.warn("command is: "+cmd);
+
     if (self.connected) {
         data.command = cmd;
         data.id = this.requestId;

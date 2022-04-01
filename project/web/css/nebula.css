@@ -408,7 +408,14 @@ form input[type=submit].dark:hover{
     background-color:white;
     color:var(--black);
 }
-div[contenteditable=true]{}
+div[contenteditable=true] {
+    width:300px;
+    background-color:white;
+    border-radius:5px;
+    padding:3px 6px;
+    outline:none;
+    color:var(--black);
+}
 
 .bttn {
     padding:6px 8px;
